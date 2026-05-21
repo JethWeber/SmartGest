@@ -1,0 +1,11 @@
+/home/weber/projects/SmartGest/SmartGest.Core/bin/Release/net10.0/SmartGest.Core.deps.json
+/home/weber/projects/SmartGest/SmartGest.Core/bin/Release/net10.0/SmartGest.Core.dll
+/home/weber/projects/SmartGest/SmartGest.Core/bin/Release/net10.0/SmartGest.Core.pdb
+/home/weber/projects/SmartGest/SmartGest.Core/obj/Release/net10.0/SmartGest.Core.GeneratedMSBuildEditorConfig.editorconfig
+/home/weber/projects/SmartGest/SmartGest.Core/obj/Release/net10.0/SmartGest.Core.AssemblyInfoInputs.cache
+/home/weber/projects/SmartGest/SmartGest.Core/obj/Release/net10.0/SmartGest.Core.AssemblyInfo.cs
+/home/weber/projects/SmartGest/SmartGest.Core/obj/Release/net10.0/SmartGest.Core.csproj.CoreCompileInputs.cache
+/home/weber/projects/SmartGest/SmartGest.Core/obj/Release/net10.0/SmartGest.Core.dll
+/home/weber/projects/SmartGest/SmartGest.Core/obj/Release/net10.0/refint/SmartGest.Core.dll
+/home/weber/projects/SmartGest/SmartGest.Core/obj/Release/net10.0/SmartGest.Core.pdb
+/home/weber/projects/SmartGest/SmartGest.Core/obj/Release/net10.0/ref/SmartGest.Core.dll

@@ -1,0 +1,225 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:SmartGest.Desktop.ViewModels"
+        x:Class="SmartGest.Desktop.Views.LoginView"
+        x:DataType="vm:LoginViewModel"
+        Title="SmartGest"
+        Width="960" Height="600"
+        MinWidth="800" MinHeight="520"
+        WindowStartupLocation="CenterScreen"
+        Background="#1A2E5A"
+        CanResize="False">
+
+  <Window.Styles>
+
+    <!-- Input field estilo mockup: borda suave, fundo branco/cinza claro -->
+    <Style Selector="TextBox.sg-input">
+      <Setter Property="Height" Value="44"/>
+      <Setter Property="FontSize" Value="13"/>
+      <Setter Property="Foreground" Value="#333333"/>
+      <Setter Property="Background" Value="#FFFFFF"/>
+      <Setter Property="BorderBrush" Value="#DDDDDD"/>
+      <Setter Property="BorderThickness" Value="1"/>
+      <Setter Property="CornerRadius" Value="6"/>
+      <Setter Property="Padding" Value="14,0"/>
+      <Setter Property="HorizontalAlignment" Value="Stretch"/>
+    </Style>
+    <Style Selector="TextBox.sg-input:focus">
+      <Setter Property="BorderBrush" Value="#4A90D9"/>
+    </Style>
+    <Style Selector="TextBox.sg-input /template/ TextBlock#PART_PlaceholderText">
+      <Setter Property="Foreground" Value="#AAAAAA"/>
+      <Setter Property="VerticalAlignment" Value="Center"/>
+    </Style>
+    <Style Selector="TextBox.sg-input /template/ ScrollViewer">
+      <Setter Property="VerticalAlignment" Value="Center"/>
+    </Style>
+
+    <!-- Botão principal: azul sólido como no mockup -->
+    <Style Selector="Button.sg-btn-primary">
+      <Setter Property="Height" Value="44"/>
+      <Setter Property="FontSize" Value="14"/>
+      <Setter Property="FontWeight" Value="SemiBold"/>
+      <Setter Property="Foreground" Value="White"/>
+      <Setter Property="Background" Value="#2196F3"/>
+      <Setter Property="CornerRadius" Value="6"/>
+      <Setter Property="HorizontalContentAlignment" Value="Center"/>
+      <Setter Property="HorizontalAlignment" Value="Stretch"/>
+      <Setter Property="Cursor" Value="Hand"/>
+      <Setter Property="BorderThickness" Value="0"/>
+    </Style>
+    <Style Selector="Button.sg-btn-primary:pointerover /template/ ContentPresenter">
+      <Setter Property="Background" Value="#1976D2"/>
+    </Style>
+    <Style Selector="Button.sg-btn-primary:pressed /template/ ContentPresenter">
+      <Setter Property="Background" Value="#1565C0"/>
+    </Style>
+
+    <!-- Link -->
+    <Style Selector="Button.sg-link">
+      <Setter Property="Background" Value="Transparent"/>
+      <Setter Property="BorderThickness" Value="0"/>
+      <Setter Property="Foreground" Value="#2196F3"/>
+      <Setter Property="FontSize" Value="12.5"/>
+      <Setter Property="Cursor" Value="Hand"/>
+      <Setter Property="Padding" Value="0"/>
+    </Style>
+    <Style Selector="Button.sg-link:pointerover">
+      <Setter Property="Opacity" Value="0.75"/>
+    </Style>
+
+  </Window.Styles>
+
+  <Grid ColumnDefinitions="*,400">
+
+    <!-- ========================================
+         LADO ESQUERDO — hero escuro com gráfico
+         ======================================== -->
+    <Border Grid.Column="0" ClipToBounds="True">
+      <Border.Background>
+        <LinearGradientBrush StartPoint="0%,0%" EndPoint="60%,100%">
+          <GradientStop Color="#0D1B3E" Offset="0"/>
+          <GradientStop Color="#1A2E5A" Offset="1"/>
+        </LinearGradientBrush>
+      </Border.Background>
+
+      <Grid>
+
+        <!-- Gráfico de barras decorativo (fiel ao mockup: barras azuis e salmão) -->
+        <Canvas HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                Width="360" Height="320"
+                Margin="0,40,0,0">
+
+          <!-- Eixo Y: linhas horizontais de referência -->
+          <Line StartPoint="0,60"  EndPoint="360,60"  Stroke="#22FFFFFF" StrokeThickness="1"/>
+          <Line StartPoint="0,120" EndPoint="360,120" Stroke="#22FFFFFF" StrokeThickness="1"/>
+          <Line StartPoint="0,180" EndPoint="360,180" Stroke="#22FFFFFF" StrokeThickness="1"/>
+          <Line StartPoint="0,240" EndPoint="360,240" Stroke="#22FFFFFF" StrokeThickness="1"/>
+
+          <!-- Barras — pares (azul claro = receita, salmão = despesa), 6 grupos -->
+          <!-- Grupo 1 -->
+          <Rectangle Canvas.Left="10"  Canvas.Top="100" Width="26" Height="200" Fill="#558EC6" RadiusX="3" RadiusY="3" Opacity="0.85"/>
+          <Rectangle Canvas.Left="38"  Canvas.Top="160" Width="26" Height="140" Fill="#E07070" RadiusX="3" RadiusY="3" Opacity="0.75"/>
+          <!-- Grupo 2 -->
+          <Rectangle Canvas.Left="78"  Canvas.Top="60"  Width="26" Height="240" Fill="#558EC6" RadiusX="3" RadiusY="3" Opacity="0.85"/>
+          <Rectangle Canvas.Left="106" Canvas.Top="130" Width="26" Height="170" Fill="#E07070" RadiusX="3" RadiusY="3" Opacity="0.75"/>
+          <!-- Grupo 3 -->
+          <Rectangle Canvas.Left="146" Canvas.Top="80"  Width="26" Height="220" Fill="#558EC6" RadiusX="3" RadiusY="3" Opacity="0.85"/>
+          <Rectangle Canvas.Left="174" Canvas.Top="150" Width="26" Height="150" Fill="#E07070" RadiusX="3" RadiusY="3" Opacity="0.75"/>
+          <!-- Grupo 4 -->
+          <Rectangle Canvas.Left="214" Canvas.Top="20"  Width="26" Height="280" Fill="#558EC6" RadiusX="3" RadiusY="3" Opacity="0.85"/>
+          <Rectangle Canvas.Left="242" Canvas.Top="110" Width="26" Height="190" Fill="#E07070" RadiusX="3" RadiusY="3" Opacity="0.75"/>
+          <!-- Grupo 5 -->
+          <Rectangle Canvas.Left="282" Canvas.Top="50"  Width="26" Height="250" Fill="#558EC6" RadiusX="3" RadiusY="3" Opacity="0.85"/>
+          <Rectangle Canvas.Left="310" Canvas.Top="140" Width="26" Height="160" Fill="#E07070" RadiusX="3" RadiusY="3" Opacity="0.75"/>
+
+        </Canvas>
+
+        <!-- Textos hero por cima do gráfico -->
+        <StackPanel VerticalAlignment="Top"
+                    HorizontalAlignment="Left"
+                    Margin="48,56,40,0"
+                    Spacing="8">
+          <TextBlock FontSize="32"
+                     FontWeight="Bold"
+                     Foreground="White"
+                     TextWrapping="Wrap"
+                     LineHeight="40"
+                     Text="Automatize números.&#x0a;Multiplique resultados."/>
+          <TextBlock FontSize="15"
+                     Foreground="#88C3F0"
+                     Text="Contabilidade moderna sem complicações"/>
+        </StackPanel>
+
+      </Grid>
+    </Border>
+
+    <!-- ========================================
+         LADO DIREITO — card de login branco
+         ======================================== -->
+    <Border Grid.Column="1" Background="#F5F6FA">
+
+      <!-- Card branco centralizado — fiel ao mockup -->
+      <Border Background="White"
+              CornerRadius="10"
+              BoxShadow="0 2 20 0 #18000000"
+              Padding="40,36"
+              Width="320"
+              VerticalAlignment="Center"
+              HorizontalAlignment="Center">
+
+        <StackPanel Spacing="0">
+
+          <!-- Logo dentro do card -->
+          <StackPanel Orientation="Horizontal"
+                      HorizontalAlignment="Center"
+                      Spacing="10"
+                      Margin="0,0,0,4">
+
+            <!-- Ícone SVG simplificado -->
+            <Image Source="/Assets/smartgest_logo.png"
+               Width="260"
+               HorizontalAlignment="Center"
+               Stretch="Uniform"
+               Margin="0,0,0,36"/>
+          </StackPanel> 
+
+          <!-- Separador -->
+          <Border Height="1" Background="#F0F0F0" Margin="0,20,0,20"/>
+
+          <!-- Campos -->
+          <StackPanel Spacing="12">
+            <TextBox Classes="sg-input"
+                     Watermark="Número de telefone"
+                     Text="{Binding Phone}"
+                     KeyboardNavigation.TabIndex="0"/>
+
+            <TextBox Classes="sg-input"
+                     Watermark="Senha de acesso"
+                     PasswordChar="●"
+                     Text="{Binding Password}"
+                     KeyboardNavigation.TabIndex="1"/>
+          </StackPanel>
+
+          <!-- Erro -->
+          <TextBlock Text="{Binding ErrorMessage}"
+                     Foreground="#E53935"
+                     FontSize="12"
+                     IsVisible="{Binding HasError}"
+                     TextWrapping="Wrap"
+                     Margin="0,10,0,0"
+                     HorizontalAlignment="Center"/>
+
+          <!-- Botão Entrar -->
+          <Button Classes="sg-btn-primary"
+                  Content="Entrar"
+                  Command="{Binding LoginCommand}"
+                  IsEnabled="{Binding !IsLoading}"
+                  Margin="0,20,0,0"
+                  KeyboardNavigation.TabIndex="2"/>
+
+          <!-- Loading -->
+          <StackPanel IsVisible="{Binding IsLoading}"
+                      HorizontalAlignment="Center"
+                      Margin="0,10,0,0">
+            <TextBlock Text="A autenticar..."
+                       FontSize="12"
+                       Foreground="#888888"/>
+          </StackPanel>
+
+          <!-- Separador -->
+          <Border Height="1" Background="#F0F0F0" Margin="0,20,0,16"/>
+
+          <!-- Link criar conta -->
+          <Button Classes="sg-link"
+                  Content="Criar conta GRÁTIS"
+                  HorizontalAlignment="Center"
+                  KeyboardNavigation.TabIndex="3"/>
+
+        </StackPanel>
+      </Border>
+    </Border>
+
+  </Grid>
+</Window>

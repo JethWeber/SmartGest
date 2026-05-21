@@ -1,0 +1,78 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:SmartGest.Desktop.ViewModels"
+        x:Class="SmartGest.Desktop.Views.SplashView"
+        x:DataType="vm:SplashViewModel"
+        Title="SmartGest"
+        Width="480" Height="320"
+        WindowStartupLocation="CenterScreen"
+        SystemDecorations="None"
+        Background="Transparent"
+        CanResize="False"
+        TransparencyLevelHint="Transparent">
+
+  <Window.Styles>
+    <Style Selector="ProgressBar.sg-progress">
+      <Setter Property="Height" Value="6"/>
+      <Setter Property="CornerRadius" Value="3"/>
+      <Setter Property="Background" Value="#E8EDF2"/>
+      <Setter Property="Foreground" Value="#2196F3"/>
+      <Setter Property="BorderThickness" Value="0"/>
+      <Setter Property="Minimum" Value="0"/>
+      <Setter Property="Maximum" Value="100"/>
+    </Style>
+  </Window.Styles>
+
+  <Border CornerRadius="14"
+          Background="White"
+          ClipToBounds="True"
+          BoxShadow="0 8 40 0 #28000000">
+
+    <Grid RowDefinitions="*,Auto">
+
+      <!-- ===== ÁREA CENTRAL ===== -->
+      <StackPanel Grid.Row="0"
+                  VerticalAlignment="Center"
+                  HorizontalAlignment="Center"
+                  Spacing="0"
+                  Margin="48,40,48,0">
+
+        <!-- Logo do sistema -->
+        <Image Source="/Assets/smartgest_logo.png"
+               Width="260"
+               HorizontalAlignment="Center"
+               Stretch="Uniform"
+               Margin="0,0,0,36"/>
+
+        <!-- Status text -->
+        <TextBlock Text="{Binding StatusText}"
+                   FontSize="12"
+                   Foreground="#999999"
+                   HorizontalAlignment="Center"
+                   Margin="0,0,0,10"/>
+
+        <!-- ProgressBar linear -->
+        <ProgressBar Classes="sg-progress"
+                     Value="{Binding ProgressValue}"
+                     HorizontalAlignment="Stretch"/>
+
+        <!-- Percentagem -->
+        <TextBlock Text="{Binding ProgressText}"
+                   FontSize="11"
+                   Foreground="#BBBBBB"
+                   HorizontalAlignment="Right"
+                   Margin="0,6,0,0"/>
+
+      </StackPanel>
+
+      <!-- ===== RODAPÉ ===== -->
+      <TextBlock Grid.Row="1"
+                 Text="EducaEmpreende · Luanda, Angola"
+                 FontSize="10"
+                 Foreground="#CCCCCC"
+                 HorizontalAlignment="Center"
+                 Margin="0,0,0,18"/>
+
+    </Grid>
+  </Border>
+</Window>

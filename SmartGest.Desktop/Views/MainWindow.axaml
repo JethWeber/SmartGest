@@ -1,0 +1,120 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:SmartGest.Desktop.ViewModels"
+        xmlns:views="using:SmartGest.Desktop.Views"
+        x:Class="SmartGest.Desktop.Views.MainWindow"
+        x:DataType="vm:MainWindowViewModel"
+        Title="SmartGest ERP"
+        Width="1280" Height="760"
+        WindowStartupLocation="CenterScreen"
+        Background="#F4F6F9">
+
+  <Window.Styles>
+    <Style Selector="Button.menu-btn">
+      <Setter Property="Background" Value="Transparent"/>
+      <Setter Property="BorderThickness" Value="0"/>
+      <Setter Property="HorizontalAlignment" Value="Stretch"/>
+      <Setter Property="VerticalAlignment" Value="Stretch"/>
+      <Setter Property="HorizontalContentAlignment" Value="Left"/>
+      <Setter Property="VerticalContentAlignment" Value="Center"/>
+      <Setter Property="Padding" Value="0"/>
+    </Style>
+    
+    <Style Selector="ListBoxItem.menu-item">
+      <Setter Property="Padding" Value="14,10"/>
+      <Setter Property="CornerRadius" Value="6"/>
+      <Setter Property="Margin" Value="0,2"/>
+      <Setter Property="Foreground" Value="#555555"/>
+    </Style>
+    <Style Selector="ListBoxItem.menu-item:pointerover /template/ ContentPresenter">
+      <Setter Property="Background" Value="#EAF2F9"/>
+      <Setter Property="Foreground" Value="#2196F3"/>
+    </Style>
+    <Style Selector="ListBoxItem.menu-item:selected /template/ ContentPresenter">
+      <Setter Property="Background" Value="#2196F3"/>
+      <Setter Property="Foreground" Value="White"/>
+    </Style>
+  </Window.Styles>
+
+  <Window.DataTemplates>
+    <DataTemplate DataType="{x:Type vm:DashboardViewModel}">
+      <views:DashboardView/>
+    </DataTemplate>
+  </Window.DataTemplates>
+
+  <Grid ColumnDefinitions="250, *">
+    
+    <Border Grid.Column="0" Background="#FFFFFF" Padding="20">
+      <Grid RowDefinitions="Auto, *, Auto">
+        <Border Grid.Row="0" BorderBrush="#F0F0F0" BorderThickness="0,0,0,1" Padding="0,0,0,20" Margin="0,0,0,10">
+          <Image Source="/Assets/smartgest_logo.png" Width="180" HorizontalAlignment="Left" Stretch="Uniform"/>
+        </Border>
+
+        <ListBox Grid.Row="1" Background="Transparent" BorderThickness="0" SelectedIndex="0">
+          
+          <ListBoxItem Classes="menu-item">
+            <Button Classes="menu-btn" Command="{Binding NavigateToDashboardCommand}">
+              <TextBlock Text="Dashboard Principal" VerticalAlignment="Center"/>
+            </Button>
+          </ListBoxItem>
+          
+          <ListBoxItem Classes="menu-item">
+            <Button Classes="menu-btn" Command="{Binding NavigateToDreCommand}">
+              <TextBlock Text="Caixa" VerticalAlignment="Center"/>
+            </Button>
+          </ListBoxItem>
+          
+          <ListBoxItem Classes="menu-item">
+            <Button Classes="menu-btn" Command="{Binding NavigateToDreCommand}">
+              <TextBlock Text="Balancete" VerticalAlignment="Center"/>
+            </Button>
+          </ListBoxItem>
+
+          <ListBoxItem Classes="menu-item">
+            <Button Classes="menu-btn" Command="{Binding NavigateToDreCommand}">
+              <TextBlock Text="Balanço Patrimonial" VerticalAlignment="Center"/>
+            </Button>
+          </ListBoxItem>
+
+          <ListBoxItem Classes="menu-item">
+            <Button Classes="menu-btn" Command="{Binding NavigateToDreCommand}">
+              <TextBlock Text="Demostração de Resultado(DRE)" VerticalAlignment="Center"/>
+            </Button>
+          </ListBoxItem>
+
+          <ListBoxItem Classes="menu-item">
+            <Button Classes="menu-btn" Command="{Binding NavigateToDreCommand}">
+              <TextBlock Text="Demostração de Resultado(DRE)" VerticalAlignment="Center"/>
+            </Button>
+          </ListBoxItem>
+
+          <ListBoxItem Classes="menu-item">
+            <Button Classes="menu-btn" Command="{Binding NavigateToDreCommand}">
+              <TextBlock Text="Centro de Contas e Bancos" VerticalAlignment="Center"/>
+            </Button>
+          </ListBoxItem>
+          
+          <ListBoxItem Classes="menu-item">
+            <TextBlock Text="Configurações" VerticalAlignment="Center"/>
+          </ListBoxItem>
+          
+        </ListBox>
+
+        <Border Grid.Row="2" BorderBrush="#F0F0F0" BorderThickness="0,1,0,0" Padding="0,15,0,0">
+          <StackPanel Orientation="Horizontal" Spacing="12">
+            <Border Width="36" Height="36" CornerRadius="18" Background="#E0E6ED">
+              <TextBlock Text="AB" VerticalAlignment="Center" HorizontalAlignment="Center" FontWeight="Bold" Foreground="#4A90D9"/>
+            </Border>
+            <StackPanel VerticalAlignment="Center">
+              <TextBlock Text="{Binding UsuarioNome}" FontSize="13" FontWeight="SemiBold" Foreground="#333333"/>
+              <TextBlock Text="Administrador" FontSize="11" Foreground="#888888"/>
+            </StackPanel>
+          </StackPanel>
+        </Border>
+      </Grid>
+    </Border>
+
+    <ContentControl Grid.Column="1" Content="{Binding CurrentPage}" />
+
+  </Grid>
+</Window>
