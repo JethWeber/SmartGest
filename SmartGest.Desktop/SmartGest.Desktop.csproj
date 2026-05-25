@@ -5,6 +5,8 @@
     <Nullable>enable</Nullable>
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
+    <!-- CORREÇÃO: O ícone do executável/barra de tarefas deve ficar aqui -->
+    <ApplicationIcon>Assets\SmartGest_-_ImaLogo01.ico</ApplicationIcon>
   </PropertyGroup>
 
   <ItemGroup>
@@ -13,13 +15,14 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Avalonia"                          Version="11.3.0" />
-    <PackageReference Include="Avalonia.Controls.DataGrid"        Version="11.3.0" />
-    <PackageReference Include="Avalonia.Desktop"                  Version="11.3.0" />
-    <PackageReference Include="Avalonia.Themes.Fluent"            Version="11.3.0" />
-    <PackageReference Include="Avalonia.Fonts.Inter"              Version="11.3.0" />
-    <PackageReference Include="CommunityToolkit.Mvvm"             Version="8.4.1" />
+    <PackageReference Include="Avalonia" Version="11.3.0" />
+    <PackageReference Include="Avalonia.Controls.DataGrid" Version="11.3.0" />
+    <PackageReference Include="Avalonia.Desktop" Version="11.3.0" />
+    <PackageReference Include="Avalonia.Themes.Fluent" Version="11.3.0" />
+    <PackageReference Include="Avalonia.Fonts.Inter" Version="11.3.0" />
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.1" />
     <PackageReference Include="LiveChartsCore.SkiaSharpView.Avalonia" Version="2.0.0-rc4.5" />
+    <PackageReference Include="Material.Icons.Avalonia" Version="2.1.0" />
   </ItemGroup>
 
   <ItemGroup>

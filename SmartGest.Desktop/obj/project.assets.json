@@ -453,6 +453,28 @@
           }
         }
       },
+      "Material.Icons/2.1.0": {
+        "type": "package",
+        "compile": {
+          "lib/netstandard2.0/Material.Icons.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard2.0/Material.Icons.dll": {}
+        }
+      },
+      "Material.Icons.Avalonia/2.1.0": {
+        "type": "package",
+        "dependencies": {
+          "Avalonia": "11.0.0-rc1.1",
+          "Material.Icons": "2.1.0"
+        },
+        "compile": {
+          "lib/netstandard2.0/Material.Icons.Avalonia.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard2.0/Material.Icons.Avalonia.dll": {}
+        }
+      },
       "MicroCom.Runtime/0.11.0": {
         "type": "package",
         "compile": {
@@ -1284,6 +1306,32 @@
         "livechartscore.skiasharpview.avalonia.nuspec"
       ]
     },
+    "Material.Icons/2.1.0": {
+      "sha512": "oMMrh8mKnZwOKZJEI3hc4Y18+/FQDfXSMv21xbX4kq05gcvcD1M2zxrjgNQvygHhP4DTcFmDidqUJRmuPyV9Fg==",
+      "type": "package",
+      "path": "material.icons/2.1.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "README.md",
+        "lib/netstandard2.0/Material.Icons.dll",
+        "material.icons.2.1.0.nupkg.sha512",
+        "material.icons.nuspec"
+      ]
+    },
+    "Material.Icons.Avalonia/2.1.0": {
+      "sha512": "IEuKf8mrByuxvjsM9LPWs+Ic0JPViDwZS7q1FzpHpu3QCEKOIriDiMNI6GaAtUA3uzz9OfAbd5vSjTi6SVbJrQ==",
+      "type": "package",
+      "path": "material.icons.avalonia/2.1.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "README.md",
+        "lib/netstandard2.0/Material.Icons.Avalonia.dll",
+        "material.icons.avalonia.2.1.0.nupkg.sha512",
+        "material.icons.avalonia.nuspec"
+      ]
+    },
     "MicroCom.Runtime/0.11.0": {
       "sha512": "MEnrZ3UIiH40hjzMDsxrTyi8dtqB5ziv3iBeeU4bXsL/7NLSal9F1lZKpK+tfBRnUoDSdtcW3KufE4yhATOMCA==",
       "type": "package",
@@ -1535,6 +1583,7 @@
       "Avalonia.Themes.Fluent >= 11.3.0",
       "CommunityToolkit.Mvvm >= 8.4.1",
       "LiveChartsCore.SkiaSharpView.Avalonia >= 2.0.0-rc4.5",
+      "Material.Icons.Avalonia >= 2.1.0",
       "SmartGest.Core >= 1.0.0"
     ]
   },
@@ -1612,6 +1661,10 @@
           "LiveChartsCore.SkiaSharpView.Avalonia": {
             "target": "Package",
             "version": "[2.0.0-rc4.5, )"
+          },
+          "Material.Icons.Avalonia": {
+            "target": "Package",
+            "version": "[2.1.0, )"
           }
         },
         "imports": [

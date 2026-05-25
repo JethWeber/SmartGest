@@ -1,0 +1,400 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:SmartGest.Desktop.ViewModels"
+             xmlns:lvc="using:LiveChartsCore.SkiaSharpView.Avalonia"
+             xmlns:mi="using:Material.Icons.Avalonia"
+             x:Class="SmartGest.Desktop.Views.CaixaView"
+             x:DataType="vm:CaixaViewModel">
+
+  <UserControl.Styles>
+
+    <!-- ── Card base (idêntico ao DashboardView) ───────────────────── -->
+    <Style Selector="Border.sg-card">
+      <Setter Property="Background"   Value="White"/>
+      <Setter Property="CornerRadius" Value="10"/>
+      <Setter Property="Padding"      Value="20,16"/>
+      <Setter Property="BoxShadow"    Value="0 2 12 0 #0A000000"/>
+    </Style>
+
+    <!-- ── Títulos de secção ────────────────────────────────────────── -->
+    <Style Selector="TextBlock.section-title">
+      <Setter Property="FontSize"   Value="13"/>
+      <Setter Property="FontWeight" Value="SemiBold"/>
+      <Setter Property="Foreground" Value="#1A2E5A"/>
+      <Setter Property="Margin"     Value="0,0,0,12"/>
+    </Style>
+
+    <!-- ── Labels e valores dos cards de métrica ────────────────────── -->
+    <Style Selector="TextBlock.metric-label">
+      <Setter Property="FontSize"   Value="11"/>
+      <Setter Property="Foreground" Value="#9AA0AB"/>
+      <Setter Property="FontWeight" Value="Medium"/>
+    </Style>
+    <Style Selector="TextBlock.metric-value">
+      <Setter Property="FontSize"   Value="19"/>
+      <Setter Property="FontWeight" Value="Bold"/>
+      <Setter Property="Margin"     Value="0,4,0,0"/>
+    </Style>
+
+    <!-- ── Variação percentual (tag verde / vermelha) ───────────────── -->
+    <Style Selector="Border.badge-positive">
+      <Setter Property="Background"   Value="#E8F5E9"/>
+      <Setter Property="CornerRadius" Value="4"/>
+      <Setter Property="Padding"      Value="6,2"/>
+    </Style>
+    <Style Selector="Border.badge-negative">
+      <Setter Property="Background"   Value="#FFEBEE"/>
+      <Setter Property="CornerRadius" Value="4"/>
+      <Setter Property="Padding"      Value="6,2"/>
+    </Style>
+
+    <!-- ── Botão primário ───────────────────────────────────────────── -->
+    <Style Selector="Button.btn-primary">
+      <Setter Property="Background"   Value="#2196F3"/>
+      <Setter Property="Foreground"   Value="White"/>
+      <Setter Property="FontSize"     Value="12"/>
+      <Setter Property="FontWeight"   Value="SemiBold"/>
+      <Setter Property="Padding"      Value="16,8"/>
+      <Setter Property="CornerRadius" Value="7"/>
+      <Setter Property="Cursor"       Value="Hand"/>
+      <Setter Property="BorderThickness" Value="0"/>
+    </Style>
+    <Style Selector="Button.btn-primary:pointerover /template/ ContentPresenter">
+      <Setter Property="Background" Value="#1E88E5"/>
+    </Style>
+
+    <!-- ── Botão de perigo (saída) ──────────────────────────────────── -->
+    <Style Selector="Button.btn-danger">
+      <Setter Property="Background"   Value="#FFEBEE"/>
+      <Setter Property="Foreground"   Value="#E53935"/>
+      <Setter Property="FontSize"     Value="12"/>
+      <Setter Property="FontWeight"   Value="SemiBold"/>
+      <Setter Property="Padding"      Value="16,8"/>
+      <Setter Property="CornerRadius" Value="7"/>
+      <Setter Property="Cursor"       Value="Hand"/>
+      <Setter Property="BorderThickness" Value="0"/>
+    </Style>
+    <Style Selector="Button.btn-danger:pointerover /template/ ContentPresenter">
+      <Setter Property="Background" Value="#FFCDD2"/>
+    </Style>
+
+    <!-- ── ComboBox / TextBox de filtro ─────────────────────────────── -->
+    <Style Selector="ComboBox.sg-filter, TextBox.sg-filter">
+      <Setter Property="Background"     Value="White"/>
+      <Setter Property="BorderBrush"    Value="#E0E4EA"/>
+      <Setter Property="BorderThickness" Value="1"/>
+      <Setter Property="CornerRadius"   Value="7"/>
+      <Setter Property="Padding"        Value="10,6"/>
+      <Setter Property="FontSize"       Value="12"/>
+      <Setter Property="Height"         Value="34"/>
+    </Style>
+
+    <!-- ── Linhas alternadas na DataGrid ────────────────────────────── -->
+    <Style Selector="DataGridRow:nth-child(odd)">
+      <Setter Property="Background" Value="#F9FAFC"/>
+    </Style>
+
+    <!-- ── Pill de tipo de lançamento ───────────────────────────────── -->
+    <Style Selector="Border.pill-entrada">
+      <Setter Property="Background"   Value="#E8F5E9"/>
+      <Setter Property="CornerRadius" Value="10"/>
+      <Setter Property="Padding"      Value="8,2"/>
+    </Style>
+    <Style Selector="Border.pill-saida">
+      <Setter Property="Background"   Value="#FFEBEE"/>
+      <Setter Property="CornerRadius" Value="10"/>
+      <Setter Property="Padding"      Value="8,2"/>
+    </Style>
+
+  </UserControl.Styles>
+
+  <ScrollViewer Background="#F4F6FA">
+    <Border Padding="28,24">
+      <StackPanel Spacing="20">
+
+        <!-- ══════════════════════════════════════════════════════════
+             CABEÇALHO
+             ══════════════════════════════════════════════════════════ -->
+        <Grid ColumnDefinitions="*, Auto">
+          <StackPanel Grid.Column="0">
+            <TextBlock Text="Caixa"
+                       FontSize="20" FontWeight="Bold"
+                       Foreground="#1A2E5A"/>
+            <TextBlock Text="Gestão de entradas e saídas de caixa"
+                       FontSize="12" Foreground="#9AA0AB" Margin="0,2,0,0"/>
+          </StackPanel>
+
+          <!-- Botões de acção -->
+          <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8"
+                      VerticalAlignment="Center">
+            <Button Classes="btn-danger"
+                    Command="{Binding NovaSaidaCommand}" >
+              <StackPanel Orientation="Horizontal" Spacing="6">
+                <mi:MaterialIcon Kind="ArrowUpBold" Width="14" Height="14"/>
+                <TextBlock Text="Nova Saída" VerticalAlignment="Center"/>
+              </StackPanel>
+            </Button>
+            <Button Classes="btn-primary"
+                    Command="{Binding NovaEntradaCommand}">
+              <StackPanel Orientation="Horizontal" Spacing="6">
+                <mi:MaterialIcon Kind="ArrowDownBold" Width="14" Height="14"/>
+                <TextBlock Text="Nova Transação" VerticalAlignment="Center"/>
+              </StackPanel>
+            </Button>
+          </StackPanel>
+        </Grid>
+
+        <!-- ══════════════════════════════════════════════════════════
+             CARDS DE MÉTRICAS  (3 colunas)
+             ══════════════════════════════════════════════════════════ -->
+        <Grid ColumnDefinitions="*, 12, *, 12, *">
+
+          <!-- Saldo em Caixa -->
+          <Border Grid.Column="0" Classes="sg-card">
+            <Grid RowDefinitions="Auto, Auto, 8, 50">
+              <TextBlock Grid.Row="0" Classes="metric-label" Text="Saldo em Caixa"/>
+              <TextBlock Grid.Row="1" Classes="metric-value"
+                         Text="{Binding SaldoCaixa}"
+                         Foreground="#1A2E5A"/>
+              <lvc:CartesianChart Grid.Row="3"
+                                  Series="{Binding SparklineSaldo}"
+                                  TooltipPosition="Hidden"
+                                  Background="Transparent"/>
+            </Grid>
+          </Border>
+
+          <!-- Entradas do Dia -->
+          <Border Grid.Column="2" Classes="sg-card">
+            <Grid RowDefinitions="Auto, Auto, 8, 50">
+              <TextBlock Grid.Row="0" Classes="metric-label" Text="Entradas do Dia"/>
+              <StackPanel Grid.Row="1" Orientation="Horizontal" Spacing="8"
+                          VerticalAlignment="Center">
+                <TextBlock Classes="metric-value"
+                           Text="{Binding EntradasDia}"
+                           Foreground="#43A047"/>
+                <Border Classes="badge-positive" VerticalAlignment="Center">
+                  <TextBlock Text="{Binding EntradasVariacao}"
+                             FontSize="10" FontWeight="SemiBold"
+                             Foreground="#43A047"/>
+                </Border>
+              </StackPanel>
+              <lvc:CartesianChart Grid.Row="3"
+                                  Series="{Binding SparklineEntradas}"
+                                  TooltipPosition="Hidden"
+                                  Background="Transparent"/>
+            </Grid>
+          </Border>
+
+          <!-- Saídas do Dia -->
+          <Border Grid.Column="4" Classes="sg-card">
+            <Grid RowDefinitions="Auto, Auto, 8, 50">
+              <TextBlock Grid.Row="0" Classes="metric-label" Text="Saídas do Dia"/>
+              <StackPanel Grid.Row="1" Orientation="Horizontal" Spacing="8"
+                          VerticalAlignment="Center">
+                <TextBlock Classes="metric-value"
+                           Text="{Binding SaidasDia}"
+                           Foreground="#E53935"/>
+                <Border Classes="badge-negative" VerticalAlignment="Center">
+                  <TextBlock Text="{Binding SaidasVariacao}"
+                             FontSize="10" FontWeight="SemiBold"
+                             Foreground="#E53935"/>
+                </Border>
+              </StackPanel>
+              <lvc:CartesianChart Grid.Row="3"
+                                  Series="{Binding SparklineSaidas}"
+                                  TooltipPosition="Hidden"
+                                  Background="Transparent"/>
+            </Grid>
+          </Border>
+
+        </Grid>
+
+        <!-- ══════════════════════════════════════════════════════════
+             BARRA DE FILTROS
+             ══════════════════════════════════════════════════════════ -->
+        <Border Classes="sg-card" Padding="16,12">
+          <Grid ColumnDefinitions="*, 12, 140, 12, 140, 12, 140, 12, Auto">
+
+            <!-- Pesquisa livre -->
+            <TextBox Grid.Column="0"
+                     Classes="sg-filter"
+                     Watermark="🔍  Pesquisar descrição ou conta..."
+                     Text="{Binding FiltroTexto}"/>
+
+            <!-- Tipo de lançamento -->
+            <ComboBox Grid.Column="2"
+                      Classes="sg-filter"
+                      SelectedIndex="{Binding FiltroTipoIndex}"
+                      Width="140">
+              <ComboBoxItem Content="Todos os tipos"/>
+              <ComboBoxItem Content="Entradas"/>
+              <ComboBoxItem Content="Saídas"/>
+            </ComboBox>
+
+            <!-- Data inicial -->
+            <DatePicker Grid.Column="4"
+                        SelectedDate="{Binding FiltroDataInicio}"
+                        FontSize="12"
+                        Height="34"
+                        CornerRadius="7"/>
+
+            <!-- Data final -->
+            <DatePicker Grid.Column="6"
+                        SelectedDate="{Binding FiltroDataFim}"
+                        FontSize="12"
+                        Height="34"
+                        CornerRadius="7"/>
+
+            <!-- Botão Filtrar -->
+            <Button Grid.Column="8"
+                    Classes="btn-primary"
+                    Command="{Binding FiltrarCommand}"
+                    Padding="14,6">
+              <TextBlock Text="Filtrar" FontSize="12" FontWeight="SemiBold"/>
+            </Button>
+
+          </Grid>
+        </Border>
+
+        <!-- ══════════════════════════════════════════════════════════
+             TABELA DE LANÇAMENTOS
+             ══════════════════════════════════════════════════════════ -->
+        <Border Classes="sg-card">
+          <DockPanel>
+
+            <!-- Cabeçalho da secção -->
+            <Grid DockPanel.Dock="Top" ColumnDefinitions="*, Auto" Margin="0,0,0,12">
+              <TextBlock Grid.Column="0"
+                         Text="Lançamentos de Caixa"
+                         Classes="section-title"
+                         Margin="0"/>
+              <TextBlock Grid.Column="1"
+                         Text="{Binding TotalLancamentosTexto}"
+                         FontSize="11"
+                         Foreground="#9AA0AB"
+                         VerticalAlignment="Center"/>
+            </Grid>
+
+            <DataGrid ItemsSource="{Binding LancamentosFiltrados}"
+                      AutoGenerateColumns="False"
+                      IsReadOnly="True"
+                      GridLinesVisibility="Horizontal"
+                      HeadersVisibility="Column"
+                      RowBackground="Transparent"
+                      FontSize="12"
+                      MinHeight="300">
+
+              <DataGrid.Columns>
+
+                <!-- Data -->
+                <DataGridTemplateColumn Header="Data" Width="100">
+                  <DataGridTemplateColumn.CellTemplate>
+                    <DataTemplate x:DataType="vm:LancamentoCaixaItem">
+                      <TextBlock Text="{Binding Data}"
+                                 VerticalAlignment="Center"
+                                 Foreground="#555555"
+                                 Margin="10,0"/>
+                    </DataTemplate>
+                  </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+                <!-- Tipo (pill colorida) -->
+                <DataGridTemplateColumn Header="Tipo" Width="90">
+                  <DataGridTemplateColumn.CellTemplate>
+                    <DataTemplate x:DataType="vm:LancamentoCaixaItem">
+                      <StackPanel VerticalAlignment="Center" Margin="6,0">
+                        <!-- Entrada -->
+                        <Border Classes="pill-entrada"
+                                IsVisible="{Binding IsEntrada}">
+                          <TextBlock Text="Entrada"
+                                     FontSize="10" FontWeight="SemiBold"
+                                     Foreground="#43A047"
+                                     HorizontalAlignment="Center"/>
+                        </Border>
+                        <!-- Saída -->
+                        <Border Classes="pill-saida"
+                                IsVisible="{Binding IsSaida}">
+                          <TextBlock Text="Saída"
+                                     FontSize="10" FontWeight="SemiBold"
+                                     Foreground="#E53935"
+                                     HorizontalAlignment="Center"/>
+                        </Border>
+                      </StackPanel>
+                    </DataTemplate>
+                  </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+                <!-- Descrição -->
+                <DataGridTemplateColumn Header="Descrição" Width="2*">
+                  <DataGridTemplateColumn.CellTemplate>
+                    <DataTemplate x:DataType="vm:LancamentoCaixaItem">
+                      <TextBlock Text="{Binding Descricao}"
+                                 VerticalAlignment="Center"
+                                 Foreground="#333333"
+                                 Margin="10,0"/>
+                    </DataTemplate>
+                  </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+                <!-- Categoria -->
+                <DataGridTemplateColumn Header="Categoria" Width="*">
+                  <DataGridTemplateColumn.CellTemplate>
+                    <DataTemplate x:DataType="vm:LancamentoCaixaItem">
+                      <TextBlock Text="{Binding Categoria}"
+                                 VerticalAlignment="Center"
+                                 Foreground="#555555"
+                                 Margin="10,0"/>
+                    </DataTemplate>
+                  </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+                <!-- Conta -->
+                <DataGridTemplateColumn Header="Conta" Width="*">
+                  <DataGridTemplateColumn.CellTemplate>
+                    <DataTemplate x:DataType="vm:LancamentoCaixaItem">
+                      <TextBlock Text="{Binding Conta}"
+                                 VerticalAlignment="Center"
+                                 Foreground="#555555"
+                                 Margin="10,0"/>
+                    </DataTemplate>
+                  </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+                <!-- Valor (cor consoante tipo) -->
+                <DataGridTemplateColumn Header="Valor" Width="130">
+                  <DataGridTemplateColumn.CellTemplate>
+                    <DataTemplate x:DataType="vm:LancamentoCaixaItem">
+                      <TextBlock Text="{Binding ValorFormatado}"
+                                 VerticalAlignment="Center"
+                                 FontWeight="SemiBold"
+                                 Foreground="{Binding CorValor}"
+                                 Margin="10,0"
+                                 TextAlignment="Right"/>
+                    </DataTemplate>
+                  </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+                <!-- Saldo Acumulado -->
+                <DataGridTemplateColumn Header="Saldo Acum." Width="130">
+                  <DataGridTemplateColumn.CellTemplate>
+                    <DataTemplate x:DataType="vm:LancamentoCaixaItem">
+                      <TextBlock Text="{Binding SaldoAcumulado}"
+                                 VerticalAlignment="Center"
+                                 FontWeight="Medium"
+                                 Foreground="#1A2E5A"
+                                 Margin="10,0"
+                                 TextAlignment="Right"/>
+                    </DataTemplate>
+                  </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+              </DataGrid.Columns>
+            </DataGrid>
+
+          </DockPanel>
+        </Border>
+
+      </StackPanel>
+    </Border>
+  </ScrollViewer>
+</UserControl>

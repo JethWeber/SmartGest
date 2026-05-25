@@ -5,6 +5,7 @@
 /home/weber/projects/SmartGest/SmartGest.Core/obj/Debug/net10.0/SmartGest.Core.AssemblyInfoInputs.cache
 /home/weber/projects/SmartGest/SmartGest.Core/obj/Debug/net10.0/SmartGest.Core.AssemblyInfo.cs
 /home/weber/projects/SmartGest/SmartGest.Core/obj/Debug/net10.0/SmartGest.Core.csproj.CoreCompileInputs.cache
+/home/weber/projects/SmartGest/SmartGest.Core/obj/Debug/net10.0/SmartGest.Core.sourcelink.json
 /home/weber/projects/SmartGest/SmartGest.Core/obj/Debug/net10.0/SmartGest.Core.dll
 /home/weber/projects/SmartGest/SmartGest.Core/obj/Debug/net10.0/refint/SmartGest.Core.dll
 /home/weber/projects/SmartGest/SmartGest.Core/obj/Debug/net10.0/SmartGest.Core.pdb

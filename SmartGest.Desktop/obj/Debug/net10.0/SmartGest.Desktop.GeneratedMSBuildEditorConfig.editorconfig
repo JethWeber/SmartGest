@@ -31,13 +31,34 @@ build_property.EnableCodeStyleSeverity =
 [/home/weber/projects/SmartGest/SmartGest.Desktop/App.axaml]
 build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml
 
+[/home/weber/projects/SmartGest/SmartGest.Desktop/Views/BalanceteView.axaml]
+build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml
+
+[/home/weber/projects/SmartGest/SmartGest.Desktop/Views/BalancoView.axaml]
+build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml
+
+[/home/weber/projects/SmartGest/SmartGest.Desktop/Views/CaixaView.axaml]
+build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml
+
+[/home/weber/projects/SmartGest/SmartGest.Desktop/Views/ConfiguracoesView.axaml]
+build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml
+
+[/home/weber/projects/SmartGest/SmartGest.Desktop/Views/ContaseBancosView.axaml]
+build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml
+
 [/home/weber/projects/SmartGest/SmartGest.Desktop/Views/DashboardView.axaml]
+build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml
+
+[/home/weber/projects/SmartGest/SmartGest.Desktop/Views/DreView.axaml]
 build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml
 
 [/home/weber/projects/SmartGest/SmartGest.Desktop/Views/LoginView.axaml]
 build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml
 
 [/home/weber/projects/SmartGest/SmartGest.Desktop/Views/MainWindow.axaml]
+build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml
+
+[/home/weber/projects/SmartGest/SmartGest.Desktop/Views/NovoLancamentoView.axaml]
 build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml
 
 [/home/weber/projects/SmartGest/SmartGest.Desktop/Views/SplashView.axaml]

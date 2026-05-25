@@ -2,6 +2,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:vm="using:SmartGest.Desktop.ViewModels"
              xmlns:lvc="using:LiveChartsCore.SkiaSharpView.Avalonia"
+             xmlns:mi="using:Material.Icons.Avalonia"
              x:Class="SmartGest.Desktop.Views.DashboardView"
              x:DataType="vm:DashboardViewModel">
 

@@ -1,0 +1,597 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:SmartGest.Desktop.ViewModels"
+        xmlns:mi="using:Material.Icons.Avalonia"
+        x:Class="SmartGest.Desktop.Views.NovoLancamentoView"
+        x:DataType="vm:NovoLancamentoViewModel"
+        Title="Novo Lançamento"
+        Width="860" Height="660"
+        MinWidth="760" MinHeight="560"
+        WindowStartupLocation="CenterOwner"
+        CanResize="True"
+        ShowInTaskbar="False"
+        Background="#F0F2F7">
+
+  <Window.Styles>
+
+    <!-- ── Card de secção ───────────────────────────────────────────── -->
+    <Style Selector="Border.secao">
+      <Setter Property="Background"   Value="White"/>
+      <Setter Property="CornerRadius" Value="12"/>
+      <Setter Property="Padding"      Value="24,20"/>
+      <Setter Property="BoxShadow"    Value="0 1 6 0 #08000000"/>
+      <Setter Property="Margin"       Value="0,0,0,12"/>
+    </Style>
+
+    <!-- Cabeçalho de secção -->
+    <Style Selector="TextBlock.secao-titulo">
+      <Setter Property="FontSize"   Value="13"/>
+      <Setter Property="FontWeight" Value="Bold"/>
+      <Setter Property="Foreground" Value="#1A2E5A"/>
+    </Style>
+    <Style Selector="TextBlock.secao-sub">
+      <Setter Property="FontSize"   Value="11"/>
+      <Setter Property="Foreground" Value="#A0A9B8"/>
+      <Setter Property="Margin"     Value="0,1,0,0"/>
+    </Style>
+
+    <!-- ── Labels ───────────────────────────────────────────────────── -->
+    <Style Selector="TextBlock.lbl">
+      <Setter Property="FontSize"   Value="11"/>
+      <Setter Property="FontWeight" Value="SemiBold"/>
+      <Setter Property="Foreground" Value="#5A6478"/>
+      <Setter Property="Margin"     Value="0,0,0,6"/>
+    </Style>
+
+    <!-- ── Inputs ───────────────────────────────────────────────────── -->
+    <Style Selector="TextBox.sg-in">
+      <Setter Property="Background"      Value="#F7F8FB"/>
+      <Setter Property="BorderBrush"     Value="#DDE3EE"/>
+      <Setter Property="BorderThickness" Value="1.5"/>
+      <Setter Property="CornerRadius"    Value="8"/>
+      <Setter Property="Padding"         Value="11,9"/>
+      <Setter Property="FontSize"        Value="12"/>
+      <Setter Property="Height"          Value="40"/>
+      <Setter Property="Foreground"      Value="#222B3A"/>
+    </Style>
+    <Style Selector="TextBox.sg-in:focus">
+      <Setter Property="BorderBrush" Value="#2196F3"/>
+      <Setter Property="Background"  Value="White"/>
+    </Style>
+    <Style Selector="ComboBox.sg-in">
+      <Setter Property="Background"      Value="#F7F8FB"/>
+      <Setter Property="BorderBrush"     Value="#DDE3EE"/>
+      <Setter Property="BorderThickness" Value="1.5"/>
+      <Setter Property="CornerRadius"    Value="8"/>
+      <Setter Property="Padding"         Value="11,9"/>
+      <Setter Property="FontSize"        Value="12"/>
+      <Setter Property="Height"          Value="40"/>
+      <Setter Property="Foreground"      Value="#222B3A"/>
+    </Style>
+    <Style Selector="TextBox.sg-area">
+      <Setter Property="Background"      Value="#F7F8FB"/>
+      <Setter Property="BorderBrush"     Value="#DDE3EE"/>
+      <Setter Property="BorderThickness" Value="1.5"/>
+      <Setter Property="CornerRadius"    Value="8"/>
+      <Setter Property="Padding"         Value="11,9"/>
+      <Setter Property="FontSize"        Value="12"/>
+      <Setter Property="AcceptsReturn"   Value="True"/>
+      <Setter Property="TextWrapping"    Value="Wrap"/>
+      <Setter Property="MaxLength"       Value="500"/>
+      <Setter Property="Foreground"      Value="#222B3A"/>
+    </Style>
+
+    <!-- ── Botões de tipo ───────────────────────────────────────────── -->
+    <Style Selector="Button.tipo-btn">
+      <Setter Property="Background"      Value="#F7F8FB"/>
+      <Setter Property="BorderBrush"     Value="#DDE3EE"/>
+      <Setter Property="BorderThickness" Value="2"/>
+      <Setter Property="CornerRadius"    Value="12"/>
+      <Setter Property="Padding"         Value="0"/>
+      <Setter Property="Cursor"          Value="Hand"/>
+      <Setter Property="Height"          Value="80"/>
+      <Setter Property="HorizontalContentAlignment" Value="Center"/>
+      <Setter Property="VerticalContentAlignment"   Value="Center"/>
+      <Setter Property="Transitions">
+        <Transitions>
+          <BrushTransition Property="Background" Duration="0:0:0.15"/>
+        </Transitions>
+      </Setter>
+    </Style>
+    <Style Selector="Button.tipo-btn:pointerover /template/ ContentPresenter">
+      <Setter Property="Background" Value="#EEF2F7"/>
+    </Style>
+    <Style Selector="Button.activo-entrada">
+      <Setter Property="Background"  Value="#F0FBF1"/>
+      <Setter Property="BorderBrush" Value="#43A047"/>
+    </Style>
+    <Style Selector="Button.activo-saida">
+      <Setter Property="Background"  Value="#FFF5F5"/>
+      <Setter Property="BorderBrush" Value="#E53935"/>
+    </Style>
+
+    <!-- ── Botão primário ───────────────────────────────────────────── -->
+    <Style Selector="Button.btn-ok">
+      <Setter Property="Background"      Value="#1A73E8"/>
+      <Setter Property="Foreground"      Value="White"/>
+      <Setter Property="FontSize"        Value="13"/>
+      <Setter Property="FontWeight"      Value="Bold"/>
+      <Setter Property="Padding"         Value="28,11"/>
+      <Setter Property="CornerRadius"    Value="9"/>
+      <Setter Property="Cursor"          Value="Hand"/>
+      <Setter Property="BorderThickness" Value="0"/>
+    </Style>
+    <Style Selector="Button.btn-ok:pointerover /template/ ContentPresenter">
+      <Setter Property="Background" Value="#1558B0"/>
+    </Style>
+
+    <!-- ── Botão secundário ─────────────────────────────────────────── -->
+    <Style Selector="Button.btn-ghost">
+      <Setter Property="Background"      Value="Transparent"/>
+      <Setter Property="Foreground"      Value="#5A6478"/>
+      <Setter Property="FontSize"        Value="13"/>
+      <Setter Property="FontWeight"      Value="SemiBold"/>
+      <Setter Property="Padding"         Value="22,11"/>
+      <Setter Property="CornerRadius"    Value="9"/>
+      <Setter Property="Cursor"          Value="Hand"/>
+      <Setter Property="BorderBrush"     Value="#D0D6E2"/>
+      <Setter Property="BorderThickness" Value="1.5"/>
+    </Style>
+    <Style Selector="Button.btn-ghost:pointerover /template/ ContentPresenter">
+      <Setter Property="Background" Value="#F0F2F7"/>
+    </Style>
+
+    <!-- ── Erro ─────────────────────────────────────────────────────── -->
+    <Style Selector="Border.erro-box">
+      <Setter Property="Background"   Value="#FFF0F0"/>
+      <Setter Property="CornerRadius" Value="8"/>
+      <Setter Property="Padding"      Value="14,10"/>
+      <Setter Property="Margin"       Value="0,0,0,12"/>
+      <Setter Property="BorderBrush"  Value="#FFCDD2"/>
+      <Setter Property="BorderThickness" Value="1"/>
+    </Style>
+
+    <!-- ── Pill de separador de secção (número) ─────────────────────── -->
+    <Style Selector="Border.num-pill">
+      <Setter Property="Width"        Value="26"/>
+      <Setter Property="Height"       Value="26"/>
+      <Setter Property="CornerRadius" Value="13"/>
+      <Setter Property="Background"   Value="#EBF2FF"/>
+    </Style>
+
+  </Window.Styles>
+
+  <!-- ════════════════════════════════════════════════════════════════
+       ESTRUTURA: Cabeçalho | Scroll | Rodapé
+       ════════════════════════════════════════════════════════════════ -->
+  <Grid RowDefinitions="Auto, *, Auto">
+
+    <!-- ════ CABEÇALHO ════════════════════════════════════════════════ -->
+    <Border Grid.Row="0" Background="White"
+            BorderBrush="#E8ECF4" BorderThickness="0,0,0,1"
+            Padding="28,22,20,22">
+      <Grid ColumnDefinitions="Auto, *, Auto">
+
+        <!-- Ícone decorativo -->
+        <Border Grid.Column="0"
+                Width="42" Height="42" CornerRadius="10"
+                Background="#EBF2FF" Margin="0,0,14,0">
+          <mi:MaterialIcon Kind="CashPlus"
+                           Width="22" Height="22"
+                           Foreground="#1A73E8"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Center"/>
+        </Border>
+
+        <StackPanel Grid.Column="1" VerticalAlignment="Center">
+          <TextBlock Text="Novo Lançamento"
+                     FontSize="17" FontWeight="Bold"
+                     Foreground="#1A2E5A"/>
+          <TextBlock Text="Registe uma nova movimentação financeira"
+                     FontSize="11" Foreground="#A0A9B8" Margin="0,2,0,0"/>
+        </StackPanel>
+
+        <Button Grid.Column="2"
+                Command="{Binding CancelarCommand}"
+                Background="Transparent" BorderThickness="0"
+                VerticalAlignment="Top" Cursor="Hand"
+                Width="32" Height="32" Padding="0"
+                ToolTip.Tip="Fechar">
+          <Border CornerRadius="16" Background="Transparent">
+            <mi:MaterialIcon Kind="Close" Width="16" Height="16"
+                             Foreground="#A0A9B8"/>
+          </Border>
+        </Button>
+      </Grid>
+    </Border>
+
+    <!-- ════ ÁREA DE SCROLL ═══════════════════════════════════════════ -->
+    <ScrollViewer Grid.Row="1" Padding="28,22,28,6">
+      <StackPanel Spacing="0">
+
+        <!-- Erro global -->
+        <Border Classes="erro-box" IsVisible="{Binding TemErro}">
+          <StackPanel Orientation="Horizontal" Spacing="10">
+            <mi:MaterialIcon Kind="AlertCircle"
+                             Width="16" Height="16"
+                             Foreground="#D32F2F"
+                             VerticalAlignment="Center"/>
+            <TextBlock Text="{Binding ErroMensagem}"
+                       FontSize="12" Foreground="#D32F2F"
+                       VerticalAlignment="Center"/>
+          </StackPanel>
+        </Border>
+
+        <!-- ══ SECÇÃO 1 · MOVIMENTO ═══════════════════════════════════ -->
+        <Border Classes="secao">
+          <StackPanel Spacing="18">
+
+            <!-- Cabeçalho -->
+            <StackPanel Orientation="Horizontal" Spacing="10">
+              <Border Classes="num-pill">
+                <TextBlock Text="1" FontSize="11" FontWeight="Bold"
+                           Foreground="#1A73E8"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Center"/>
+              </Border>
+              <StackPanel VerticalAlignment="Center">
+                <TextBlock Classes="secao-titulo" Text="Movimento"/>
+                <TextBlock Classes="secao-sub"   Text="Tipo e valor da movimentação"/>
+              </StackPanel>
+            </StackPanel>
+
+            <!-- ── Botões Entrada / Saída ──────────────────────────── -->
+            <StackPanel Spacing="6">
+              <TextBlock Classes="lbl">
+                <Run Text="Tipo de Movimento "/>
+                <Run Text="*" Foreground="#E53935"/>
+              </TextBlock>
+
+              <Grid ColumnDefinitions="*, 12, *">
+
+                <!-- ENTRADA -->
+                <Button Grid.Column="0"
+                        Classes="tipo-btn"
+                        Command="{Binding SelecionarTipoCommand}"
+                        CommandParameter="Entrada"
+                        Classes.activo-entrada="{Binding IsEntrada}">
+                  <Grid ColumnDefinitions="Auto, *" Margin="18,0">
+                    <!-- Círculo de ícone -->
+                    <Border Grid.Column="0"
+                            Width="44" Height="44" CornerRadius="22"
+                            Background="{Binding FundoCirculoEntrada}"
+                            Margin="0,0,14,0">
+                      <mi:MaterialIcon Kind="TrendingUp"
+                                       Width="22" Height="22"
+                                       Foreground="{Binding CorEntrada}"
+                                       HorizontalAlignment="Center"
+                                       VerticalAlignment="Center"/>
+                    </Border>
+                    <!-- Textos -->
+                    <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="2">
+                      <TextBlock Text="Entrada"
+                                 FontSize="14" FontWeight="Bold"
+                                 Foreground="{Binding CorEntrada}"/>
+                      <TextBlock Text="Receita / Recebimento"
+                                 FontSize="10"
+                                 Foreground="#A0A9B8"/>
+                    </StackPanel>
+                  </Grid>
+                </Button>
+
+                <!-- SAÍDA -->
+                <Button Grid.Column="2"
+                        Classes="tipo-btn"
+                        Command="{Binding SelecionarTipoCommand}"
+                        CommandParameter="Saida"
+                        Classes.activo-saida="{Binding IsSaida}">
+                  <Grid ColumnDefinitions="Auto, *" Margin="18,0">
+                    <Border Grid.Column="0"
+                            Width="44" Height="44" CornerRadius="22"
+                            Background="{Binding FundoCirculoSaida}"
+                            Margin="0,0,14,0">
+                      <mi:MaterialIcon Kind="TrendingDown"
+                                       Width="22" Height="22"
+                                       Foreground="{Binding CorSaida}"
+                                       HorizontalAlignment="Center"
+                                       VerticalAlignment="Center"/>
+                    </Border>
+                    <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="2">
+                      <TextBlock Text="Saída"
+                                 FontSize="14" FontWeight="Bold"
+                                 Foreground="{Binding CorSaida}"/>
+                      <TextBlock Text="Despesa / Pagamento"
+                                 FontSize="10"
+                                 Foreground="#A0A9B8"/>
+                    </StackPanel>
+                  </Grid>
+                </Button>
+
+              </Grid>
+            </StackPanel>
+
+            <!-- ── Valor + Data ────────────────────────────────────── -->
+            <Grid ColumnDefinitions="*, 16, *">
+              <StackPanel Grid.Column="0" Spacing="0">
+                <TextBlock Classes="lbl">
+                  <Run Text="Valor "/>
+                  <Run Text="*" Foreground="#E53935"/>
+                </TextBlock>
+                <Grid ColumnDefinitions="*, Auto">
+                  <TextBox Grid.Column="0" Classes="sg-in"
+                           Text="{Binding Valor}"
+                           Watermark="0,00"
+                           CornerRadius="8,0,0,8"/>
+                  <Border Grid.Column="1"
+                          Background="#EBF0FA"
+                          BorderBrush="#DDE3EE"
+                          BorderThickness="0,1.5,1.5,1.5"
+                          CornerRadius="0,8,8,0"
+                          Padding="14,0">
+                    <TextBlock Text="Kz" FontSize="12" FontWeight="Bold"
+                               Foreground="#1A73E8"
+                               VerticalAlignment="Center"/>
+                  </Border>
+                </Grid>
+              </StackPanel>
+
+              <StackPanel Grid.Column="2" Spacing="0">
+                <TextBlock Classes="lbl">
+                  <Run Text="Data do Movimento "/>
+                  <Run Text="*" Foreground="#E53935"/>
+                </TextBlock>
+                <DatePicker SelectedDate="{Binding DataMovimento}"
+                            Height="40" FontSize="12"
+                            CornerRadius="8"
+                            HorizontalAlignment="Stretch"/>
+              </StackPanel>
+            </Grid>
+
+            <!-- ── Descrição + Categoria ───────────────────────────── -->
+            <Grid ColumnDefinitions="*, 16, *">
+              <StackPanel Grid.Column="0" Spacing="0">
+                <TextBlock Classes="lbl">
+                  <Run Text="Descrição / Histórico "/>
+                  <Run Text="*" Foreground="#E53935"/>
+                </TextBlock>
+                <TextBox Classes="sg-in"
+                         Text="{Binding Descricao}"
+                         Watermark="Ex: Pagamento de fornecedor Nº 0012"/>
+              </StackPanel>
+              <StackPanel Grid.Column="2" Spacing="0">
+                <TextBlock Classes="lbl">
+                  <Run Text="Categoria Financeira "/>
+                  <Run Text="*" Foreground="#E53935"/>
+                </TextBlock>
+                <ComboBox Classes="sg-in"
+                          ItemsSource="{Binding Categorias}"
+                          SelectedIndex="{Binding CategoriaIndex}"
+                          HorizontalAlignment="Stretch"
+                          PlaceholderText="Seleccione uma categoria"/>
+              </StackPanel>
+            </Grid>
+
+          </StackPanel>
+        </Border>
+
+        <!-- ══ SECÇÃO 2 · FINANCEIRO ══════════════════════════════════ -->
+        <Border Classes="secao">
+          <StackPanel Spacing="18">
+
+            <StackPanel Orientation="Horizontal" Spacing="10">
+              <Border Classes="num-pill">
+                <TextBlock Text="2" FontSize="11" FontWeight="Bold"
+                           Foreground="#1A73E8"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Center"/>
+              </Border>
+              <StackPanel VerticalAlignment="Center">
+                <TextBlock Classes="secao-titulo" Text="Financeiro"/>
+                <TextBlock Classes="secao-sub"   Text="Conta, método de pagamento e comprovativo"/>
+              </StackPanel>
+            </StackPanel>
+
+            <!-- Conta + Método -->
+            <Grid ColumnDefinitions="*, 16, *">
+              <StackPanel Grid.Column="0" Spacing="0">
+                <TextBlock Classes="lbl">
+                  <Run Text="Conta de Origem "/>
+                  <Run Text="*" Foreground="#E53935"/>
+                </TextBlock>
+                <ComboBox Classes="sg-in"
+                          ItemsSource="{Binding ContasOrigem}"
+                          SelectedIndex="{Binding ContaOrigemIndex}"
+                          HorizontalAlignment="Stretch"
+                          PlaceholderText="Seleccione a conta"/>
+              </StackPanel>
+              <StackPanel Grid.Column="2" Spacing="0">
+                <TextBlock Classes="lbl">
+                  <Run Text="Método de Pagamento "/>
+                  <Run Text="*" Foreground="#E53935"/>
+                </TextBlock>
+                <ComboBox Classes="sg-in"
+                          ItemsSource="{Binding MetodosPagamento}"
+                          SelectedIndex="{Binding MetodoPagamentoIndex}"
+                          HorizontalAlignment="Stretch"
+                          PlaceholderText="Seleccione o método"/>
+              </StackPanel>
+            </Grid>
+
+            <!-- Beneficiário + Documento/Recibo (file picker) -->
+            <Grid ColumnDefinitions="*, 16, *">
+              <StackPanel Grid.Column="0" Spacing="0">
+                <TextBlock Classes="lbl" Text="Beneficiário / Fornecedor (Opcional)"/>
+                <TextBox Classes="sg-in"
+                         Text="{Binding Beneficiario}"
+                         Watermark="Nome do fornecedor ou beneficiário"/>
+              </StackPanel>
+
+              <!-- CAMPO DOCUMENTO / RECIBO → file picker -->
+              <StackPanel Grid.Column="2" Spacing="0">
+                <TextBlock Classes="lbl" Text="Documento / Recibo (Opcional)"/>
+                <Border Background="#F7F8FB"
+                        BorderBrush="{Binding CorBordaDoc}"
+                        BorderThickness="1.5"
+                        CornerRadius="8">
+                  <Button Background="Transparent"
+                          BorderThickness="0"
+                          Padding="0"
+                          Cursor="Hand"
+                          Height="40"
+                          HorizontalAlignment="Stretch"
+                          Command="{Binding EscolherDocumentoCommand}">
+                    <Grid ColumnDefinitions="Auto, *, Auto" Margin="11,0">
+                      <mi:MaterialIcon Grid.Column="0"
+                                       Kind="FileDocumentOutline"
+                                       Width="16" Height="16"
+                                       Foreground="#1A73E8"
+                                       VerticalAlignment="Center"
+                                       Margin="0,0,8,0"/>
+                      <TextBlock Grid.Column="1"
+                                 Text="{Binding NomeDocumento}"
+                                 FontSize="12"
+                                 Foreground="{Binding CorTextoDoc}"
+                                 VerticalAlignment="Center"
+                                 TextTrimming="CharacterEllipsis"/>
+                      <mi:MaterialIcon Grid.Column="2"
+                                       Kind="FolderOpenOutline"
+                                       Width="15" Height="15"
+                                       Foreground="#A0A9B8"
+                                       VerticalAlignment="Center"/>
+                    </Grid>
+                  </Button>
+                </Border>
+                <!-- Info de ficheiro seleccionado -->
+                <TextBlock Text="{Binding InfoDocumento}"
+                           FontSize="10" Foreground="#A0A9B8"
+                           Margin="2,4,0,0"
+                           IsVisible="{Binding TemDocumento}"/>
+                <!-- Botão para limpar ficheiro -->
+                <Button Background="Transparent" BorderThickness="0"
+                        Padding="0" Cursor="Hand"
+                        HorizontalAlignment="Left"
+                        Command="{Binding LimparDocumentoCommand}"
+                        IsVisible="{Binding TemDocumento}"
+                        Margin="0,2,0,0">
+                  <StackPanel Orientation="Horizontal" Spacing="4">
+                    <mi:MaterialIcon Kind="CloseCircle"
+                                     Width="12" Height="12"
+                                     Foreground="#E53935"/>
+                    <TextBlock Text="Remover ficheiro"
+                               FontSize="10" Foreground="#E53935"/>
+                  </StackPanel>
+                </Button>
+              </StackPanel>
+            </Grid>
+
+          </StackPanel>
+        </Border>
+
+        <!-- ══ SECÇÃO 3 · EXTRAS ══════════════════════════════════════ -->
+        <Border Classes="secao">
+          <StackPanel Spacing="18">
+
+            <StackPanel Orientation="Horizontal" Spacing="10">
+              <Border Classes="num-pill">
+                <TextBlock Text="3" FontSize="11" FontWeight="Bold"
+                           Foreground="#1A73E8"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Center"/>
+              </Border>
+              <StackPanel VerticalAlignment="Center">
+                <TextBlock Classes="secao-titulo" Text="Extras"/>
+                <TextBlock Classes="secao-sub"   Text="Notas e classificação interna"/>
+              </StackPanel>
+            </StackPanel>
+
+            <Grid ColumnDefinitions="*, 16, *">
+
+              <!-- Observações -->
+              <StackPanel Grid.Column="0" Spacing="0">
+                <TextBlock Classes="lbl" Text="Observações (Opcional)"/>
+                <TextBox Classes="sg-area"
+                         Text="{Binding Observacoes}"
+                         Watermark="Notas úteis para auditoria ou controlo interno..."
+                         Height="90"/>
+                <Grid Margin="2,4,0,0">
+                  <TextBlock Text="Máx. 500 caracteres"
+                             FontSize="10" Foreground="#C0C6D4"/>
+                  <TextBlock Text="{Binding ContadorObs}"
+                             FontSize="10" Foreground="#C0C6D4"
+                             HorizontalAlignment="Right"/>
+                </Grid>
+              </StackPanel>
+
+              <!-- Centro de Custo (dropdown) -->
+              <StackPanel Grid.Column="2" Spacing="0">
+                <TextBlock Classes="lbl" Text="Centro de Custo (Opcional)"/>
+                <ComboBox Classes="sg-in"
+                          ItemsSource="{Binding CentrosCusto}"
+                          SelectedIndex="{Binding CentroCustoIndex}"
+                          HorizontalAlignment="Stretch"
+                          PlaceholderText="Seleccione o centro de custo"/>
+
+                <TextBlock Classes="lbl" Text="Projecto / Referência Interna" Margin="0,14,0,6"/>
+                <TextBox Classes="sg-in"
+                         Text="{Binding ReferenciaInterna}"
+                         Watermark="Ex: PROJ-2025-04"/>
+              </StackPanel>
+
+            </Grid>
+
+          </StackPanel>
+        </Border>
+
+        <Border Height="6"/>
+
+      </StackPanel>
+    </ScrollViewer>
+
+    <!-- ════ RODAPÉ ═══════════════════════════════════════════════════ -->
+    <Border Grid.Row="2"
+            Background="White"
+            BorderBrush="#E8ECF4" BorderThickness="0,1,0,0"
+            Padding="28,14">
+      <Grid ColumnDefinitions="Auto, *, Auto">
+
+        <!-- Indicador de campos obrigatórios -->
+        <TextBlock Grid.Column="0"
+                   Text="* Campos obrigatórios"
+                   FontSize="11" Foreground="#A0A9B8"
+                   VerticalAlignment="Center"/>
+
+        <!-- Spinner de carregamento -->
+        <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    IsVisible="{Binding IsLoading}">
+          <mi:MaterialIcon Kind="Loading"
+                           Width="15" Height="15"
+                           Foreground="#1A73E8"/>
+          <TextBlock Text="A guardar lançamento..."
+                     FontSize="12" Foreground="#7B8EA6"
+                     VerticalAlignment="Center"/>
+        </StackPanel>
+
+        <!-- Botões -->
+        <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="10">
+          <Button Classes="btn-ghost"
+                  Command="{Binding CancelarCommand}"
+                  IsEnabled="{Binding !IsLoading}">
+            <TextBlock Text="Cancelar" VerticalAlignment="Center"/>
+          </Button>
+          <Button Classes="btn-ok"
+                  Command="{Binding SalvarLancamentoCommand}"
+                  IsEnabled="{Binding !IsLoading}">
+            <StackPanel Orientation="Horizontal" Spacing="7">
+              <mi:MaterialIcon Kind="CheckCircleOutline" Width="15" Height="15"/>
+              <TextBlock Text="Salvar Lançamento" VerticalAlignment="Center"/>
+            </StackPanel>
+          </Button>
+        </StackPanel>
+
+      </Grid>
+    </Border>
+
+  </Grid>
+</Window>

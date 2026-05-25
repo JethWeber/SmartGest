@@ -2,9 +2,16 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              x:Class="SmartGest.Desktop.App"
              xmlns:local="using:SmartGest.Desktop"
-             RequestedThemeVariant="Default">
+             RequestedThemeVariant="Light">
              <!-- "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options. -->
 
+    <TrayIcon.Icons>
+        <TrayIcons>
+            <TrayIcon Icon="avares://SmartGest.Desktop/Assets/SmartGest_-_ImaLogo01.ico" 
+                      ToolTipText="SmartGest ERP" />
+        </TrayIcons>
+    </TrayIcon.Icons>
+    
     <Application.DataTemplates>
         <local:ViewLocator/>
 
@@ -13,5 +20,6 @@
     <Application.Styles>
         <FluentTheme />
         <StyleInclude Source="avares://Avalonia.Controls.DataGrid/Themes/Fluent.xaml"/>
+        <StyleInclude Source="avares://Material.Icons.Avalonia/MaterialIconStyles.axaml"/>
     </Application.Styles>
 </Application>

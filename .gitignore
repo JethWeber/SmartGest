@@ -1,0 +1,28 @@
+# Build outputs
+bin/
+obj/
+
+# User-specific files
+*.user
+*.suo
+.vs/
+.vscode/
+.idea/
+
+# NuGet
+*.nupkg
+project.nuget.cache
+*.nuget.dgspec.json
+*.nuget.g.props
+*.nuget.g.targets
+project.assets.json
+
+# Avalonia designer
+.avalonia/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log

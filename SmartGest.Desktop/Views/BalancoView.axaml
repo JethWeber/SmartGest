@@ -1,0 +1,599 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:SmartGest.Desktop.ViewModels"
+             xmlns:lvc="using:LiveChartsCore.SkiaSharpView.Avalonia"
+             xmlns:mi="using:Material.Icons.Avalonia"
+             x:Class="SmartGest.Desktop.Views.BalancoView"
+             x:DataType="vm:BalancoViewModel">
+
+  <UserControl.Styles>
+
+    <!-- ── Card base ────────────────────────────────────────────────── -->
+    <Style Selector="Border.sg-card">
+      <Setter Property="Background"   Value="White"/>
+      <Setter Property="CornerRadius" Value="10"/>
+      <Setter Property="Padding"      Value="20,16"/>
+      <Setter Property="BoxShadow"    Value="0 2 12 0 #0A000000"/>
+    </Style>
+
+    <!-- ── Títulos de secção ─────────────────────────────────────────── -->
+    <Style Selector="TextBlock.section-title">
+      <Setter Property="FontSize"   Value="13"/>
+      <Setter Property="FontWeight" Value="SemiBold"/>
+      <Setter Property="Foreground" Value="#1A2E5A"/>
+      <Setter Property="Margin"     Value="0,0,0,12"/>
+    </Style>
+
+    <!-- ── Labels e valores dos cards ───────────────────────────────── -->
+    <Style Selector="TextBlock.metric-label">
+      <Setter Property="FontSize"   Value="11"/>
+      <Setter Property="Foreground" Value="#9AA0AB"/>
+      <Setter Property="FontWeight" Value="Medium"/>
+    </Style>
+    <Style Selector="TextBlock.metric-value">
+      <Setter Property="FontSize"   Value="19"/>
+      <Setter Property="FontWeight" Value="Bold"/>
+      <Setter Property="Margin"     Value="0,4,0,0"/>
+    </Style>
+
+    <!-- ── Cabeçalho de sub-secção do balanço (Ativo Corrente, etc.) ── -->
+    <Style Selector="Border.sub-header">
+      <Setter Property="Background"   Value="#F0F4FF"/>
+      <Setter Property="CornerRadius" Value="6"/>
+      <Setter Property="Padding"      Value="12,7"/>
+      <Setter Property="Margin"       Value="0,4,0,2"/>
+    </Style>
+
+    <!-- ── Linha de conta ───────────────────────────────────────────── -->
+    <Style Selector="Border.conta-linha">
+      <Setter Property="Padding" Value="12,7"/>
+    </Style>
+    <Style Selector="Border.conta-linha:pointerover">
+      <Setter Property="Background" Value="#F9FAFC"/>
+    </Style>
+
+    <!-- ── Linha de subtotal ─────────────────────────────────────────── -->
+    <Style Selector="Border.subtotal-linha">
+      <Setter Property="Background"      Value="#F4F6FA"/>
+      <Setter Property="BorderBrush"     Value="#DDE3EE"/>
+      <Setter Property="BorderThickness" Value="0,1,0,0"/>
+      <Setter Property="Padding"         Value="12,8"/>
+      <Setter Property="Margin"          Value="0,4,0,0"/>
+    </Style>
+
+    <!-- ── Linha de total geral ──────────────────────────────────────── -->
+    <Style Selector="Border.total-geral">
+      <Setter Property="Background"      Value="#1A2E5A"/>
+      <Setter Property="CornerRadius"    Value="7"/>
+      <Setter Property="Padding"         Value="14,10"/>
+      <Setter Property="Margin"          Value="0,10,0,0"/>
+    </Style>
+
+    <!-- ── Separador ────────────────────────────────────────────────── -->
+    <Style Selector="Border.separador">
+      <Setter Property="Height"      Value="1"/>
+      <Setter Property="Background"  Value="#EBEEF4"/>
+      <Setter Property="Margin"      Value="0,8,0,4"/>
+    </Style>
+
+    <!-- ── Botões ────────────────────────────────────────────────────── -->
+    <Style Selector="Button.btn-primary">
+      <Setter Property="Background"      Value="#2196F3"/>
+      <Setter Property="Foreground"      Value="White"/>
+      <Setter Property="FontSize"        Value="12"/>
+      <Setter Property="FontWeight"      Value="SemiBold"/>
+      <Setter Property="Padding"         Value="16,8"/>
+      <Setter Property="CornerRadius"    Value="7"/>
+      <Setter Property="Cursor"          Value="Hand"/>
+      <Setter Property="BorderThickness" Value="0"/>
+    </Style>
+    <Style Selector="Button.btn-primary:pointerover /template/ ContentPresenter">
+      <Setter Property="Background" Value="#1E88E5"/>
+    </Style>
+
+    <Style Selector="Button.btn-outline">
+      <Setter Property="Background"      Value="White"/>
+      <Setter Property="Foreground"      Value="#1A2E5A"/>
+      <Setter Property="FontSize"        Value="12"/>
+      <Setter Property="FontWeight"      Value="SemiBold"/>
+      <Setter Property="Padding"         Value="14,8"/>
+      <Setter Property="CornerRadius"    Value="7"/>
+      <Setter Property="Cursor"          Value="Hand"/>
+      <Setter Property="BorderThickness" Value="1"/>
+      <Setter Property="BorderBrush"     Value="#DDE3EE"/>
+    </Style>
+    <Style Selector="Button.btn-outline:pointerover /template/ ContentPresenter">
+      <Setter Property="Background" Value="#F4F6FA"/>
+    </Style>
+
+    <!-- ── Filtros ───────────────────────────────────────────────────── -->
+    <Style Selector="ComboBox.sg-filter">
+      <Setter Property="Background"      Value="White"/>
+      <Setter Property="BorderBrush"     Value="#E0E4EA"/>
+      <Setter Property="BorderThickness" Value="1"/>
+      <Setter Property="CornerRadius"    Value="7"/>
+      <Setter Property="Padding"         Value="10,6"/>
+      <Setter Property="FontSize"        Value="12"/>
+      <Setter Property="Height"          Value="34"/>
+    </Style>
+
+  </UserControl.Styles>
+
+  <ScrollViewer Background="#F4F6FA">
+    <Border Padding="28,24">
+      <StackPanel Spacing="20">
+
+        <!-- ══════════════════════════════════════════════════════════════
+             CABEÇALHO
+             ══════════════════════════════════════════════════════════════ -->
+        <Grid ColumnDefinitions="*, Auto">
+          <StackPanel Grid.Column="0">
+            <TextBlock Text="Balanço Patrimonial"
+                       FontSize="20" FontWeight="Bold"
+                       Foreground="#1A2E5A"/>
+            <TextBlock Text="Posição financeira da empresa num determinado momento"
+                       FontSize="12" Foreground="#9AA0AB" Margin="0,2,0,0"/>
+          </StackPanel>
+
+          <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8"
+                      VerticalAlignment="Center">
+            <!-- Badge de equilíbrio -->
+            <Border Background="{Binding FundoEquilibrio}"
+                    CornerRadius="6" Padding="12,7"
+                    VerticalAlignment="Center">
+              <TextBlock Text="{Binding TextoEquilibrio}"
+                         FontSize="12" FontWeight="Bold"
+                         Foreground="{Binding CorEquilibrio}"/>
+            </Border>
+            <Button Classes="btn-outline" Command="{Binding ExportarCommand}">
+              <StackPanel Orientation="Horizontal" Spacing="6">
+                <mi:MaterialIcon Kind="FileExcelOutline" Width="14" Height="14"/>
+                <TextBlock Text="Exportar" VerticalAlignment="Center"/>
+              </StackPanel>
+            </Button>
+          </StackPanel>
+        </Grid>
+
+        <!-- ══════════════════════════════════════════════════════════════
+             FILTRO DE PERÍODO
+             ══════════════════════════════════════════════════════════════ -->
+        <Border Classes="sg-card" Padding="16,12">
+          <Grid ColumnDefinitions="Auto, 12, 160, 12, 120, 12, Auto">
+
+            <TextBlock Grid.Column="0"
+                       Text="Período de referência:"
+                       FontSize="12" Foreground="#5A6478"
+                       VerticalAlignment="Center"/>
+
+            <!-- Mês -->
+            <ComboBox Grid.Column="2"
+                      Classes="sg-filter"
+                      SelectedIndex="{Binding MesIndex}">
+              <ComboBoxItem Content="Janeiro"/>
+              <ComboBoxItem Content="Fevereiro"/>
+              <ComboBoxItem Content="Março"/>
+              <ComboBoxItem Content="Abril"/>
+              <ComboBoxItem Content="Maio"/>
+              <ComboBoxItem Content="Junho"/>
+              <ComboBoxItem Content="Julho"/>
+              <ComboBoxItem Content="Agosto"/>
+              <ComboBoxItem Content="Setembro"/>
+              <ComboBoxItem Content="Outubro"/>
+              <ComboBoxItem Content="Novembro"/>
+              <ComboBoxItem Content="Dezembro"/>
+            </ComboBox>
+
+            <!-- Exercício (ano) -->
+            <ComboBox Grid.Column="4"
+                      Classes="sg-filter"
+                      SelectedIndex="0">
+              <ComboBoxItem Content="2025"/>
+              <ComboBoxItem Content="2024"/>
+              <ComboBoxItem Content="2023"/>
+            </ComboBox>
+
+            <Button Grid.Column="6"
+                    Classes="btn-primary"
+                    Command="{Binding AtualizarCommand}"
+                    Padding="14,6">
+              <StackPanel Orientation="Horizontal" Spacing="6">
+                <mi:MaterialIcon Kind="Refresh" Width="13" Height="13"/>
+                <TextBlock Text="Actualizar" FontSize="12" FontWeight="SemiBold"/>
+              </StackPanel>
+            </Button>
+
+          </Grid>
+        </Border>
+
+        <!-- ══════════════════════════════════════════════════════════════
+             CARDS DE MÉTRICAS  (3 colunas)
+             ══════════════════════════════════════════════════════════════ -->
+        <Grid ColumnDefinitions="*, 12, *, 12, *">
+
+          <!-- Total Ativo -->
+          <Border Grid.Column="0" Classes="sg-card">
+            <Grid ColumnDefinitions="*, 100">
+              <StackPanel Grid.Column="0" VerticalAlignment="Center" Spacing="2">
+                <TextBlock Classes="metric-label" Text="Total do Ativo"/>
+                <TextBlock Classes="metric-value"
+                           Text="{Binding TotalAtivoFmt}"
+                           Foreground="#2196F3"/>
+              </StackPanel>
+              <lvc:CartesianChart Grid.Column="1" Height="50"
+                                  Series="{Binding SparklineAtivo}"
+                                  TooltipPosition="Hidden"
+                                  Background="Transparent"/>
+            </Grid>
+          </Border>
+
+          <!-- Total Passivo + Capital -->
+          <Border Grid.Column="2" Classes="sg-card">
+            <Grid ColumnDefinitions="*, 100">
+              <StackPanel Grid.Column="0" VerticalAlignment="Center" Spacing="2">
+                <TextBlock Classes="metric-label" Text="Total Passivo + Capital"/>
+                <TextBlock Classes="metric-value"
+                           Text="{Binding TotalPassivoCapitalFmt}"
+                           Foreground="#1A2E5A"/>
+              </StackPanel>
+              <lvc:CartesianChart Grid.Column="1" Height="50"
+                                  Series="{Binding SparklinePassivoCapital}"
+                                  TooltipPosition="Hidden"
+                                  Background="Transparent"/>
+            </Grid>
+          </Border>
+
+          <!-- Resultado do Exercício -->
+          <Border Grid.Column="4" Classes="sg-card">
+            <Grid ColumnDefinitions="*, 100">
+              <StackPanel Grid.Column="0" VerticalAlignment="Center" Spacing="2">
+                <TextBlock Classes="metric-label" Text="Resultado do Exercício"/>
+                <TextBlock Classes="metric-value"
+                           Text="{Binding ResultadoExercicioFmt}"
+                           Foreground="{Binding CorResultado}"/>
+              </StackPanel>
+              <lvc:CartesianChart Grid.Column="1" Height="50"
+                                  Series="{Binding SparklineResultado}"
+                                  TooltipPosition="Hidden"
+                                  Background="Transparent"/>
+            </Grid>
+          </Border>
+
+        </Grid>
+
+        <!-- ══════════════════════════════════════════════════════════════
+             CORPO DO BALANÇO  — layout em dois blocos lado a lado
+             ══════════════════════════════════════════════════════════════ -->
+        <Grid ColumnDefinitions="*, 16, *">
+
+          <!-- ╔══════════════════════════════╗
+               ║          A T I V O           ║
+               ╚══════════════════════════════╝ -->
+          <Border Grid.Column="0" Classes="sg-card">
+            <StackPanel Spacing="0">
+
+              <!-- Título da coluna -->
+              <Border Background="#E3F2FD" CornerRadius="7" Padding="14,10" Margin="0,0,0,14">
+                <StackPanel Orientation="Horizontal" Spacing="10">
+                  <mi:MaterialIcon Kind="TrendingUp" Width="16" Height="16" Foreground="#1565C0"/>
+                  <TextBlock Text="ATIVO"
+                             FontSize="14" FontWeight="Bold"
+                             Foreground="#1565C0"
+                             VerticalAlignment="Center"/>
+                </StackPanel>
+              </Border>
+
+              <!-- ── ATIVO CORRENTE ──────────────────────────────────── -->
+              <Border Classes="sub-header">
+                <TextBlock Text="Ativo Corrente"
+                           FontSize="12" FontWeight="Bold"
+                           Foreground="#1A2E5A"/>
+              </Border>
+
+              <ItemsControl ItemsSource="{Binding AtivoCorrentes}">
+                <ItemsControl.ItemTemplate>
+                  <DataTemplate x:DataType="vm:BalancoLinhaItem">
+                    <Border Classes="conta-linha">
+                      <Grid ColumnDefinitions="*, Auto">
+                        <TextBlock Grid.Column="0"
+                                   Text="{Binding Descricao}"
+                                   FontSize="12" Foreground="#444444"
+                                   VerticalAlignment="Center"
+                                   TextWrapping="Wrap"/>
+                        <TextBlock Grid.Column="1"
+                                   Text="{Binding ValorFmt}"
+                                   FontSize="12" FontWeight="Medium"
+                                   Foreground="{Binding CorValor}"
+                                   VerticalAlignment="Center"
+                                   TextAlignment="Right"
+                                   MinWidth="140"/>
+                      </Grid>
+                    </Border>
+                  </DataTemplate>
+                </ItemsControl.ItemTemplate>
+              </ItemsControl>
+
+              <!-- Subtotal Ativo Corrente -->
+              <Border Classes="subtotal-linha">
+                <Grid ColumnDefinitions="*, Auto">
+                  <TextBlock Grid.Column="0"
+                             Text="Total Ativo Corrente"
+                             FontSize="12" FontWeight="Bold"
+                             Foreground="#1A2E5A"/>
+                  <TextBlock Grid.Column="1"
+                             Text="{Binding TotalAtivoCorrenteFmt}"
+                             FontSize="12" FontWeight="Bold"
+                             Foreground="#1565C0"
+                             TextAlignment="Right" MinWidth="140"/>
+                </Grid>
+              </Border>
+
+              <Border Classes="separador"/>
+
+              <!-- ── ATIVO NÃO CORRENTE ──────────────────────────────── -->
+              <Border Classes="sub-header">
+                <TextBlock Text="Ativo Não Corrente"
+                           FontSize="12" FontWeight="Bold"
+                           Foreground="#1A2E5A"/>
+              </Border>
+
+              <ItemsControl ItemsSource="{Binding AtivoNaoCorrentes}">
+                <ItemsControl.ItemTemplate>
+                  <DataTemplate x:DataType="vm:BalancoLinhaItem">
+                    <Border Classes="conta-linha">
+                      <Grid ColumnDefinitions="*, Auto">
+                        <TextBlock Grid.Column="0"
+                                   Text="{Binding Descricao}"
+                                   FontSize="12" Foreground="#444444"
+                                   VerticalAlignment="Center"
+                                   TextWrapping="Wrap"/>
+                        <TextBlock Grid.Column="1"
+                                   Text="{Binding ValorFmt}"
+                                   FontSize="12" FontWeight="Medium"
+                                   Foreground="{Binding CorValor}"
+                                   VerticalAlignment="Center"
+                                   TextAlignment="Right"
+                                   MinWidth="140"/>
+                      </Grid>
+                    </Border>
+                  </DataTemplate>
+                </ItemsControl.ItemTemplate>
+              </ItemsControl>
+
+              <!-- Subtotal Ativo Não Corrente -->
+              <Border Classes="subtotal-linha">
+                <Grid ColumnDefinitions="*, Auto">
+                  <TextBlock Grid.Column="0"
+                             Text="Total Ativo Não Corrente"
+                             FontSize="12" FontWeight="Bold"
+                             Foreground="#1A2E5A"/>
+                  <TextBlock Grid.Column="1"
+                             Text="{Binding TotalAtivoNaoCorrenteFmt}"
+                             FontSize="12" FontWeight="Bold"
+                             Foreground="#1565C0"
+                             TextAlignment="Right" MinWidth="140"/>
+                </Grid>
+              </Border>
+
+              <!-- ── TOTAL ATIVO ─────────────────────────────────────── -->
+              <Border Classes="total-geral">
+                <Grid ColumnDefinitions="*, Auto">
+                  <TextBlock Grid.Column="0"
+                             Text="TOTAL DO ATIVO"
+                             FontSize="13" FontWeight="Bold"
+                             Foreground="White"/>
+                  <TextBlock Grid.Column="1"
+                             Text="{Binding TotalAtivoFmt}"
+                             FontSize="13" FontWeight="Bold"
+                             Foreground="White"
+                             TextAlignment="Right" MinWidth="140"/>
+                </Grid>
+              </Border>
+
+            </StackPanel>
+          </Border>
+
+          <!-- ╔══════════════════════════════════╗
+               ║  PASSIVO  +  CAPITAL PRÓPRIO     ║
+               ╚══════════════════════════════════╝ -->
+          <Border Grid.Column="2" Classes="sg-card">
+            <StackPanel Spacing="0">
+
+              <!-- Título da coluna -->
+              <Border Background="#F3E5F5" CornerRadius="7" Padding="14,10" Margin="0,0,0,14">
+                <StackPanel Orientation="Horizontal" Spacing="10">
+                  <mi:MaterialIcon Kind="ScaleBalance" Width="16" Height="16" Foreground="#6A1B9A"/>
+                  <TextBlock Text="PASSIVO + CAPITAL PRÓPRIO"
+                             FontSize="14" FontWeight="Bold"
+                             Foreground="#6A1B9A"
+                             VerticalAlignment="Center"/>
+                </StackPanel>
+              </Border>
+
+              <!-- ── PASSIVO CORRENTE ────────────────────────────────── -->
+              <Border Classes="sub-header" Background="#FFF3E0">
+                <TextBlock Text="Passivo Corrente"
+                           FontSize="12" FontWeight="Bold"
+                           Foreground="#E65100"/>
+              </Border>
+
+              <ItemsControl ItemsSource="{Binding PassivosCorrentes}">
+                <ItemsControl.ItemTemplate>
+                  <DataTemplate x:DataType="vm:BalancoLinhaItem">
+                    <Border Classes="conta-linha">
+                      <Grid ColumnDefinitions="*, Auto">
+                        <TextBlock Grid.Column="0"
+                                   Text="{Binding Descricao}"
+                                   FontSize="12" Foreground="#444444"
+                                   VerticalAlignment="Center"
+                                   TextWrapping="Wrap"/>
+                        <TextBlock Grid.Column="1"
+                                   Text="{Binding ValorFmt}"
+                                   FontSize="12" FontWeight="Medium"
+                                   Foreground="#444444"
+                                   VerticalAlignment="Center"
+                                   TextAlignment="Right"
+                                   MinWidth="140"/>
+                      </Grid>
+                    </Border>
+                  </DataTemplate>
+                </ItemsControl.ItemTemplate>
+              </ItemsControl>
+
+              <!-- Subtotal Passivo Corrente -->
+              <Border Classes="subtotal-linha">
+                <Grid ColumnDefinitions="*, Auto">
+                  <TextBlock Grid.Column="0"
+                             Text="Total Passivo Corrente"
+                             FontSize="12" FontWeight="Bold"
+                             Foreground="#1A2E5A"/>
+                  <TextBlock Grid.Column="1"
+                             Text="{Binding TotalPassivoCorrenteFmt}"
+                             FontSize="12" FontWeight="Bold"
+                             Foreground="#E65100"
+                             TextAlignment="Right" MinWidth="140"/>
+                </Grid>
+              </Border>
+
+              <Border Classes="separador"/>
+
+              <!-- ── PASSIVO NÃO CORRENTE ────────────────────────────── -->
+              <Border Classes="sub-header" Background="#FFF3E0">
+                <TextBlock Text="Passivo Não Corrente"
+                           FontSize="12" FontWeight="Bold"
+                           Foreground="#E65100"/>
+              </Border>
+
+              <ItemsControl ItemsSource="{Binding PassivosNaoCorrentes}">
+                <ItemsControl.ItemTemplate>
+                  <DataTemplate x:DataType="vm:BalancoLinhaItem">
+                    <Border Classes="conta-linha">
+                      <Grid ColumnDefinitions="*, Auto">
+                        <TextBlock Grid.Column="0"
+                                   Text="{Binding Descricao}"
+                                   FontSize="12" Foreground="#444444"
+                                   VerticalAlignment="Center"
+                                   TextWrapping="Wrap"/>
+                        <TextBlock Grid.Column="1"
+                                   Text="{Binding ValorFmt}"
+                                   FontSize="12" FontWeight="Medium"
+                                   Foreground="#444444"
+                                   VerticalAlignment="Center"
+                                   TextAlignment="Right"
+                                   MinWidth="140"/>
+                      </Grid>
+                    </Border>
+                  </DataTemplate>
+                </ItemsControl.ItemTemplate>
+              </ItemsControl>
+
+              <!-- Subtotal Passivo Não Corrente -->
+              <Border Classes="subtotal-linha">
+                <Grid ColumnDefinitions="*, Auto">
+                  <TextBlock Grid.Column="0"
+                             Text="Total Passivo Não Corrente"
+                             FontSize="12" FontWeight="Bold"
+                             Foreground="#1A2E5A"/>
+                  <TextBlock Grid.Column="1"
+                             Text="{Binding TotalPassivoNaoCorrenteFmt}"
+                             FontSize="12" FontWeight="Bold"
+                             Foreground="#E65100"
+                             TextAlignment="Right" MinWidth="140"/>
+                </Grid>
+              </Border>
+
+              <Border Classes="separador"/>
+
+              <!-- ── CAPITAL PRÓPRIO ──────────────────────────────────── -->
+              <Border Classes="sub-header" Background="#E8F5E9">
+                <TextBlock Text="Capital Próprio"
+                           FontSize="12" FontWeight="Bold"
+                           Foreground="#2E7D32"/>
+              </Border>
+
+              <ItemsControl ItemsSource="{Binding CapitalProprio}">
+                <ItemsControl.ItemTemplate>
+                  <DataTemplate x:DataType="vm:BalancoLinhaItem">
+                    <Border Classes="conta-linha">
+                      <Grid ColumnDefinitions="*, Auto">
+                        <TextBlock Grid.Column="0"
+                                   Text="{Binding Descricao}"
+                                   FontSize="12" Foreground="#444444"
+                                   VerticalAlignment="Center"
+                                   TextWrapping="Wrap"/>
+                        <TextBlock Grid.Column="1"
+                                   Text="{Binding ValorFmt}"
+                                   FontSize="12" FontWeight="Medium"
+                                   Foreground="{Binding CorValor}"
+                                   VerticalAlignment="Center"
+                                   TextAlignment="Right"
+                                   MinWidth="140"/>
+                      </Grid>
+                    </Border>
+                  </DataTemplate>
+                </ItemsControl.ItemTemplate>
+              </ItemsControl>
+
+              <!-- Subtotal Capital Próprio -->
+              <Border Classes="subtotal-linha">
+                <Grid ColumnDefinitions="*, Auto">
+                  <TextBlock Grid.Column="0"
+                             Text="Total Capital Próprio"
+                             FontSize="12" FontWeight="Bold"
+                             Foreground="#1A2E5A"/>
+                  <TextBlock Grid.Column="1"
+                             Text="{Binding TotalCapitalProprioFmt}"
+                             FontSize="12" FontWeight="Bold"
+                             Foreground="#2E7D32"
+                             TextAlignment="Right" MinWidth="140"/>
+                </Grid>
+              </Border>
+
+              <!-- ── TOTAL PASSIVO + CAPITAL ─────────────────────────── -->
+              <Border Classes="total-geral">
+                <Grid ColumnDefinitions="*, Auto">
+                  <TextBlock Grid.Column="0"
+                             Text="TOTAL PASSIVO + CAPITAL"
+                             FontSize="13" FontWeight="Bold"
+                             Foreground="White"/>
+                  <TextBlock Grid.Column="1"
+                             Text="{Binding TotalPassivoCapitalFmt}"
+                             FontSize="13" FontWeight="Bold"
+                             Foreground="White"
+                             TextAlignment="Right" MinWidth="140"/>
+                </Grid>
+              </Border>
+
+            </StackPanel>
+          </Border>
+
+        </Grid>
+
+        <!-- ══════════════════════════════════════════════════════════════
+             RODAPÉ — nota contabilística
+             ══════════════════════════════════════════════════════════════ -->
+        <Border Classes="sg-card" Padding="16,12" Background="#FAFBFF">
+          <Grid ColumnDefinitions="Auto, *, Auto">
+            <mi:MaterialIcon Grid.Column="0"
+                             Kind="InformationOutline"
+                             Width="14" Height="14"
+                             Foreground="#9AA0AB"
+                             VerticalAlignment="Center"
+                             Margin="0,0,8,0"/>
+            <TextBlock Grid.Column="1"
+                       Text="Balanço elaborado de acordo com o Plano Geral de Contabilidade (PGC) angolano. Os valores apresentados são preliminares e podem estar sujeitos a revisão."
+                       FontSize="11" Foreground="#9AA0AB"
+                       TextWrapping="Wrap"
+                       VerticalAlignment="Center"/>
+            <TextBlock Grid.Column="2"
+                       Text="{Binding PeriodoTexto}"
+                       FontSize="11" FontWeight="SemiBold"
+                       Foreground="#1A2E5A"
+                       VerticalAlignment="Center"
+                       Margin="16,0,0,0"/>
+          </Grid>
+        </Border>
+
+      </StackPanel>
+    </Border>
+  </ScrollViewer>
+</UserControl>

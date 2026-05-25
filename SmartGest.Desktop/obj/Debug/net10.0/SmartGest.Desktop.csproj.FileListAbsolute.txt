@@ -30,6 +30,8 @@
 /home/weber/projects/SmartGest/SmartGest.Desktop/bin/Debug/net10.0/LiveChartsCore.dll
 /home/weber/projects/SmartGest/SmartGest.Desktop/bin/Debug/net10.0/LiveChartsCore.SkiaSharpView.dll
 /home/weber/projects/SmartGest/SmartGest.Desktop/bin/Debug/net10.0/LiveChartsCore.SkiaSharpView.Avalonia.dll
+/home/weber/projects/SmartGest/SmartGest.Desktop/bin/Debug/net10.0/Material.Icons.dll
+/home/weber/projects/SmartGest/SmartGest.Desktop/bin/Debug/net10.0/Material.Icons.Avalonia.dll
 /home/weber/projects/SmartGest/SmartGest.Desktop/bin/Debug/net10.0/MicroCom.Runtime.dll
 /home/weber/projects/SmartGest/SmartGest.Desktop/bin/Debug/net10.0/SkiaSharp.dll
 /home/weber/projects/SmartGest/SmartGest.Desktop/bin/Debug/net10.0/SkiaSharp.HarfBuzz.dll
@@ -63,6 +65,7 @@
 /home/weber/projects/SmartGest/SmartGest.Desktop/obj/Debug/net10.0/SmartGest.Desktop.AssemblyInfoInputs.cache
 /home/weber/projects/SmartGest/SmartGest.Desktop/obj/Debug/net10.0/SmartGest.Desktop.AssemblyInfo.cs
 /home/weber/projects/SmartGest/SmartGest.Desktop/obj/Debug/net10.0/SmartGest.Desktop.csproj.CoreCompileInputs.cache
+/home/weber/projects/SmartGest/SmartGest.Desktop/obj/Debug/net10.0/SmartGest.Desktop.sourcelink.json
 /home/weber/projects/SmartGest/SmartGest.Desktop/obj/Debug/net10.0/SmartGes.3DDC1362.Up2Date
 /home/weber/projects/SmartGest/SmartGest.Desktop/obj/Debug/net10.0/SmartGest.Desktop.dll
 /home/weber/projects/SmartGest/SmartGest.Desktop/obj/Debug/net10.0/refint/SmartGest.Desktop.dll

@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "p12CD+U1aLM=",
+  "dgSpecHash": "JSvbYSLJxHc=",
   "success": true,
   "projectFilePath": "/home/weber/projects/SmartGest/SmartGest.Desktop/SmartGest.Desktop.csproj",
   "expectedPackageFiles": [
@@ -26,6 +26,8 @@
     "/home/weber/.nuget/packages/livechartscore/2.0.0-rc4.5/livechartscore.2.0.0-rc4.5.nupkg.sha512",
     "/home/weber/.nuget/packages/livechartscore.skiasharpview/2.0.0-rc4.5/livechartscore.skiasharpview.2.0.0-rc4.5.nupkg.sha512",
     "/home/weber/.nuget/packages/livechartscore.skiasharpview.avalonia/2.0.0-rc4.5/livechartscore.skiasharpview.avalonia.2.0.0-rc4.5.nupkg.sha512",
+    "/home/weber/.nuget/packages/material.icons/2.1.0/material.icons.2.1.0.nupkg.sha512",
+    "/home/weber/.nuget/packages/material.icons.avalonia/2.1.0/material.icons.avalonia.2.1.0.nupkg.sha512",
     "/home/weber/.nuget/packages/microcom.runtime/0.11.0/microcom.runtime.0.11.0.nupkg.sha512",
     "/home/weber/.nuget/packages/skiasharp/2.88.9/skiasharp.2.88.9.nupkg.sha512",
     "/home/weber/.nuget/packages/skiasharp.harfbuzz/2.88.8/skiasharp.harfbuzz.2.88.8.nupkg.sha512",

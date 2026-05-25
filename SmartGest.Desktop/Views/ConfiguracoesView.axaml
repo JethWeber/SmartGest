@@ -1,0 +1,1039 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:SmartGest.Desktop.ViewModels"
+             xmlns:mi="using:Material.Icons.Avalonia"
+             x:Class="SmartGest.Desktop.Views.ConfiguracoesView"
+             x:DataType="vm:ConfiguracoesViewModel">
+
+  <UserControl.Styles>
+
+    <!-- ── Card base ────────────────────────────────────────────────── -->
+    <Style Selector="Border.sg-card">
+      <Setter Property="Background"   Value="White"/>
+      <Setter Property="CornerRadius" Value="10"/>
+      <Setter Property="Padding"      Value="24,20"/>
+      <Setter Property="BoxShadow"    Value="0 2 12 0 #0A000000"/>
+    </Style>
+
+    <!-- ── Título de grupo dentro de um card ─────────────────────────── -->
+    <Style Selector="TextBlock.group-title">
+      <Setter Property="FontSize"   Value="12"/>
+      <Setter Property="FontWeight" Value="SemiBold"/>
+      <Setter Property="Foreground" Value="#1A2E5A"/>
+      <Setter Property="Margin"     Value="0,0,0,12"/>
+    </Style>
+
+    <!-- ── Label de campo ───────────────────────────────────────────── -->
+    <Style Selector="TextBlock.field-label">
+      <Setter Property="FontSize"   Value="11"/>
+      <Setter Property="Foreground" Value="#5A6478"/>
+      <Setter Property="Margin"     Value="0,0,0,4"/>
+    </Style>
+
+    <!-- ── Input ────────────────────────────────────────────────────── -->
+    <Style Selector="TextBox.sg-input">
+      <Setter Property="Background"      Value="White"/>
+      <Setter Property="BorderBrush"     Value="#E0E4EA"/>
+      <Setter Property="BorderThickness" Value="1"/>
+      <Setter Property="CornerRadius"    Value="7"/>
+      <Setter Property="Padding"         Value="10,8"/>
+      <Setter Property="FontSize"        Value="13"/>
+    </Style>
+    <Style Selector="TextBox.sg-input:focus /template/ Border">
+      <Setter Property="BorderBrush" Value="#2196F3"/>
+    </Style>
+
+    <!-- ── ComboBox ─────────────────────────────────────────────────── -->
+    <Style Selector="ComboBox.sg-combo">
+      <Setter Property="Background"      Value="White"/>
+      <Setter Property="BorderBrush"     Value="#E0E4EA"/>
+      <Setter Property="BorderThickness" Value="1"/>
+      <Setter Property="CornerRadius"    Value="7"/>
+      <Setter Property="Padding"         Value="10,8"/>
+      <Setter Property="FontSize"        Value="13"/>
+      <Setter Property="HorizontalAlignment" Value="Stretch"/>
+    </Style>
+
+    <!-- ── Toggle Switch label ──────────────────────────────────────── -->
+    <Style Selector="TextBlock.toggle-label">
+      <Setter Property="FontSize"   Value="13"/>
+      <Setter Property="Foreground" Value="#333333"/>
+      <Setter Property="VerticalAlignment" Value="Center"/>
+    </Style>
+    <Style Selector="TextBlock.toggle-sub">
+      <Setter Property="FontSize"   Value="11"/>
+      <Setter Property="Foreground" Value="#9AA0AB"/>
+    </Style>
+
+    <!-- ── Botão primário ───────────────────────────────────────────── -->
+    <Style Selector="Button.btn-primary">
+      <Setter Property="Background"      Value="#2196F3"/>
+      <Setter Property="Foreground"      Value="White"/>
+      <Setter Property="FontSize"        Value="12"/>
+      <Setter Property="FontWeight"      Value="SemiBold"/>
+      <Setter Property="Padding"         Value="18,9"/>
+      <Setter Property="CornerRadius"    Value="7"/>
+      <Setter Property="Cursor"          Value="Hand"/>
+      <Setter Property="BorderThickness" Value="0"/>
+    </Style>
+    <Style Selector="Button.btn-primary:pointerover /template/ ContentPresenter">
+      <Setter Property="Background" Value="#1E88E5"/>
+    </Style>
+
+    <!-- ── Botão perigo ─────────────────────────────────────────────── -->
+    <Style Selector="Button.btn-danger">
+      <Setter Property="Background"      Value="#FFEBEE"/>
+      <Setter Property="Foreground"      Value="#E53935"/>
+      <Setter Property="FontSize"        Value="12"/>
+      <Setter Property="FontWeight"      Value="SemiBold"/>
+      <Setter Property="Padding"         Value="14,8"/>
+      <Setter Property="CornerRadius"    Value="7"/>
+      <Setter Property="Cursor"          Value="Hand"/>
+      <Setter Property="BorderThickness" Value="0"/>
+    </Style>
+    <Style Selector="Button.btn-danger:pointerover /template/ ContentPresenter">
+      <Setter Property="Background" Value="#FFCDD2"/>
+    </Style>
+
+    <!-- ── Botão outline ────────────────────────────────────────────── -->
+    <Style Selector="Button.btn-outline">
+      <Setter Property="Background"      Value="White"/>
+      <Setter Property="Foreground"      Value="#1A2E5A"/>
+      <Setter Property="FontSize"        Value="12"/>
+      <Setter Property="FontWeight"      Value="SemiBold"/>
+      <Setter Property="Padding"         Value="14,8"/>
+      <Setter Property="CornerRadius"    Value="7"/>
+      <Setter Property="Cursor"          Value="Hand"/>
+      <Setter Property="BorderThickness" Value="1"/>
+      <Setter Property="BorderBrush"     Value="#DDE3EE"/>
+    </Style>
+    <Style Selector="Button.btn-outline:pointerover /template/ ContentPresenter">
+      <Setter Property="Background" Value="#F4F6FA"/>
+    </Style>
+
+    <!-- ── Separador horizontal ─────────────────────────────────────── -->
+    <Style Selector="Border.sep">
+      <Setter Property="Height"     Value="1"/>
+      <Setter Property="Background" Value="#F0F2F5"/>
+      <Setter Property="Margin"     Value="0,16,0,16"/>
+    </Style>
+
+  </UserControl.Styles>
+
+  <DockPanel Background="#F4F6FA">
+
+    <!-- ══════════════════════════════════════════════════════════════
+         CABEÇALHO + TABS  (fixo no topo)
+         ══════════════════════════════════════════════════════════════ -->
+    <Border DockPanel.Dock="Top" Background="White"
+            BoxShadow="0 2 8 0 #08000000"
+            Padding="28,20,28,0">
+      <StackPanel Spacing="16">
+
+        <!-- Título -->
+        <StackPanel>
+          <TextBlock Text="Configurações"
+                     FontSize="20" FontWeight="Bold"
+                     Foreground="#1A2E5A"/>
+          <TextBlock Text="Gerir preferências e parâmetros do sistema"
+                     FontSize="12" Foreground="#9AA0AB" Margin="0,2,0,0"/>
+        </StackPanel>
+
+        <!-- Tabs -->
+        <StackPanel Orientation="Horizontal" Spacing="0">
+
+          <!-- Tab 0 — Empresa -->
+          <Button Classes="btn-outline"
+                  Command="{Binding $parent[UserControl].((vm:ConfiguracoesViewModel)DataContext).MudarTabCommand}"
+                  CommandParameter="0"
+                  BorderThickness="0,0,0,3"
+                  BorderBrush="{Binding TabIndex, Converter={x:Static vm:TabIndexConverter.Instance}, ConverterParameter=0}"
+                  CornerRadius="0" Padding="18,10">
+            <StackPanel Orientation="Horizontal" Spacing="6">
+              <mi:MaterialIcon Kind="OfficeBuildingOutline" Width="15" Height="15"/>
+              <TextBlock Text="Empresa" FontSize="13"/>
+            </StackPanel>
+          </Button>
+
+          <!-- Tab 1 — Utilizadores -->
+          <Button Classes="btn-outline"
+                  Command="{Binding $parent[UserControl].((vm:ConfiguracoesViewModel)DataContext).MudarTabCommand}"
+                  CommandParameter="1"
+                  BorderThickness="0,0,0,3"
+                  BorderBrush="{Binding TabIndex, Converter={x:Static vm:TabIndexConverter.Instance}, ConverterParameter=1}"
+                  CornerRadius="0" Padding="18,10">
+            <StackPanel Orientation="Horizontal" Spacing="6">
+              <mi:MaterialIcon Kind="AccountGroupOutline" Width="15" Height="15"/>
+              <TextBlock Text="Utilizadores" FontSize="13"/>
+            </StackPanel>
+          </Button>
+
+          <!-- Tab 2 — Aparência -->
+          <Button Classes="btn-outline"
+                  Command="{Binding $parent[UserControl].((vm:ConfiguracoesViewModel)DataContext).MudarTabCommand}"
+                  CommandParameter="2"
+                  BorderThickness="0,0,0,3"
+                  BorderBrush="{Binding TabIndex, Converter={x:Static vm:TabIndexConverter.Instance}, ConverterParameter=2}"
+                  CornerRadius="0" Padding="18,10">
+            <StackPanel Orientation="Horizontal" Spacing="6">
+              <mi:MaterialIcon Kind="PaletteOutline" Width="15" Height="15"/>
+              <TextBlock Text="Aparência" FontSize="13"/>
+            </StackPanel>
+          </Button>
+
+          <!-- Tab 3 — Notificações -->
+          <Button Classes="btn-outline"
+                  Command="{Binding $parent[UserControl].((vm:ConfiguracoesViewModel)DataContext).MudarTabCommand}"
+                  CommandParameter="3"
+                  BorderThickness="0,0,0,3"
+                  BorderBrush="{Binding TabIndex, Converter={x:Static vm:TabIndexConverter.Instance}, ConverterParameter=3}"
+                  CornerRadius="0" Padding="18,10">
+            <StackPanel Orientation="Horizontal" Spacing="6">
+              <mi:MaterialIcon Kind="BellOutline" Width="15" Height="15"/>
+              <TextBlock Text="Notificações" FontSize="13"/>
+            </StackPanel>
+          </Button>
+
+          <!-- Tab 4 — Segurança -->
+          <Button Classes="btn-outline"
+                  Command="{Binding $parent[UserControl].((vm:ConfiguracoesViewModel)DataContext).MudarTabCommand}"
+                  CommandParameter="4"
+                  BorderThickness="0,0,0,3"
+                  BorderBrush="{Binding TabIndex, Converter={x:Static vm:TabIndexConverter.Instance}, ConverterParameter=4}"
+                  CornerRadius="0" Padding="18,10">
+            <StackPanel Orientation="Horizontal" Spacing="6">
+              <mi:MaterialIcon Kind="ShieldLockOutline" Width="15" Height="15"/>
+              <TextBlock Text="Segurança" FontSize="13"/>
+            </StackPanel>
+          </Button>
+
+          <!-- Tab 5 — API -->
+          <Button Classes="btn-outline"
+                  Command="{Binding $parent[UserControl].((vm:ConfiguracoesViewModel)DataContext).MudarTabCommand}"
+                  CommandParameter="5"
+                  BorderThickness="0,0,0,3"
+                  BorderBrush="{Binding TabIndex, Converter={x:Static vm:TabIndexConverter.Instance}, ConverterParameter=5}"
+                  CornerRadius="0" Padding="18,10">
+            <StackPanel Orientation="Horizontal" Spacing="6">
+              <mi:MaterialIcon Kind="SwapHorizontalVariant" Width="13" Height="13"/>
+              <TextBlock Text="API / Integração" FontSize="13"/>
+            </StackPanel>
+          </Button>
+
+        </StackPanel>
+      </StackPanel>
+    </Border>
+
+    <!-- ══════════════════════════════════════════════════════════════
+         FEEDBACK GLOBAL  (toast persistente até desaparecer)
+         ══════════════════════════════════════════════════════════════ -->
+    <Border DockPanel.Dock="Bottom"
+            IsVisible="{Binding TemFeedback}"
+            Background="#1A2E5A"
+            Padding="20,12" Margin="28,0,28,20">
+      <Border.CornerRadius>
+        <CornerRadius>8</CornerRadius>
+      </Border.CornerRadius>
+      <StackPanel Orientation="Horizontal" Spacing="10">
+        <mi:MaterialIcon Kind="CheckCircleOutline" Width="16" Height="16" Foreground="White"/>
+        <TextBlock Text="{Binding FeedbackMsg}"
+                   FontSize="12" Foreground="White"
+                   VerticalAlignment="Center"/>
+      </StackPanel>
+    </Border>
+
+    <!-- ══════════════════════════════════════════════════════════════
+         CONTEÚDO DAS TABS
+         ══════════════════════════════════════════════════════════════ -->
+    <ScrollViewer Padding="28,24">
+      <Panel>
+
+        <!-- ────────────────────────────────────────────────────────
+             TAB 0 · PERFIL DA EMPRESA
+             ──────────────────────────────────────────────────────── -->
+        <StackPanel Spacing="20"
+                    IsVisible="{Binding TabIndex, Converter={x:Static vm:TabEqualConverter.Instance}, ConverterParameter=0}">
+
+          <Grid ColumnDefinitions="*, 20, 280">
+
+            <!-- Coluna esquerda: campos -->
+            <StackPanel Grid.Column="0" Spacing="20">
+
+              <Border Classes="sg-card">
+                <StackPanel Spacing="0">
+                  <TextBlock Classes="group-title" Text="Identificação"/>
+                  <Grid ColumnDefinitions="*, 16, *" RowDefinitions="Auto, 16, Auto, 16, Auto">
+
+                    <StackPanel Grid.Row="0" Grid.Column="0">
+                      <TextBlock Classes="field-label" Text="Nome da Empresa"/>
+                      <TextBox Classes="sg-input" Text="{Binding EmpresaNome}"/>
+                    </StackPanel>
+                    <StackPanel Grid.Row="0" Grid.Column="2">
+                      <TextBlock Classes="field-label" Text="NIF / Contribuinte"/>
+                      <TextBox Classes="sg-input" Text="{Binding EmpresaNif}"/>
+                    </StackPanel>
+
+                    <StackPanel Grid.Row="2" Grid.Column="0">
+                      <TextBlock Classes="field-label" Text="Telefone"/>
+                      <TextBox Classes="sg-input" Text="{Binding EmpresaTelefone}"/>
+                    </StackPanel>
+                    <StackPanel Grid.Row="2" Grid.Column="2">
+                      <TextBlock Classes="field-label" Text="E-mail"/>
+                      <TextBox Classes="sg-input" Text="{Binding EmpresaEmail}"/>
+                    </StackPanel>
+
+                    <StackPanel Grid.Row="4" Grid.Column="0">
+                      <TextBlock Classes="field-label" Text="Website"/>
+                      <TextBox Classes="sg-input" Text="{Binding EmpresaWebsite}"/>
+                    </StackPanel>
+                    <StackPanel Grid.Row="4" Grid.Column="2">
+                      <TextBlock Classes="field-label" Text="Capital Social (Kzs)"/>
+                      <TextBox Classes="sg-input" Text="{Binding EmpresaCapital}"/>
+                    </StackPanel>
+
+                  </Grid>
+                </StackPanel>
+              </Border>
+
+              <Border Classes="sg-card">
+                <StackPanel Spacing="0">
+                  <TextBlock Classes="group-title" Text="Morada"/>
+                  <Grid ColumnDefinitions="*, 16, 160, 16, 140" RowDefinitions="Auto, 16, Auto">
+
+                    <StackPanel Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="5">
+                      <TextBlock Classes="field-label" Text="Rua / Endereço"/>
+                      <TextBox Classes="sg-input" Text="{Binding EmpresaMorada}"/>
+                    </StackPanel>
+
+                    <StackPanel Grid.Row="2" Grid.Column="0">
+                      <TextBlock Classes="field-label" Text="Cidade"/>
+                      <TextBox Classes="sg-input" Text="{Binding EmpresaCidade}"/>
+                    </StackPanel>
+                    <StackPanel Grid.Row="2" Grid.Column="2">
+                      <TextBlock Classes="field-label" Text="País"/>
+                      <TextBox Classes="sg-input" Text="{Binding EmpresaPais}"/>
+                    </StackPanel>
+
+                  </Grid>
+                </StackPanel>
+              </Border>
+
+              <Button Classes="btn-primary" HorizontalAlignment="Right"
+                      Command="{Binding SalvarPerfilCommand}">
+                <StackPanel Orientation="Horizontal" Spacing="6">
+                  <mi:MaterialIcon Kind="ContentSave" Width="14" Height="14"/>
+                  <TextBlock Text="Guardar Perfil"/>
+                </StackPanel>
+              </Button>
+
+            </StackPanel>
+
+            <!-- Coluna direita: Logo -->
+            <Border Grid.Column="2" Classes="sg-card">
+              <StackPanel Spacing="14">
+                <TextBlock Classes="group-title" Text="Logótipo da Empresa"/>
+
+                <!-- Zona do logo -->
+                <Border Background="#F4F6FA" CornerRadius="8"
+                  Height="160" BorderBrush="#DDE3EE" BorderThickness="2">
+                  <Panel>
+                    <!-- Placeholder sem logo -->
+                    <StackPanel IsVisible="{Binding !TemLogo}"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                Spacing="8">
+                      <mi:MaterialIcon Kind="ImagePlusOutline" Width="36" Height="36"
+                                       HorizontalAlignment="Center" Foreground="#C8CDD6"/>
+                      <TextBlock Text="Sem logótipo" FontSize="12"
+                                 Foreground="#9AA0AB" HorizontalAlignment="Center"/>
+                    </StackPanel>
+                  </Panel>
+                </Border>
+
+                <Button Classes="btn-outline" HorizontalAlignment="Stretch"
+                        Command="{Binding EscolherLogoCommand}">
+                  <StackPanel Orientation="Horizontal" Spacing="6" HorizontalAlignment="Center">
+                    <mi:MaterialIcon Kind="Upload" Width="14" Height="14"/>
+                    <TextBlock Text="Carregar Logo"/>
+                  </StackPanel>
+                </Button>
+
+                <Button Classes="btn-danger" HorizontalAlignment="Stretch"
+                        IsVisible="{Binding TemLogo}"
+                        Command="{Binding RemoverLogoCommand}">
+                  <TextBlock Text="Remover" HorizontalAlignment="Center"/>
+                </Button>
+
+                <TextBlock Text="PNG ou SVG · máximo 2 MB · fundo transparente recomendado"
+                           FontSize="10" Foreground="#9AA0AB"
+                           TextWrapping="Wrap"/>
+              </StackPanel>
+            </Border>
+
+          </Grid>
+        </StackPanel>
+
+        <!-- ────────────────────────────────────────────────────────
+             TAB 1 · UTILIZADORES E PERMISSÕES
+             ──────────────────────────────────────────────────────── -->
+        <Grid ColumnDefinitions="*, 20, 320"
+              IsVisible="{Binding TabIndex, Converter={x:Static vm:TabEqualConverter.Instance}, ConverterParameter=1}">
+
+          <!-- Lista de utilizadores -->
+          <Border Grid.Column="0" Classes="sg-card">
+            <StackPanel Spacing="0">
+              <Grid ColumnDefinitions="*, Auto" Margin="0,0,0,16">
+                <TextBlock Grid.Column="0" Classes="group-title" Margin="0"
+                           Text="Membros da Equipa"/>
+                <TextBlock Grid.Column="1"
+                           Text="{Binding Utilizadores.Count, StringFormat='{}{0} utilizador(es)'}"
+                           FontSize="11" Foreground="#9AA0AB" VerticalAlignment="Center"/>
+              </Grid>
+
+              <ItemsControl ItemsSource="{Binding Utilizadores}">
+                <ItemsControl.ItemTemplate>
+                  <DataTemplate x:DataType="vm:UtilizadorItem">
+                    <Border Padding="0,10" BorderBrush="#F0F2F5" BorderThickness="0,0,0,1">
+                      <Grid ColumnDefinitions="44, 12, *, 100, 80, 80">
+
+                        <!-- Avatar -->
+                        <Border Grid.Column="0"
+                                Width="40" Height="40" CornerRadius="20"
+                                Background="{Binding CorAvatar}">
+                          <TextBlock Text="{Binding Iniciais}"
+                                     FontSize="13" FontWeight="Bold"
+                                     Foreground="White"
+                                     HorizontalAlignment="Center"
+                                     VerticalAlignment="Center"/>
+                        </Border>
+
+                        <!-- Nome + email -->
+                        <StackPanel Grid.Column="2" VerticalAlignment="Center" Spacing="2">
+                          <TextBlock Text="{Binding Nome}"
+                                     FontSize="13" FontWeight="SemiBold"
+                                     Foreground="#1A2E5A"/>
+                          <TextBlock Text="{Binding Email}"
+                                     FontSize="11" Foreground="#9AA0AB"/>
+                        </StackPanel>
+
+                        <!-- Badge de perfil -->
+                        <Border Grid.Column="3"
+                                Background="{Binding FundoPerfilBadge}"
+                                CornerRadius="5" Padding="8,4"
+                                HorizontalAlignment="Left" VerticalAlignment="Center">
+                          <TextBlock Text="{Binding Perfil}"
+                                     FontSize="10" FontWeight="SemiBold"
+                                     Foreground="{Binding CorPerfilBadge}"/>
+                        </Border>
+
+                        <!-- Estado activo/inactivo -->
+                        <Border Grid.Column="4"
+                                Background="{Binding FundoEstado}"
+                                CornerRadius="5" Padding="8,4"
+                                HorizontalAlignment="Left" VerticalAlignment="Center">
+                          <TextBlock Text="{Binding TextoEstado}"
+                                     FontSize="10" FontWeight="Medium"
+                                     Foreground="{Binding CorEstado}"/>
+                        </Border>
+
+                        <!-- Acções -->
+                        <StackPanel Grid.Column="5" Orientation="Horizontal"
+                                    Spacing="4" VerticalAlignment="Center">
+                          <Button Classes="btn-outline" Padding="6"
+                                  Command="{Binding $parent[UserControl].((vm:ConfiguracoesViewModel)DataContext).ToggleUtilizadorCommand}"
+                                  CommandParameter="{Binding}">
+                            <mi:MaterialIcon Kind="SwapHorizontal" Width="13" Height="13"/>
+                          </Button>
+                          <Button Classes="btn-danger" Padding="6"
+                                  Command="{Binding $parent[UserControl].((vm:ConfiguracoesViewModel)DataContext).RemoverUtilizadorCommand}"
+                                  CommandParameter="{Binding}">
+                            <mi:MaterialIcon Kind="DeleteOutline" Width="13" Height="13"/>
+                          </Button>
+                        </StackPanel>
+
+                      </Grid>
+                    </Border>
+                  </DataTemplate>
+                </ItemsControl.ItemTemplate>
+              </ItemsControl>
+            </StackPanel>
+          </Border>
+
+          <!-- Painel: convidar novo utilizador -->
+          <Border Grid.Column="2" Classes="sg-card">
+            <StackPanel Spacing="14">
+              <TextBlock Classes="group-title" Text="Convidar Utilizador"/>
+
+              <StackPanel Spacing="4">
+                <TextBlock Classes="field-label" Text="Nome completo"/>
+                <TextBox Classes="sg-input" Text="{Binding NovoUtilNome}"
+                         Watermark="Ex: Ana Rodrigues"/>
+              </StackPanel>
+
+              <StackPanel Spacing="4">
+                <TextBlock Classes="field-label" Text="E-mail"/>
+                <TextBox Classes="sg-input" Text="{Binding NovoUtilEmail}"
+                         Watermark="utilizador@empresa.ao"/>
+              </StackPanel>
+
+              <StackPanel Spacing="4">
+                <TextBlock Classes="field-label" Text="Perfil de acesso"/>
+                <ComboBox Classes="sg-combo"
+                          ItemsSource="{Binding Perfis}"
+                          SelectedIndex="{Binding NovoUtilPerfilIndex}"/>
+              </StackPanel>
+
+              <Border Classes="sep" Margin="0,4,0,4"/>
+
+              <!-- Descrição dos perfis -->
+              <StackPanel Spacing="8">
+                <TextBlock Text="Permissões por perfil" FontSize="11"
+                           FontWeight="SemiBold" Foreground="#5A6478"/>
+                <StackPanel Spacing="4">
+                  <TextBlock Text="• Administrador — acesso total" FontSize="11" Foreground="#444"/>
+                  <TextBlock Text="• Contabilista — lançamentos e relatórios" FontSize="11" Foreground="#444"/>
+                  <TextBlock Text="• Operador — apenas lançamentos" FontSize="11" Foreground="#444"/>
+                  <TextBlock Text="• Visualizador — só leitura" FontSize="11" Foreground="#444"/>
+                </StackPanel>
+              </StackPanel>
+
+              <Button Classes="btn-primary" HorizontalAlignment="Stretch"
+                      Command="{Binding ConvidarUtilizadorCommand}">
+                <StackPanel Orientation="Horizontal" Spacing="6" HorizontalAlignment="Center">
+                  <mi:MaterialIcon Kind="EmailPlusOutline" Width="14" Height="14"/>
+                  <TextBlock Text="Enviar Convite"/>
+                </StackPanel>
+              </Button>
+
+            </StackPanel>
+          </Border>
+
+        </Grid>
+
+        <!-- ────────────────────────────────────────────────────────
+             TAB 2 · APARÊNCIA
+             ──────────────────────────────────────────────────────── -->
+        <Grid ColumnDefinitions="*, 20, *"
+              IsVisible="{Binding TabIndex, Converter={x:Static vm:TabEqualConverter.Instance}, ConverterParameter=2}">
+
+          <Border Grid.Column="0" Classes="sg-card">
+            <StackPanel Spacing="20">
+              <TextBlock Classes="group-title" Text="Tema e Idioma"/>
+
+              <StackPanel Spacing="4">
+                <TextBlock Classes="field-label" Text="Tema da interface"/>
+                <ComboBox Classes="sg-combo" SelectedIndex="{Binding TemaIndex}">
+                  <ComboBoxItem Content="☀️  Claro"/>
+                  <ComboBoxItem Content="🌙  Escuro"/>
+                  <ComboBoxItem Content="💻  Seguir o Sistema"/>
+                </ComboBox>
+              </StackPanel>
+
+              <StackPanel Spacing="4">
+                <TextBlock Classes="field-label" Text="Idioma"/>
+                <ComboBox Classes="sg-combo" SelectedIndex="{Binding IdiomaIndex}">
+                  <ComboBoxItem Content="🇦🇴  Português (Angola)"/>
+                  <ComboBoxItem Content="🇬🇧  English"/>
+                </ComboBox>
+              </StackPanel>
+
+              <StackPanel Spacing="4">
+                <TextBlock Classes="field-label" Text="Moeda padrão"/>
+                <ComboBox Classes="sg-combo" SelectedIndex="{Binding MoedaIndex}">
+                  <ComboBoxItem Content="Kzs — Kwanza Angolano"/>
+                  <ComboBoxItem Content="USD — Dólar Americano"/>
+                  <ComboBoxItem Content="EUR — Euro"/>
+                </ComboBox>
+              </StackPanel>
+
+              <StackPanel Spacing="4">
+                <TextBlock Classes="field-label" Text="Formato de data"/>
+                <ComboBox Classes="sg-combo" SelectedIndex="{Binding DataFormatoIndex}">
+                  <ComboBoxItem Content="dd/MM/yyyy  (31/12/2025)"/>
+                  <ComboBoxItem Content="MM/dd/yyyy  (12/31/2025)"/>
+                </ComboBox>
+              </StackPanel>
+
+              <Button Classes="btn-primary" HorizontalAlignment="Right"
+                      Command="{Binding SalvarAparenciaCommand}">
+                <StackPanel Orientation="Horizontal" Spacing="6">
+                  <mi:MaterialIcon Kind="ContentSave" Width="14" Height="14"/>
+                  <TextBlock Text="Guardar"/>
+                </StackPanel>
+              </Button>
+
+            </StackPanel>
+          </Border>
+
+          <Border Grid.Column="2" Classes="sg-card">
+            <StackPanel Spacing="16">
+              <TextBlock Classes="group-title" Text="Preferências de Visualização"/>
+
+              <!-- Toggle: Sparklines -->
+              <Grid ColumnDefinitions="*, Auto">
+                <StackPanel Grid.Column="0">
+                  <TextBlock Classes="toggle-label" Text="Mostrar sparklines nos cards"/>
+                  <TextBlock Classes="toggle-sub"   Text="Mini-gráficos de tendência nos KPIs"/>
+                </StackPanel>
+                <ToggleSwitch Grid.Column="1" IsChecked="{Binding MostrarSparklines}"
+                              OffContent="" OnContent="" VerticalAlignment="Center"/>
+              </Grid>
+              <Border Classes="sep" Margin="0,0"/>
+
+              <!-- Toggle: Animações -->
+              <Grid ColumnDefinitions="*, Auto">
+                <StackPanel Grid.Column="0">
+                  <TextBlock Classes="toggle-label" Text="Animações da interface"/>
+                  <TextBlock Classes="toggle-sub"   Text="Transições e efeitos visuais"/>
+                </StackPanel>
+                <ToggleSwitch Grid.Column="1" IsChecked="{Binding AnimacoesAtivadas}"
+                              OffContent="" OnContent="" VerticalAlignment="Center"/>
+              </Grid>
+              <Border Classes="sep" Margin="0,0"/>
+
+              <!-- Toggle: Ocultar saldos -->
+              <Grid ColumnDefinitions="*, Auto">
+                <StackPanel Grid.Column="0">
+                  <TextBlock Classes="toggle-label" Text="Ocultar saldos por defeito"/>
+                  <TextBlock Classes="toggle-sub"   Text="Mostra ●●●●● até clicar em revelar"/>
+                </StackPanel>
+                <ToggleSwitch Grid.Column="1" IsChecked="{Binding MostrarSaldosOcultos}"
+                              OffContent="" OnContent="" VerticalAlignment="Center"/>
+              </Grid>
+
+            </StackPanel>
+          </Border>
+
+        </Grid>
+
+        <!-- ────────────────────────────────────────────────────────
+             TAB 3 · NOTIFICAÇÕES
+             ──────────────────────────────────────────────────────── -->
+        <Grid ColumnDefinitions="*, 20, *"
+              IsVisible="{Binding TabIndex, Converter={x:Static vm:TabEqualConverter.Instance}, ConverterParameter=3}">
+
+          <!-- Canal de envio -->
+          <Border Grid.Column="0" Classes="sg-card">
+            <StackPanel Spacing="16">
+              <TextBlock Classes="group-title" Text="Canais de Notificação"/>
+
+              <Grid ColumnDefinitions="*, Auto">
+                <StackPanel Grid.Column="0">
+                  <TextBlock Classes="toggle-label" Text="Notificações por E-mail"/>
+                  <TextBlock Classes="toggle-sub"   Text="Enviar alertas para o e-mail configurado"/>
+                </StackPanel>
+                <ToggleSwitch Grid.Column="1" IsChecked="{Binding NotifEmailAtivo}"
+                              OffContent="" OnContent="" VerticalAlignment="Center"/>
+              </Grid>
+
+              <StackPanel Spacing="4" IsVisible="{Binding NotifEmailAtivo}">
+                <TextBlock Classes="field-label" Text="E-mail de destino"/>
+                <TextBox Classes="sg-input" Text="{Binding EmailNotificacoes}"/>
+              </StackPanel>
+
+              <Border Classes="sep" Margin="0,0"/>
+
+              <Grid ColumnDefinitions="*, Auto">
+                <StackPanel Grid.Column="0">
+                  <TextBlock Classes="toggle-label" Text="Notificações na Aplicação"/>
+                  <TextBlock Classes="toggle-sub"   Text="Alertas no sino da barra de topo"/>
+                </StackPanel>
+                <ToggleSwitch Grid.Column="1" IsChecked="{Binding NotifAppAtivo}"
+                              OffContent="" OnContent="" VerticalAlignment="Center"/>
+              </Grid>
+
+              <Button Classes="btn-primary" HorizontalAlignment="Right"
+                      Command="{Binding SalvarNotificacoesCommand}">
+                <StackPanel Orientation="Horizontal" Spacing="6">
+                  <mi:MaterialIcon Kind="ContentSave" Width="14" Height="14"/>
+                  <TextBlock Text="Guardar"/>
+                </StackPanel>
+              </Button>
+
+            </StackPanel>
+          </Border>
+
+          <!-- Tipos de eventos -->
+          <Border Grid.Column="2" Classes="sg-card">
+            <StackPanel Spacing="16">
+              <TextBlock Classes="group-title" Text="Eventos a Notificar"/>
+
+              <Grid ColumnDefinitions="*, Auto">
+                <StackPanel Grid.Column="0">
+                  <TextBlock Classes="toggle-label" Text="Saldo abaixo do limiar"/>
+                  <TextBlock Classes="toggle-sub"   Text="Alerta quando caixa fica abaixo do valor"/>
+                </StackPanel>
+                <ToggleSwitch Grid.Column="1" IsChecked="{Binding NotifSaldoBaixo}"
+                              OffContent="" OnContent="" VerticalAlignment="Center"/>
+              </Grid>
+
+              <StackPanel Spacing="4" IsVisible="{Binding NotifSaldoBaixo}">
+                <TextBlock Classes="field-label" Text="Limiar mínimo de saldo (Kzs)"/>
+                <TextBox Classes="sg-input" Text="{Binding LimiarSaldoBaixo}"/>
+              </StackPanel>
+
+              <Border Classes="sep" Margin="0,0"/>
+
+              <Grid ColumnDefinitions="*, Auto">
+                <StackPanel Grid.Column="0">
+                  <TextBlock Classes="toggle-label" Text="Novos lançamentos"/>
+                </StackPanel>
+                <ToggleSwitch Grid.Column="1" IsChecked="{Binding NotifLancamentos}"
+                              OffContent="" OnContent="" VerticalAlignment="Center"/>
+              </Grid>
+              <Border Classes="sep" Margin="0,0"/>
+
+              <Grid ColumnDefinitions="*, Auto">
+                <StackPanel Grid.Column="0">
+                  <TextBlock Classes="toggle-label" Text="Relatórios gerados"/>
+                </StackPanel>
+                <ToggleSwitch Grid.Column="1" IsChecked="{Binding NotifRelatorios}"
+                              OffContent="" OnContent="" VerticalAlignment="Center"/>
+              </Grid>
+              <Border Classes="sep" Margin="0,0"/>
+
+              <Grid ColumnDefinitions="*, Auto">
+                <StackPanel Grid.Column="0">
+                  <TextBlock Classes="toggle-label" Text="Erros do sistema"/>
+                </StackPanel>
+                <ToggleSwitch Grid.Column="1" IsChecked="{Binding NotifErrosSistema}"
+                              OffContent="" OnContent="" VerticalAlignment="Center"/>
+              </Grid>
+              <Border Classes="sep" Margin="0,0"/>
+
+              <Grid ColumnDefinitions="*, Auto">
+                <StackPanel Grid.Column="0">
+                  <TextBlock Classes="toggle-label" Text="Backup realizado"/>
+                </StackPanel>
+                <ToggleSwitch Grid.Column="1" IsChecked="{Binding NotifBackup}"
+                              OffContent="" OnContent="" VerticalAlignment="Center"/>
+              </Grid>
+
+            </StackPanel>
+          </Border>
+
+        </Grid>
+
+        <!-- ────────────────────────────────────────────────────────
+             TAB 4 · SEGURANÇA
+             ──────────────────────────────────────────────────────── -->
+        <Grid ColumnDefinitions="*, 20, *"
+              IsVisible="{Binding TabIndex, Converter={x:Static vm:TabEqualConverter.Instance}, ConverterParameter=4}">
+
+          <!-- Alterar senha -->
+          <StackPanel Grid.Column="0" Spacing="20">
+
+            <Border Classes="sg-card">
+              <StackPanel Spacing="16">
+                <TextBlock Classes="group-title" Text="Alterar Senha"/>
+
+                <StackPanel Spacing="4">
+                  <TextBlock Classes="field-label" Text="Senha actual"/>
+                  <TextBox Classes="sg-input" PasswordChar="●"
+                           Text="{Binding SenhaAtual}" Watermark="••••••••"/>
+                </StackPanel>
+                <StackPanel Spacing="4">
+                  <TextBlock Classes="field-label" Text="Nova senha"/>
+                  <TextBox Classes="sg-input" PasswordChar="●"
+                           Text="{Binding SenhaNova}" Watermark="mínimo 8 caracteres"/>
+                </StackPanel>
+                <StackPanel Spacing="4">
+                  <TextBlock Classes="field-label" Text="Confirmar nova senha"/>
+                  <TextBox Classes="sg-input" PasswordChar="●"
+                           Text="{Binding SenhaConfirmacao}" Watermark="••••••••"/>
+                </StackPanel>
+
+                <!-- Erro -->
+                <Border IsVisible="{Binding TemErroSeguranca}"
+                        Background="#FFEBEE" CornerRadius="7" Padding="12,8">
+                  <StackPanel Orientation="Horizontal" Spacing="8">
+                    <mi:MaterialIcon Kind="AlertCircleOutline" Width="14" Height="14" Foreground="#E53935"/>
+                    <TextBlock Text="{Binding ErroSeguranca}"
+                               FontSize="12" Foreground="#E53935"
+                               VerticalAlignment="Center"/>
+                  </StackPanel>
+                </Border>
+
+                <!-- Sucesso -->
+                <Border IsVisible="{Binding TemSucessoSeguranca}"
+                        Background="#E8F5E9" CornerRadius="7" Padding="12,8">
+                  <StackPanel Orientation="Horizontal" Spacing="8">
+                    <mi:MaterialIcon Kind="CheckCircleOutline" Width="14" Height="14" Foreground="#43A047"/>
+                    <TextBlock Text="{Binding SucessoSeguranca}"
+                               FontSize="12" Foreground="#43A047"
+                               VerticalAlignment="Center"/>
+                  </StackPanel>
+                </Border>
+
+                <Button Classes="btn-primary" HorizontalAlignment="Right"
+                        Command="{Binding AlterarSenhaCommand}">
+                  <StackPanel Orientation="Horizontal" Spacing="6">
+                    <mi:MaterialIcon Kind="LockReset" Width="14" Height="14"/>
+                    <TextBlock Text="Alterar Senha"/>
+                  </StackPanel>
+                </Button>
+
+              </StackPanel>
+            </Border>
+
+            <!-- Sessões activas -->
+            <Border Classes="sg-card">
+              <StackPanel Spacing="14">
+                <TextBlock Classes="group-title" Text="Sessões Activas"/>
+
+                <ItemsControl ItemsSource="{Binding SessoesActivas}">
+                  <ItemsControl.ItemTemplate>
+                    <DataTemplate x:DataType="vm:SessaoItem">
+                      <Border Padding="0,8" BorderBrush="#F0F2F5" BorderThickness="0,0,0,1">
+                        <Grid ColumnDefinitions="Auto, 12, *, Auto">
+                          <mi:MaterialIcon Grid.Column="0"
+                                           Kind="Monitor" Width="20" Height="20"
+                                           Foreground="#9AA0AB" VerticalAlignment="Center"/>
+                          <StackPanel Grid.Column="2" VerticalAlignment="Center" Spacing="2">
+                            <StackPanel Orientation="Horizontal" Spacing="8">
+                              <TextBlock Text="{Binding Dispositivo}"
+                                         FontSize="12" FontWeight="SemiBold"
+                                         Foreground="#1A2E5A"/>
+                              <Border IsVisible="{Binding IsAtual}"
+                                      Background="#E8F5E9" CornerRadius="4" Padding="6,2">
+                                <TextBlock Text="Sessão actual" FontSize="9"
+                                           Foreground="#2E7D32" FontWeight="SemiBold"/>
+                              </Border>
+                            </StackPanel>
+                            <TextBlock FontSize="11" Foreground="#9AA0AB">
+                              <Run Text="{Binding Localizacao}"/>
+                              <Run Text=" · "/>
+                              <Run Text="{Binding UltimaActividade}"/>
+                            </TextBlock>
+                          </StackPanel>
+                          <Button Grid.Column="3" Classes="btn-danger" Padding="8,5"
+                                  IsVisible="{Binding !IsAtual}"
+                                  Command="{Binding $parent[UserControl].((vm:ConfiguracoesViewModel)DataContext).EncerrarSessaoCommand}"
+                                  CommandParameter="{Binding}">
+                            <TextBlock Text="Encerrar" FontSize="11"/>
+                          </Button>
+                        </Grid>
+                      </Border>
+                    </DataTemplate>
+                  </ItemsControl.ItemTemplate>
+                </ItemsControl>
+
+              </StackPanel>
+            </Border>
+
+          </StackPanel>
+
+          <!-- 2FA + auditoria -->
+          <Border Grid.Column="2" Classes="sg-card">
+            <StackPanel Spacing="16">
+              <TextBlock Classes="group-title" Text="Autenticação e Auditoria"/>
+
+              <!-- 2FA -->
+              <Grid ColumnDefinitions="*, Auto">
+                <StackPanel Grid.Column="0">
+                  <TextBlock Classes="toggle-label" Text="Autenticação de dois factores (2FA)"/>
+                  <TextBlock Classes="toggle-sub"   Text="Código OTP por SMS ou app autenticador"/>
+                </StackPanel>
+                <ToggleSwitch Grid.Column="1" IsChecked="{Binding DoisFatoresAtivo}"
+                              OffContent="" OnContent="" VerticalAlignment="Center"/>
+              </Grid>
+
+              <Border IsVisible="{Binding DoisFatoresAtivo}"
+                      Background="#E3F2FD" CornerRadius="7" Padding="12,10">
+                <StackPanel Spacing="6">
+                  <TextBlock Text="2FA activado" FontSize="12" FontWeight="SemiBold"
+                             Foreground="#1565C0"/>
+                  <TextBlock Text="Será pedido um código OTP no próximo início de sessão."
+                             FontSize="11" Foreground="#1565C0" TextWrapping="Wrap"/>
+                </StackPanel>
+              </Border>
+
+              <Border Classes="sep" Margin="0,0"/>
+
+              <!-- Tempo de sessão -->
+              <StackPanel Spacing="4">
+                <TextBlock Classes="field-label" Text="Tempo de inactividade até expirar sessão"/>
+                <ComboBox Classes="sg-combo" SelectedIndex="{Binding SessaoTempomins}">
+                  <ComboBoxItem Content="15 minutos"/>
+                  <ComboBoxItem Content="30 minutos"/>
+                  <ComboBoxItem Content="1 hora"/>
+                  <ComboBoxItem Content="4 horas"/>
+                  <ComboBoxItem Content="Nunca expirar"/>
+                </ComboBox>
+              </StackPanel>
+
+              <Border Classes="sep" Margin="0,0"/>
+
+              <!-- Registo de auditoria -->
+              <Grid ColumnDefinitions="*, Auto">
+                <StackPanel Grid.Column="0">
+                  <TextBlock Classes="toggle-label" Text="Registo de auditoria"/>
+                  <TextBlock Classes="toggle-sub"   Text="Guardar histórico de todas as acções"/>
+                </StackPanel>
+                <ToggleSwitch Grid.Column="1" IsChecked="{Binding RegistarAuditoria}"
+                              OffContent="" OnContent="" VerticalAlignment="Center"/>
+              </Grid>
+
+              <Button Classes="btn-primary" HorizontalAlignment="Right"
+                      Command="{Binding SalvarSegurancaCommand}">
+                <StackPanel Orientation="Horizontal" Spacing="6">
+                  <mi:MaterialIcon Kind="ContentSave" Width="14" Height="14"/>
+                  <TextBlock Text="Guardar"/>
+                </StackPanel>
+              </Button>
+
+            </StackPanel>
+          </Border>
+
+        </Grid>
+
+        <!-- ────────────────────────────────────────────────────────
+             TAB 5 · API / INTEGRAÇÃO
+             ──────────────────────────────────────────────────────── -->
+        <Grid ColumnDefinitions="*, 20, *"
+              IsVisible="{Binding TabIndex, Converter={x:Static vm:TabEqualConverter.Instance}, ConverterParameter=5}">
+
+          <!-- Configuração de ligação -->
+          <Border Grid.Column="0" Classes="sg-card">
+            <StackPanel Spacing="16">
+              <TextBlock Classes="group-title" Text="Ligação ao Backend"/>
+
+              <StackPanel Spacing="4">
+                <TextBlock Classes="field-label" Text="URL base da API"/>
+                <TextBox Classes="sg-input" Text="{Binding ApiBaseUrl}"
+                         Watermark="https://api.smartgest.ao/v1"/>
+              </StackPanel>
+
+              <StackPanel Spacing="4">
+                <TextBlock Classes="field-label" Text="Chave de API (API Key)"/>
+                <Grid ColumnDefinitions="*, 8, Auto">
+                  <TextBox Grid.Column="0" Classes="sg-input"
+                           Text="{Binding ApiKey}" IsReadOnly="True"
+                           FontFamily="Monospace" FontSize="12"/>
+                  <Button Grid.Column="2" Classes="btn-outline" Padding="10,8"
+                          Command="{Binding ToggleApiKeyCommand}">
+                    <mi:MaterialIcon Kind="EyeOutline" Width="14" Height="14"/>
+                  </Button>
+                </Grid>
+              </StackPanel>
+
+              <StackPanel Spacing="4">
+                <TextBlock Classes="field-label" Text="Timeout dos pedidos"/>
+                <ComboBox Classes="sg-combo" SelectedIndex="{Binding TimeoutIndex}">
+                  <ComboBoxItem Content="10 segundos"/>
+                  <ComboBoxItem Content="30 segundos"/>
+                  <ComboBoxItem Content="60 segundos"/>
+                </ComboBox>
+              </StackPanel>
+
+              <Border Classes="sep" Margin="0,0"/>
+
+              <Grid ColumnDefinitions="*, Auto">
+                <StackPanel Grid.Column="0">
+                  <TextBlock Classes="toggle-label" Text="Forçar HTTPS / TLS"/>
+                  <TextBlock Classes="toggle-sub"   Text="Rejeitar ligações sem certificado válido"/>
+                </StackPanel>
+                <ToggleSwitch Grid.Column="1" IsChecked="{Binding TlsAtivado}"
+                              OffContent="" OnContent="" VerticalAlignment="Center"/>
+              </Grid>
+
+              <Grid ColumnDefinitions="*, Auto">
+                <StackPanel Grid.Column="0">
+                  <TextBlock Classes="toggle-label" Text="Retry automático"/>
+                  <TextBlock Classes="toggle-sub"   Text="Retentar pedidos falhados até 3 vezes"/>
+                </StackPanel>
+                <ToggleSwitch Grid.Column="1" IsChecked="{Binding RetryAtivado}"
+                              OffContent="" OnContent="" VerticalAlignment="Center"/>
+              </Grid>
+
+              <Border Classes="sep" Margin="0,0"/>
+
+              <!-- Estado da ligação -->
+              <Border Background="{Binding FundoEstadoConexao}"
+                      CornerRadius="7" Padding="14,10">
+                <Grid ColumnDefinitions="Auto, 8, *, Auto">
+                  <mi:MaterialIcon Grid.Column="0" Kind="Circle"
+                                   Width="10" Height="10"
+                                   Foreground="{Binding CorEstadoConexao}"
+                                   VerticalAlignment="Center"/>
+                  <TextBlock Grid.Column="2"
+                             Text="{Binding EstadoConexao}"
+                             FontSize="12" FontWeight="SemiBold"
+                             Foreground="{Binding CorEstadoConexao}"
+                             VerticalAlignment="Center"/>
+                  <Button Grid.Column="3" Classes="btn-outline" Padding="10,6"
+                          Command="{Binding TestarConexaoCommand}">
+                    <StackPanel Orientation="Horizontal" Spacing="5">
+                      <mi:MaterialIcon Kind="Refresh" Width="12" Height="12"/>
+                      <TextBlock Text="Testar" FontSize="11"/>
+                    </StackPanel>
+                  </Button>
+                </Grid>
+              </Border>
+
+              <Button Classes="btn-primary" HorizontalAlignment="Right"
+                      Command="{Binding SalvarApiCommand}">
+                <StackPanel Orientation="Horizontal" Spacing="6">
+                  <mi:MaterialIcon Kind="ContentSave" Width="14" Height="14"/>
+                  <TextBlock Text="Guardar"/>
+                </StackPanel>
+              </Button>
+
+            </StackPanel>
+          </Border>
+
+          <!-- Webhooks -->
+          <Border Grid.Column="2" Classes="sg-card">
+            <StackPanel Spacing="14">
+              <Grid ColumnDefinitions="*, Auto">
+                <TextBlock Grid.Column="0" Classes="group-title" Margin="0"
+                           Text="Webhooks"/>
+                <Button Grid.Column="1" Classes="btn-outline" Padding="10,6"
+                        Command="{Binding AdicionarWebhookCommand}">
+                  <StackPanel Orientation="Horizontal" Spacing="5">
+                    <mi:MaterialIcon Kind="Plus" Width="12" Height="12"/>
+                    <TextBlock Text="Adicionar" FontSize="11"/>
+                  </StackPanel>
+                </Button>
+              </Grid>
+
+              <TextBlock Text="Envie eventos da aplicação para URLs externas (n8n, Zapier, etc.)"
+                         FontSize="11" Foreground="#9AA0AB" TextWrapping="Wrap"
+                         Margin="0,0,0,8"/>
+
+              <ItemsControl ItemsSource="{Binding Webhooks}">
+                <ItemsControl.ItemTemplate>
+                  <DataTemplate x:DataType="vm:WebhookItem">
+                    <Border Padding="12" Background="#F9FAFC" CornerRadius="7"
+                            Margin="0,0,0,8">
+                      <StackPanel Spacing="8">
+                        <Grid ColumnDefinitions="*, Auto">
+                          <TextBlock Grid.Column="0"
+                                     Text="{Binding Evento}"
+                                     FontSize="12" FontWeight="SemiBold"
+                                     Foreground="#1A2E5A"/>
+                          <Button Grid.Column="1" Classes="btn-danger" Padding="6"
+                                  Command="{Binding $parent[UserControl].((vm:ConfiguracoesViewModel)DataContext).RemoverWebhookCommand}"
+                                  CommandParameter="{Binding}">
+                            <mi:MaterialIcon Kind="DeleteOutline" Width="12" Height="12"/>
+                          </Button>
+                        </Grid>
+                        <TextBox Classes="sg-input" Text="{Binding Url}"
+                                 Watermark="https://hooks.exemplo.io/webhook/..."
+                                 FontFamily="Monospace" FontSize="11"/>
+                      </StackPanel>
+                    </Border>
+                  </DataTemplate>
+                </ItemsControl.ItemTemplate>
+              </ItemsControl>
+
+            </StackPanel>
+          </Border>
+
+        </Grid>
+
+      </Panel>
+    </ScrollViewer>
+
+  </DockPanel>
+</UserControl>
