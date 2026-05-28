@@ -1,3 +1,11 @@
+/home/weber/projects/SmartGest/SmartGest.Desktop/obj/Debug/net10.0/SmartGest.Desktop.csproj.AssemblyReference.cache
+/home/weber/projects/SmartGest/SmartGest.Desktop/obj/Debug/net10.0/Avalonia/Resources.Inputs.cache
+/home/weber/projects/SmartGest/SmartGest.Desktop/obj/Debug/net10.0/Avalonia/resources
+/home/weber/projects/SmartGest/SmartGest.Desktop/obj/Debug/net10.0/SmartGest.Desktop.GeneratedMSBuildEditorConfig.editorconfig
+/home/weber/projects/SmartGest/SmartGest.Desktop/obj/Debug/net10.0/SmartGest.Desktop.AssemblyInfoInputs.cache
+/home/weber/projects/SmartGest/SmartGest.Desktop/obj/Debug/net10.0/SmartGest.Desktop.AssemblyInfo.cs
+/home/weber/projects/SmartGest/SmartGest.Desktop/obj/Debug/net10.0/SmartGest.Desktop.csproj.CoreCompileInputs.cache
+/home/weber/projects/SmartGest/SmartGest.Desktop/obj/Debug/net10.0/SmartGest.Desktop.sourcelink.json
 /home/weber/projects/SmartGest/SmartGest.Desktop/bin/Debug/net10.0/SmartGest.Desktop
 /home/weber/projects/SmartGest/SmartGest.Desktop/bin/Debug/net10.0/SmartGest.Desktop.deps.json
 /home/weber/projects/SmartGest/SmartGest.Desktop/bin/Debug/net10.0/SmartGest.Desktop.runtimeconfig.json
@@ -33,6 +41,8 @@
 /home/weber/projects/SmartGest/SmartGest.Desktop/bin/Debug/net10.0/Material.Icons.dll
 /home/weber/projects/SmartGest/SmartGest.Desktop/bin/Debug/net10.0/Material.Icons.Avalonia.dll
 /home/weber/projects/SmartGest/SmartGest.Desktop/bin/Debug/net10.0/MicroCom.Runtime.dll
+/home/weber/projects/SmartGest/SmartGest.Desktop/bin/Debug/net10.0/Microsoft.Extensions.DependencyInjection.dll
+/home/weber/projects/SmartGest/SmartGest.Desktop/bin/Debug/net10.0/Microsoft.Extensions.DependencyInjection.Abstractions.dll
 /home/weber/projects/SmartGest/SmartGest.Desktop/bin/Debug/net10.0/SkiaSharp.dll
 /home/weber/projects/SmartGest/SmartGest.Desktop/bin/Debug/net10.0/SkiaSharp.HarfBuzz.dll
 /home/weber/projects/SmartGest/SmartGest.Desktop/bin/Debug/net10.0/Tmds.DBus.Protocol.dll
@@ -58,14 +68,6 @@
 /home/weber/projects/SmartGest/SmartGest.Desktop/bin/Debug/net10.0/runtimes/win-x86/native/libSkiaSharp.dll
 /home/weber/projects/SmartGest/SmartGest.Desktop/bin/Debug/net10.0/SmartGest.Core.dll
 /home/weber/projects/SmartGest/SmartGest.Desktop/bin/Debug/net10.0/SmartGest.Core.pdb
-/home/weber/projects/SmartGest/SmartGest.Desktop/obj/Debug/net10.0/SmartGest.Desktop.csproj.AssemblyReference.cache
-/home/weber/projects/SmartGest/SmartGest.Desktop/obj/Debug/net10.0/Avalonia/Resources.Inputs.cache
-/home/weber/projects/SmartGest/SmartGest.Desktop/obj/Debug/net10.0/Avalonia/resources
-/home/weber/projects/SmartGest/SmartGest.Desktop/obj/Debug/net10.0/SmartGest.Desktop.GeneratedMSBuildEditorConfig.editorconfig
-/home/weber/projects/SmartGest/SmartGest.Desktop/obj/Debug/net10.0/SmartGest.Desktop.AssemblyInfoInputs.cache
-/home/weber/projects/SmartGest/SmartGest.Desktop/obj/Debug/net10.0/SmartGest.Desktop.AssemblyInfo.cs
-/home/weber/projects/SmartGest/SmartGest.Desktop/obj/Debug/net10.0/SmartGest.Desktop.csproj.CoreCompileInputs.cache
-/home/weber/projects/SmartGest/SmartGest.Desktop/obj/Debug/net10.0/SmartGest.Desktop.sourcelink.json
 /home/weber/projects/SmartGest/SmartGest.Desktop/obj/Debug/net10.0/SmartGes.3DDC1362.Up2Date
 /home/weber/projects/SmartGest/SmartGest.Desktop/obj/Debug/net10.0/SmartGest.Desktop.dll
 /home/weber/projects/SmartGest/SmartGest.Desktop/obj/Debug/net10.0/refint/SmartGest.Desktop.dll

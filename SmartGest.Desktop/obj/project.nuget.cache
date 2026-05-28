@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "JSvbYSLJxHc=",
+  "dgSpecHash": "p250SWpMCok=",
   "success": true,
   "projectFilePath": "/home/weber/projects/SmartGest/SmartGest.Desktop/SmartGest.Desktop.csproj",
   "expectedPackageFiles": [
@@ -29,6 +29,8 @@
     "/home/weber/.nuget/packages/material.icons/2.1.0/material.icons.2.1.0.nupkg.sha512",
     "/home/weber/.nuget/packages/material.icons.avalonia/2.1.0/material.icons.avalonia.2.1.0.nupkg.sha512",
     "/home/weber/.nuget/packages/microcom.runtime/0.11.0/microcom.runtime.0.11.0.nupkg.sha512",
+    "/home/weber/.nuget/packages/microsoft.extensions.dependencyinjection/10.0.8/microsoft.extensions.dependencyinjection.10.0.8.nupkg.sha512",
+    "/home/weber/.nuget/packages/microsoft.extensions.dependencyinjection.abstractions/10.0.8/microsoft.extensions.dependencyinjection.abstractions.10.0.8.nupkg.sha512",
     "/home/weber/.nuget/packages/skiasharp/2.88.9/skiasharp.2.88.9.nupkg.sha512",
     "/home/weber/.nuget/packages/skiasharp.harfbuzz/2.88.8/skiasharp.harfbuzz.2.88.8.nupkg.sha512",
     "/home/weber/.nuget/packages/skiasharp.nativeassets.linux/2.88.9/skiasharp.nativeassets.linux.2.88.9.nupkg.sha512",

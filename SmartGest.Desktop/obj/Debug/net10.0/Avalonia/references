@@ -29,6 +29,8 @@
 /home/weber/.nuget/packages/material.icons/2.1.0/lib/netstandard2.0/Material.Icons.dll
 /home/weber/.nuget/packages/microcom.runtime/0.11.0/lib/net5.0/MicroCom.Runtime.dll
 /home/weber/.dotnet/packs/Microsoft.NETCore.App.Ref/10.0.7/ref/net10.0/Microsoft.CSharp.dll
+/home/weber/.nuget/packages/microsoft.extensions.dependencyinjection.abstractions/10.0.8/lib/net10.0/Microsoft.Extensions.DependencyInjection.Abstractions.dll
+/home/weber/.nuget/packages/microsoft.extensions.dependencyinjection/10.0.8/lib/net10.0/Microsoft.Extensions.DependencyInjection.dll
 /home/weber/.dotnet/packs/Microsoft.NETCore.App.Ref/10.0.7/ref/net10.0/Microsoft.VisualBasic.Core.dll
 /home/weber/.dotnet/packs/Microsoft.NETCore.App.Ref/10.0.7/ref/net10.0/Microsoft.VisualBasic.dll
 /home/weber/.dotnet/packs/Microsoft.NETCore.App.Ref/10.0.7/ref/net10.0/Microsoft.Win32.Primitives.dll

@@ -1,27 +1,35 @@
 using System;
 using System.Collections.ObjectModel;
+using System.Globalization;
 using System.IO;
+using System.Net;
+using System.Net.Http;
 using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Platform.Storage;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using SmartGest.Desktop.Services;
 
 namespace SmartGest.Desktop.ViewModels;
 
 public partial class NovoLancamentoViewModel : ViewModelBase
 {
-    // ── Evento de fecho do modal ──────────────────────────────────────────────
-    public event Action? DialogClosed;
+    // ── Dependências ─────────────────────────────────────────────────────────
+    private readonly LancamentoService      _lancamentoSvc;
+    private readonly ContasBancariasService _contasSvc;
 
-    // ── Referência à Window (injectada pelo code-behind para o file picker) ───
+    // ── Eventos ───────────────────────────────────────────────────────────────
+    public event Action? DialogClosed;
+    public event Action<LancamentoService.LancamentoResponse>? LancamentoCriado;
+
+    // ── Owner (para o file picker) ────────────────────────────────────────────
     public Window? OwnerWindow { get; set; }
 
     // ════════════════════════════════════════════════════════════════════════
     // SECÇÃO 1 · MOVIMENTO
     // ════════════════════════════════════════════════════════════════════════
 
-    /// <summary>0 = Entrada · 1 = Saída</summary>
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(IsEntrada))]
     [NotifyPropertyChangedFor(nameof(IsSaida))]
@@ -34,56 +42,37 @@ public partial class NovoLancamentoViewModel : ViewModelBase
     public bool IsEntrada => TipoMovimento == 0;
     public bool IsSaida   => TipoMovimento == 1;
 
-    // Cores reactivas dos botões de tipo
-    public string CorEntrada         => IsEntrada ? "#43A047" : "#A0A9B8";
-    public string CorSaida           => IsSaida   ? "#E53935" : "#A0A9B8";
+    public string CorEntrada          => IsEntrada ? "#43A047" : "#A0A9B8";
+    public string CorSaida            => IsSaida   ? "#E53935" : "#A0A9B8";
     public string FundoCirculoEntrada => IsEntrada ? "#D4EDDA" : "#EEF2F7";
     public string FundoCirculoSaida   => IsSaida   ? "#FDECEA" : "#EEF2F7";
 
-    [ObservableProperty] private string          _valor        = string.Empty;
-    [ObservableProperty] private DateTimeOffset? _dataMovimento = DateTimeOffset.Now;
-    [ObservableProperty] private string          _descricao    = string.Empty;
+    [ObservableProperty] private string          _valor          = string.Empty;
+    [ObservableProperty] private DateTimeOffset? _dataMovimento  = DateTimeOffset.Now;
+    [ObservableProperty] private string          _descricao      = string.Empty;
     [ObservableProperty] private int             _categoriaIndex = -1;
 
     public ObservableCollection<string> Categorias { get; } = new()
     {
-        "Venda de produto",
-        "Recebimento de cliente",
-        "Adiantamento recebido",
-        "Compra de matéria-prima",
-        "Material de Escritório",
-        "Despesas gerais",
-        "Pagamento de salários",
-        "Pagamento a fornecedor",
-        "Encargos bancários",
-        "Outros",
+        "Venda de produto", "Recebimento de cliente", "Adiantamento recebido",
+        "Compra de matéria-prima", "Material de Escritório", "Despesas gerais",
+        "Pagamento de salários", "Pagamento a fornecedor", "Encargos bancários", "Outros",
     };
 
     // ════════════════════════════════════════════════════════════════════════
     // SECÇÃO 2 · FINANCEIRO
     // ════════════════════════════════════════════════════════════════════════
 
-    [ObservableProperty] private int    _contaOrigemIndex      = -1;
-    [ObservableProperty] private int    _metodoPagamentoIndex  = -1;
-    [ObservableProperty] private string _beneficiario          = string.Empty;
+    [ObservableProperty] private int    _contaOrigemIndex     = -1;
+    [ObservableProperty] private int    _metodoPagamentoIndex = -1;
+    [ObservableProperty] private string _beneficiario         = string.Empty;
 
-    public ObservableCollection<string> ContasOrigem { get; } = new()
-    {
-        "BAI - Conta Corrente  ·  Saldo: 2.450.000 Kz",
-        "BPC - Conta Poupança  ·  Saldo: 800.000 Kz",
-        "ATL 021               ·  Saldo: 320.000 Kz",
-        "Caixa Física          ·  Saldo: 150.000 Kz",
-    };
+    public ObservableCollection<ContaItemVm> ContasOrigem { get; } = new();
 
     public ObservableCollection<string> MetodosPagamento { get; } = new()
     {
-        "Transferência Bancária",
-        "Multicaixa / TPA",
-        "Numerário (Dinheiro)",
-        "Cheque",
+        "Transferência Bancária", "Multicaixa / TPA", "Numerário (Dinheiro)", "Cheque",
     };
-
-    // ── Documento / Recibo (file picker) ─────────────────────────────────────
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(TemDocumento))]
@@ -94,27 +83,20 @@ public partial class NovoLancamentoViewModel : ViewModelBase
     private string _caminhoDocumento = string.Empty;
 
     public bool   TemDocumento  => !string.IsNullOrEmpty(CaminhoDocumento);
-    public string NomeDocumento => TemDocumento
-        ? Path.GetFileName(CaminhoDocumento)
-        : "Clique para seleccionar ficheiro…";
+    public string NomeDocumento => TemDocumento ? Path.GetFileName(CaminhoDocumento) : "Clique para seleccionar ficheiro…";
     public string InfoDocumento => TemDocumento
         ? $"{FormatarTamanho(new FileInfo(CaminhoDocumento).Length)}  ·  {Path.GetExtension(CaminhoDocumento).ToUpper().TrimStart('.')}"
         : string.Empty;
-    public string CorBordaDoc   => TemDocumento ? "#1A73E8" : "#DDE3EE";
-    public string CorTextoDoc   => TemDocumento ? "#1A2E5A" : "#A0A9B8";
-
-    private static string FormatarTamanho(long bytes) =>
-        bytes >= 1_048_576 ? $"{bytes / 1_048_576.0:F1} MB"
-        : bytes >= 1_024   ? $"{bytes / 1_024.0:F0} KB"
-        : $"{bytes} B";
+    public string CorBordaDoc => TemDocumento ? "#1A73E8" : "#DDE3EE";
+    public string CorTextoDoc => TemDocumento ? "#1A2E5A" : "#A0A9B8";
 
     // ════════════════════════════════════════════════════════════════════════
     // SECÇÃO 3 · EXTRAS
     // ════════════════════════════════════════════════════════════════════════
 
-    [ObservableProperty] private string _observacoes      = string.Empty;
-    [ObservableProperty] private string _contadorObs      = "0 / 500";
-    [ObservableProperty] private int    _centroCustoIndex = -1;
+    [ObservableProperty] private string _observacoes       = string.Empty;
+    [ObservableProperty] private string _contadorObs       = "0 / 500";
+    [ObservableProperty] private int    _centroCustoIndex  = -1;
     [ObservableProperty] private string _referenciaInterna = string.Empty;
 
     partial void OnObservacoesChanged(string value)
@@ -122,49 +104,109 @@ public partial class NovoLancamentoViewModel : ViewModelBase
 
     public ObservableCollection<string> CentrosCusto { get; } = new()
     {
-        "Administração Geral",
-        "Comercial / Vendas",
-        "Produção / Operações",
-        "Logística",
-        "Recursos Humanos",
-        "Tecnologia & Sistemas",
-        "Marketing",
+        "Administração Geral", "Comercial / Vendas", "Produção / Operações",
+        "Logística", "Recursos Humanos", "Tecnologia & Sistemas", "Marketing",
     };
 
     // ════════════════════════════════════════════════════════════════════════
-    // VALIDAÇÃO / ESTADO
+    // ESTADO
     // ════════════════════════════════════════════════════════════════════════
 
-    [ObservableProperty] private string _erroMensagem = string.Empty;
-    [ObservableProperty] private bool   _temErro       = false;
-    [ObservableProperty] private bool   _isLoading     = false;
+    [ObservableProperty] private string _erroMensagem     = string.Empty;
+    [ObservableProperty] private bool   _temErro          = false;
+    [ObservableProperty] private bool   _isLoading        = false;
+    [ObservableProperty] private bool   _contasCarregando = false;
+    [ObservableProperty] private string _erroCarregamento = string.Empty;
+
+    // ── Estado de sucesso ─────────────────────────────────────────────────────
+    /// <summary>
+    /// Activado após o lançamento ser guardado com sucesso.
+    /// O XAML usa este flag para mostrar o banner verde e esconder
+    /// o formulário ou os botões de acção.
+    /// O modal fecha-se automaticamente 1,5 s depois via DialogClosed.
+    /// </summary>
+    [ObservableProperty] private bool   _isSucesso        = false;
+    [ObservableProperty] private string _sucessoMensagem  = string.Empty;
+
+    // ════════════════════════════════════════════════════════════════════════
+    // CONSTRUTORES
+    // ════════════════════════════════════════════════════════════════════════
+
+    /// <summary>Construtor principal — injectado pelo DI em produção.</summary>
+    public NovoLancamentoViewModel(
+        LancamentoService      lancamentoSvc,
+        ContasBancariasService contasSvc)
+    {
+        _lancamentoSvc = lancamentoSvc;
+        _contasSvc     = contasSvc;
+        _ = CarregarContasAsync();
+    }
+
+    /// <summary>
+    /// Construtor sem parâmetros — APENAS para o Avalonia Designer.
+    /// Em produção NUNCA é chamado; o DI resolve sempre o construtor acima.
+    /// </summary>
+    public NovoLancamentoViewModel()
+    {
+        var stubStore = new TokenStore();
+        var stubApi   = new ApiClient(stubStore);
+        _lancamentoSvc = new LancamentoService(stubApi);
+        _contasSvc     = new ContasBancariasService(stubApi);
+
+        ContasOrigem.Add(new ContaItemVm(1, "Banco BIC  ·  4.820.000 Kzs"));
+        ContasOrigem.Add(new ContaItemVm(2, "Banco BAI  ·  3.150.000 Kzs"));
+        ContasOrigem.Add(new ContaItemVm(3, "Banco BPC  ·  2.980.000 Kzs"));
+    }
+
+    // ════════════════════════════════════════════════════════════════════════
+    // CARREGAMENTO
+    // ════════════════════════════════════════════════════════════════════════
+
+    private async Task CarregarContasAsync()
+    {
+        ContasCarregando = true;
+        ErroCarregamento = string.Empty;
+        try
+        {
+            var resp = await _contasSvc.ListarAsync();
+            ContasOrigem.Clear();
+            foreach (var c in resp?.Contas ?? new())
+                ContasOrigem.Add(new ContaItemVm(c.Id, $"{c.Banco}  ·  {c.SaldoAtual:N0} {c.Moeda}"));
+        }
+        catch (Exception ex)
+        {
+            ErroCarregamento = $"Não foi possível carregar as contas: {ex.Message}";
+        }
+        finally
+        {
+            ContasCarregando = false;
+        }
+    }
 
     // ════════════════════════════════════════════════════════════════════════
     // COMANDOS
     // ════════════════════════════════════════════════════════════════════════
 
     [RelayCommand]
-    private void SelecionarTipo(string tipo)
-        => TipoMovimento = tipo == "Saida" ? 1 : 0;
+    private void SelecionarTipo(string tipo) => TipoMovimento = tipo == "Saida" ? 1 : 0;
 
     [RelayCommand]
     private async Task EscolherDocumentoAsync()
     {
         if (OwnerWindow is null) return;
-
         var topLevel = TopLevel.GetTopLevel(OwnerWindow);
         if (topLevel is null) return;
 
         var ficheiros = await topLevel.StorageProvider.OpenFilePickerAsync(
             new FilePickerOpenOptions
             {
-                Title          = "Seleccionar Documento / Recibo",
-                AllowMultiple  = false,
+                Title         = "Seleccionar Documento / Recibo",
+                AllowMultiple = false,
                 FileTypeFilter = new[]
                 {
                     new FilePickerFileType("Documentos")
                     {
-                        Patterns = new[] { "*.pdf", "*.jpg", "*.jpeg", "*.png" },
+                        Patterns  = new[] { "*.pdf", "*.jpg", "*.jpeg", "*.png" },
                         MimeTypes = new[] { "application/pdf", "image/jpeg", "image/png" }
                     },
                     FilePickerFileTypes.All
@@ -178,17 +220,27 @@ public partial class NovoLancamentoViewModel : ViewModelBase
     [RelayCommand]
     private void LimparDocumento() => CaminhoDocumento = string.Empty;
 
-    [RelayCommand]
+    /// <summary>
+    /// Cancela e fecha o modal.
+    /// Só permitido quando não está a guardar nem a mostrar o banner de sucesso.
+    /// </summary>
+    [RelayCommand(CanExecute = nameof(PodeCancelar))]
     private void Cancelar() => DialogClosed?.Invoke();
+
+    private bool PodeCancelar() => !IsLoading;
 
     [RelayCommand]
     private async Task SalvarLancamentoAsync()
     {
-        TemErro = false;
+        TemErro      = false;
         ErroMensagem = string.Empty;
 
+        // ── Validações ────────────────────────────────────────────────────────
         if (string.IsNullOrWhiteSpace(Valor))
         { SetErro("O campo Valor é obrigatório."); return; }
+
+        if (!TryParseValor(Valor, out decimal valorDecimal) || valorDecimal <= 0)
+        { SetErro("Valor inválido. Use apenas números (ex: 150000)."); return; }
 
         if (string.IsNullOrWhiteSpace(Descricao))
         { SetErro("O campo Descrição / Histórico é obrigatório."); return; }
@@ -202,16 +254,57 @@ public partial class NovoLancamentoViewModel : ViewModelBase
         if (MetodoPagamentoIndex < 0)
         { SetErro("Seleccione o Método de Pagamento."); return; }
 
+        // ── Envio ─────────────────────────────────────────────────────────────
         IsLoading = true;
         try
         {
-            // TODO: persistir via repositório / API
-            await Task.Delay(800);
+            int? contaId = ContaOrigemIndex >= 0 && ContaOrigemIndex < ContasOrigem.Count
+                ? ContasOrigem[ContaOrigemIndex].Id
+                : null;
+
+            var req = new LancamentoService.LancamentoRequest(
+                Data:              DataMovimento?.DateTime ?? DateTime.Today,
+                Descricao:         Descricao.Trim(),
+                Categoria:         CategoriaIndex >= 0 ? Categorias[CategoriaIndex] : string.Empty,
+                Tipo:              IsEntrada ? "Entrada" : "Saída",
+                Valor:             valorDecimal,
+                Beneficiario:      Beneficiario.Trim(),
+                MetodoPagamento:   MetodoPagamentoIndex >= 0 ? MetodosPagamento[MetodoPagamentoIndex] : string.Empty,
+                CaminhoDocumento:  CaminhoDocumento,
+                Observacoes:       Observacoes.Length > 500 ? Observacoes[..500] : Observacoes,
+                CentroCusto:       CentroCustoIndex >= 0 ? CentrosCusto[CentroCustoIndex] : string.Empty,
+                ReferenciaInterna: ReferenciaInterna.Trim(),
+                ContaBancariaId:   contaId);
+
+            var criado = await _lancamentoSvc.CriarAsync(req);
+
+            // ── Sucesso: mostra banner e fecha o modal após 1,5 s ─────────────
+            SucessoMensagem = $"Lançamento #{criado.Id} guardado com sucesso!";
+            IsSucesso       = true;
+            LancamentoCriado?.Invoke(criado);
+
+            await Task.Delay(1500);
             DialogClosed?.Invoke();
+        }
+        catch (ApiException ex) when (ex.StatusCode == HttpStatusCode.Unauthorized)
+        {
+            SetErro("Sessão expirada. Por favor, inicie sessão novamente.");
+        }
+        catch (ApiException ex) when (ex.StatusCode == HttpStatusCode.BadRequest)
+        {
+            SetErro($"Dados inválidos: {ex.Message}");
+        }
+        catch (ApiException ex)
+        {
+            SetErro($"Erro da API ({(int)ex.StatusCode}): {ex.Message}");
+        }
+        catch (HttpRequestException)
+        {
+            SetErro($"Sem ligação à API ({ApiClient.BaseUrl}). Verifique o servidor.");
         }
         catch (Exception ex)
         {
-            SetErro($"Erro ao guardar: {ex.Message}");
+            SetErro($"Erro inesperado: {ex.Message}");
         }
         finally
         {
@@ -219,6 +312,37 @@ public partial class NovoLancamentoViewModel : ViewModelBase
         }
     }
 
-    // ── Helpers ──────────────────────────────────────────────────────────────
+    // ── Helpers ───────────────────────────────────────────────────────────────
+
     private void SetErro(string msg) { ErroMensagem = msg; TemErro = true; }
+
+    private static bool TryParseValor(string input, out decimal result)
+    {
+        var limpo = input.Trim().Replace(" ", "");
+
+        if (decimal.TryParse(limpo, NumberStyles.Any,
+            CultureInfo.GetCultureInfo("pt-PT"), out result) && result > 0)
+            return true;
+
+        if (decimal.TryParse(limpo, NumberStyles.Any,
+            CultureInfo.InvariantCulture, out result) && result > 0)
+            return true;
+
+        if (decimal.TryParse(limpo.Replace(".", "").Replace(",", ""),
+            out result) && result > 0)
+            return true;
+
+        return false;
+    }
+
+    private static string FormatarTamanho(long bytes) =>
+        bytes >= 1_048_576 ? $"{bytes / 1_048_576.0:F1} MB"
+        : bytes >= 1_024   ? $"{bytes / 1_024.0:F0} KB"
+        : $"{bytes} B";
+}
+
+// ── DTO interno ───────────────────────────────────────────────────────────────
+public record ContaItemVm(int Id, string Label)
+{
+    public override string ToString() => Label;
 }

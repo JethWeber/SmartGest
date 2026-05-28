@@ -222,6 +222,29 @@
           </StackPanel>
         </Border>
 
+        <!-- Banner de sucesso — visível após guardar com êxito -->
+        <Border IsVisible="{Binding IsSucesso}"
+                Background="#F0FBF1"
+                CornerRadius="8"
+                Padding="16,12"
+                Margin="0,0,0,12"
+                BorderBrush="#A5D6A7"
+                BorderThickness="1">
+          <StackPanel Orientation="Horizontal" Spacing="12">
+            <mi:MaterialIcon Kind="CheckCircle"
+                             Width="22" Height="22"
+                             Foreground="#2E7D32"
+                             VerticalAlignment="Center"/>
+            <StackPanel VerticalAlignment="Center" Spacing="2">
+              <TextBlock Text="{Binding SucessoMensagem}"
+                         FontSize="13" FontWeight="Bold"
+                         Foreground="#1B5E20"/>
+              <TextBlock Text="O modal fechará automaticamente…"
+                         FontSize="11" Foreground="#388E3C"/>
+            </StackPanel>
+          </StackPanel>
+        </Border>
+
         <!-- ══ SECÇÃO 1 · MOVIMENTO ═══════════════════════════════════ -->
         <Border Classes="secao">
           <StackPanel Spacing="18">
@@ -560,7 +583,7 @@
                    FontSize="11" Foreground="#A0A9B8"
                    VerticalAlignment="Center"/>
 
-        <!-- Spinner de carregamento -->
+        <!-- Spinner de carregamento (visível só durante o envio) -->
         <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8"
                     HorizontalAlignment="Center"
                     VerticalAlignment="Center"
@@ -573,8 +596,9 @@
                      VerticalAlignment="Center"/>
         </StackPanel>
 
-        <!-- Botões -->
-        <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="10">
+        <!-- Botões (ocultados após sucesso para evitar duplo clique) -->
+        <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="10"
+                    IsVisible="{Binding !IsSucesso}">
           <Button Classes="btn-ghost"
                   Command="{Binding CancelarCommand}"
                   IsEnabled="{Binding !IsLoading}">

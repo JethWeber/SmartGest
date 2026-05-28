@@ -1,3 +1,6 @@
+# autenticaçao
+athuGitHub.txt
+
 # Build outputs
 bin/
 obj/
@@ -8,6 +11,11 @@ obj/
 .vs/
 .vscode/
 .idea/
+
+#banco de dados
+*.db
+*.db-shm
+*.db-wal
 
 # NuGet
 *.nupkg

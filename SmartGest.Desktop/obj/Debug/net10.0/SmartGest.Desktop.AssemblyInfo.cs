@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("SmartGest.Desktop")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+06a277a1e34642eb8619913334858568b28854d1")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+22f92eb9c9e36315ecf5816248ae741e1cb37a72")]
 [assembly: System.Reflection.AssemblyProductAttribute("SmartGest.Desktop")]
 [assembly: System.Reflection.AssemblyTitleAttribute("SmartGest.Desktop")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
