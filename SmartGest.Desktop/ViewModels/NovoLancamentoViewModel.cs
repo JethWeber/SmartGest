@@ -2,6 +2,7 @@ using System;
 using System.Collections.ObjectModel;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -15,9 +16,10 @@ namespace SmartGest.Desktop.ViewModels;
 
 public partial class NovoLancamentoViewModel : ViewModelBase
 {
-    // ── Dependências ─────────────────────────────────────────────────────────
+    // ── Dependências ──────────────────────────────────────────────────────────
     private readonly LancamentoService      _lancamentoSvc;
     private readonly ContasBancariasService _contasSvc;
+    private readonly CategoriaService       _categoriaSvc;
 
     // ── Eventos ───────────────────────────────────────────────────────────────
     public event Action? DialogClosed;
@@ -47,17 +49,16 @@ public partial class NovoLancamentoViewModel : ViewModelBase
     public string FundoCirculoEntrada => IsEntrada ? "#D4EDDA" : "#EEF2F7";
     public string FundoCirculoSaida   => IsSaida   ? "#FDECEA" : "#EEF2F7";
 
+    // Recarrega categorias quando o tipo muda
+    partial void OnTipoMovimentoChanged(int value) => _ = CarregarCategoriasAsync();
+
     [ObservableProperty] private string          _valor          = string.Empty;
     [ObservableProperty] private DateTimeOffset? _dataMovimento  = DateTimeOffset.Now;
     [ObservableProperty] private string          _descricao      = string.Empty;
     [ObservableProperty] private int             _categoriaIndex = -1;
 
-    public ObservableCollection<string> Categorias { get; } = new()
-    {
-        "Venda de produto", "Recebimento de cliente", "Adiantamento recebido",
-        "Compra de matéria-prima", "Material de Escritório", "Despesas gerais",
-        "Pagamento de salários", "Pagamento a fornecedor", "Encargos bancários", "Outros",
-    };
+    // Categorias carregadas da API (filtradas por tipo)
+    [ObservableProperty] private ObservableCollection<string> _categorias = new();
 
     // ════════════════════════════════════════════════════════════════════════
     // SECÇÃO 2 · FINANCEIRO
@@ -102,6 +103,7 @@ public partial class NovoLancamentoViewModel : ViewModelBase
     partial void OnObservacoesChanged(string value)
         => ContadorObs = $"{Math.Min(value.Length, 500)} / 500";
 
+    // Centros de custo — organizacionais, não existem na BD
     public ObservableCollection<string> CentrosCusto { get; } = new()
     {
         "Administração Geral", "Comercial / Vendas", "Produção / Operações",
@@ -117,14 +119,6 @@ public partial class NovoLancamentoViewModel : ViewModelBase
     [ObservableProperty] private bool   _isLoading        = false;
     [ObservableProperty] private bool   _contasCarregando = false;
     [ObservableProperty] private string _erroCarregamento = string.Empty;
-
-    // ── Estado de sucesso ─────────────────────────────────────────────────────
-    /// <summary>
-    /// Activado após o lançamento ser guardado com sucesso.
-    /// O XAML usa este flag para mostrar o banner verde e esconder
-    /// o formulário ou os botões de acção.
-    /// O modal fecha-se automaticamente 1,5 s depois via DialogClosed.
-    /// </summary>
     [ObservableProperty] private bool   _isSucesso        = false;
     [ObservableProperty] private string _sucessoMensagem  = string.Empty;
 
@@ -132,35 +126,45 @@ public partial class NovoLancamentoViewModel : ViewModelBase
     // CONSTRUTORES
     // ════════════════════════════════════════════════════════════════════════
 
-    /// <summary>Construtor principal — injectado pelo DI em produção.</summary>
+    /// <summary>Construtor principal — DI em produção.</summary>
     public NovoLancamentoViewModel(
         LancamentoService      lancamentoSvc,
-        ContasBancariasService contasSvc)
+        ContasBancariasService contasSvc,
+        CategoriaService       categoriaSvc)
     {
         _lancamentoSvc = lancamentoSvc;
         _contasSvc     = contasSvc;
-        _ = CarregarContasAsync();
+        _categoriaSvc  = categoriaSvc;
+        _ = CarregarTudoAsync();
     }
 
-    /// <summary>
-    /// Construtor sem parâmetros — APENAS para o Avalonia Designer.
-    /// Em produção NUNCA é chamado; o DI resolve sempre o construtor acima.
-    /// </summary>
+    /// <summary>Construtor sem parâmetros — APENAS para o Avalonia Designer.</summary>
     public NovoLancamentoViewModel()
     {
-        var stubStore = new TokenStore();
-        var stubApi   = new ApiClient(stubStore);
+        var stubStore  = new TokenStore();
+        var stubApi    = new ApiClient(stubStore);
         _lancamentoSvc = new LancamentoService(stubApi);
         _contasSvc     = new ContasBancariasService(stubApi);
+        _categoriaSvc  = new CategoriaService(stubApi);
 
+        // Dados stub para o designer
         ContasOrigem.Add(new ContaItemVm(1, "Banco BIC  ·  4.820.000 Kzs"));
         ContasOrigem.Add(new ContaItemVm(2, "Banco BAI  ·  3.150.000 Kzs"));
         ContasOrigem.Add(new ContaItemVm(3, "Banco BPC  ·  2.980.000 Kzs"));
+        Categorias = new ObservableCollection<string>
+        {
+            "Venda De Produto", "Prestação De Serviços", "Recebimento De Cliente"
+        };
     }
 
     // ════════════════════════════════════════════════════════════════════════
     // CARREGAMENTO
     // ════════════════════════════════════════════════════════════════════════
+
+    private async Task CarregarTudoAsync()
+    {
+        await Task.WhenAll(CarregarContasAsync(), CarregarCategoriasAsync());
+    }
 
     private async Task CarregarContasAsync()
     {
@@ -183,6 +187,21 @@ public partial class NovoLancamentoViewModel : ViewModelBase
         }
     }
 
+    private async Task CarregarCategoriasAsync()
+    {
+        CategoriaIndex = -1;
+        try
+        {
+            var tipo  = IsEntrada ? "Entrada" : "Saída";
+            var lista = await _categoriaSvc.ListarAsync(tipo);
+            Categorias = new ObservableCollection<string>(lista.Select(c => c.Nome));
+        }
+        catch
+        {
+            Categorias = new ObservableCollection<string>();
+        }
+    }
+
     // ════════════════════════════════════════════════════════════════════════
     // COMANDOS
     // ════════════════════════════════════════════════════════════════════════
@@ -200,8 +219,8 @@ public partial class NovoLancamentoViewModel : ViewModelBase
         var ficheiros = await topLevel.StorageProvider.OpenFilePickerAsync(
             new FilePickerOpenOptions
             {
-                Title         = "Seleccionar Documento / Recibo",
-                AllowMultiple = false,
+                Title          = "Seleccionar Documento / Recibo",
+                AllowMultiple  = false,
                 FileTypeFilter = new[]
                 {
                     new FilePickerFileType("Documentos")
@@ -220,10 +239,6 @@ public partial class NovoLancamentoViewModel : ViewModelBase
     [RelayCommand]
     private void LimparDocumento() => CaminhoDocumento = string.Empty;
 
-    /// <summary>
-    /// Cancela e fecha o modal.
-    /// Só permitido quando não está a guardar nem a mostrar o banner de sucesso.
-    /// </summary>
     [RelayCommand(CanExecute = nameof(PodeCancelar))]
     private void Cancelar() => DialogClosed?.Invoke();
 
@@ -278,7 +293,6 @@ public partial class NovoLancamentoViewModel : ViewModelBase
 
             var criado = await _lancamentoSvc.CriarAsync(req);
 
-            // ── Sucesso: mostra banner e fecha o modal após 1,5 s ─────────────
             SucessoMensagem = $"Lançamento #{criado.Id} guardado com sucesso!";
             IsSucesso       = true;
             LancamentoCriado?.Invoke(criado);
@@ -287,29 +301,17 @@ public partial class NovoLancamentoViewModel : ViewModelBase
             DialogClosed?.Invoke();
         }
         catch (ApiException ex) when (ex.StatusCode == HttpStatusCode.Unauthorized)
-        {
-            SetErro("Sessão expirada. Por favor, inicie sessão novamente.");
-        }
+        { SetErro("Sessão expirada. Por favor, inicie sessão novamente."); }
         catch (ApiException ex) when (ex.StatusCode == HttpStatusCode.BadRequest)
-        {
-            SetErro($"Dados inválidos: {ex.Message}");
-        }
+        { SetErro($"Dados inválidos: {ex.Message}"); }
         catch (ApiException ex)
-        {
-            SetErro($"Erro da API ({(int)ex.StatusCode}): {ex.Message}");
-        }
+        { SetErro($"Erro da API ({(int)ex.StatusCode}): {ex.Message}"); }
         catch (HttpRequestException)
-        {
-            SetErro($"Sem ligação à API ({ApiClient.BaseUrl}). Verifique o servidor.");
-        }
+        { SetErro($"Sem ligação à API ({ApiClient.BaseUrl}). Verifique o servidor."); }
         catch (Exception ex)
-        {
-            SetErro($"Erro inesperado: {ex.Message}");
-        }
+        { SetErro($"Erro inesperado: {ex.Message}"); }
         finally
-        {
-            IsLoading = false;
-        }
+        { IsLoading = false; }
     }
 
     // ── Helpers ───────────────────────────────────────────────────────────────
@@ -319,19 +321,9 @@ public partial class NovoLancamentoViewModel : ViewModelBase
     private static bool TryParseValor(string input, out decimal result)
     {
         var limpo = input.Trim().Replace(" ", "");
-
-        if (decimal.TryParse(limpo, NumberStyles.Any,
-            CultureInfo.GetCultureInfo("pt-PT"), out result) && result > 0)
-            return true;
-
-        if (decimal.TryParse(limpo, NumberStyles.Any,
-            CultureInfo.InvariantCulture, out result) && result > 0)
-            return true;
-
-        if (decimal.TryParse(limpo.Replace(".", "").Replace(",", ""),
-            out result) && result > 0)
-            return true;
-
+        if (decimal.TryParse(limpo, NumberStyles.Any, CultureInfo.GetCultureInfo("pt-PT"), out result) && result > 0) return true;
+        if (decimal.TryParse(limpo, NumberStyles.Any, CultureInfo.InvariantCulture, out result) && result > 0) return true;
+        if (decimal.TryParse(limpo.Replace(".", "").Replace(",", ""), out result) && result > 0) return true;
         return false;
     }
 

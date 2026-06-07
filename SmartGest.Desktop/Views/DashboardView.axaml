@@ -50,6 +50,111 @@
       <StackPanel Spacing="20">
 
         <!-- ══════════════════════════════════════════════════════
+     BANNER EDUCAEMPREENDE
+     ══════════════════════════════════════════════════════ -->
+        <Border CornerRadius="12"
+                ClipToBounds="True"
+                Height="90">
+          <Border.Background>
+            <LinearGradientBrush StartPoint="0%,0%" EndPoint="100%,100%">
+              <GradientStop Color="#0D1B4B" Offset="0"/>
+              <GradientStop Color="#0A1535" Offset="0.5"/>
+              <GradientStop Color="#111C45" Offset="1"/>
+            </LinearGradientBrush>
+          </Border.Background>
+
+          <!-- Linha decorativa magenta no topo -->
+          <Panel>
+            <Border VerticalAlignment="Top"
+                    Height="3"
+                    CornerRadius="12,12,0,0">
+              <Border.Background>
+                <LinearGradientBrush StartPoint="0%,0%" EndPoint="100%,0%">
+                  <GradientStop Color="#FF2D78" Offset="0"/>
+                  <GradientStop Color="#FF6BB0" Offset="0.5"/>
+                  <GradientStop Color="#3BB5E8" Offset="1"/>
+                </LinearGradientBrush>
+              </Border.Background>
+            </Border>
+
+            <!-- Conteúdo do banner -->
+            <Grid ColumnDefinitions="Auto, *, Auto"
+                  Margin="20,0">
+
+              <!-- Logo (texto substituto enquanto não há imagem carregada) -->
+              <StackPanel Grid.Column="0"
+                          Orientation="Horizontal"
+                          VerticalAlignment="Center"
+                          Spacing="8">
+                <!-- Ícone "e" circular com gradiente -->
+                <Border Width="38" Height="38"
+                        CornerRadius="19">
+                  <Border.Background>
+                    <LinearGradientBrush StartPoint="0%,0%" EndPoint="100%,100%">
+                      <GradientStop Color="#FF2D78" Offset="0"/>
+                      <GradientStop Color="#3BB5E8" Offset="1"/>
+                    </LinearGradientBrush>
+                  </Border.Background>
+                  <TextBlock Text="e"
+                            FontSize="20"
+                            FontWeight="Bold"
+                            Foreground="White"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"/>
+                </Border>
+
+                <!-- Nome da marca -->
+                <StackPanel VerticalAlignment="Center" Spacing="0">
+                  <StackPanel Orientation="Horizontal" Spacing="0">
+                    <TextBlock Text="educa"
+                              FontSize="15"
+                              FontWeight="Bold"
+                              Foreground="#FF2D78"/>
+                    <TextBlock Text="Empreende"
+                              FontSize="15"
+                              FontWeight="Light"
+                              Foreground="White"/>
+                  </StackPanel>
+                  <TextBlock Text="Gestão para MPMEs"
+                            FontSize="10"
+                            Foreground="#7A8BB5"
+                            LetterSpacing="1"/>
+                </StackPanel>
+              </StackPanel>
+
+              <!-- Slogan central -->
+              <TextBlock Grid.Column="1"
+                        Text="Transformando negócios através da gestão"
+                        FontSize="12"
+                        Foreground="#9BAACE"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        FontStyle="Italic"/>
+
+              <!-- Tagline/badge direito -->
+              <Border Grid.Column="2"
+                      VerticalAlignment="Center"
+                      CornerRadius="20"
+                      Padding="12,5">
+                <Border.Background>
+                  <SolidColorBrush Color="#FF2D78" Opacity="0.15"/>
+                </Border.Background>
+                <Border.BorderBrush>
+                  <SolidColorBrush Color="#FF2D78" Opacity="0.4"/>
+                </Border.BorderBrush>
+                <Border.BorderThickness>
+                  <Thickness>1</Thickness>
+                </Border.BorderThickness>
+                <TextBlock Text="@educa_e_empreende"
+                          FontSize="11"
+                          Foreground="#FF2D78"/>
+              </Border>
+
+            </Grid>
+          </Panel>
+        </Border>
+
+        <!-- ══════════════════════════════════════════════════════
              CABEÇALHO
              ══════════════════════════════════════════════════════ -->
         <Grid ColumnDefinitions="*, Auto">

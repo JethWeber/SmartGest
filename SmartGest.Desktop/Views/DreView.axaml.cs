@@ -10,4 +10,11 @@ public partial class DreView : UserControl
         InitializeComponent();
         DataContext ??= new DreViewModel();
     }
+
+    protected override async void OnLoaded(Avalonia.Interactivity.RoutedEventArgs e)
+    {
+        base.OnLoaded(e);
+        if (DataContext is DreViewModel vm)
+            await vm.InicializarAsync();
+    }
 }

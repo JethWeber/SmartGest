@@ -44,7 +44,17 @@ public class AppDbContext : DbContext
 
         mb.Entity<Lancamento>(e =>
         {
-            e.Property(l => l.Valor).HasColumnType("decimal(18,2)");
+            // PostgreSQL usa "numeric" para decimais de alta precisão
+            e.Property(l => l.Valor).HasColumnType("numeric(18,2)");
+            e.Property(l => l.ImpostoSelo).HasColumnType("numeric(18,2)");
+
+            // Índice na Data para acelerar queries de relatórios por período
+            e.HasIndex(l => l.Data).HasDatabaseName("IX_Lancamento_Data");
+
+            // Soft Delete — campo para marcar como anulado sem apagar fisicamente
+            e.Property(l => l.Anulado).HasDefaultValue(false);
+            e.HasIndex(l => l.Anulado).HasDatabaseName("IX_Lancamento_Anulado");
+
             e.HasOne(l => l.ContaBancaria)
              .WithMany(cb => cb.Lancamentos)
              .HasForeignKey(l => l.ContaBancariaId)
@@ -53,12 +63,18 @@ public class AppDbContext : DbContext
 
         mb.Entity<LancamentoDetalhe>(e =>
         {
-            e.Property(d => d.Debito).HasColumnType("decimal(18,2)");
-            e.Property(d => d.Credito).HasColumnType("decimal(18,2)");
+            e.Property(d => d.Debito).HasColumnType("numeric(18,2)");
+            e.Property(d => d.Credito).HasColumnType("numeric(18,2)");
+
+            // Índice composto crítico para os SUMs dos relatórios no PostgreSQL
+            e.HasIndex(d => new { d.ContaContabilId, d.Debito, d.Credito })
+             .HasDatabaseName("IX_LancamentoDetalhe_ContaContabilId_Debito_Credito");
+
             e.HasOne(d => d.Lancamento)
              .WithMany(l => l.Detalhes)
              .HasForeignKey(d => d.LancamentoId)
              .OnDelete(DeleteBehavior.Cascade);
+
             e.HasOne(d => d.ContaContabil)
              .WithMany(c => c.Lancamentos)
              .HasForeignKey(d => d.ContaContabilId)
@@ -67,14 +83,14 @@ public class AppDbContext : DbContext
 
         mb.Entity<ContaBancaria>(e =>
         {
-            e.Property(c => c.SaldoAtual).HasColumnType("decimal(18,2)");
-            e.Property(c => c.SaldoOntem).HasColumnType("decimal(18,2)");
+            e.Property(c => c.SaldoAtual).HasColumnType("numeric(18,2)");
+            e.Property(c => c.SaldoOntem).HasColumnType("numeric(18,2)");
             e.HasIndex(c => c.NIB).IsUnique();
         });
 
         mb.Entity<MovimentoBancario>(e =>
         {
-            e.Property(m => m.Valor).HasColumnType("decimal(18,2)");
+            e.Property(m => m.Valor).HasColumnType("numeric(18,2)");
             e.HasOne(m => m.ContaBancaria)
              .WithMany(cb => cb.Movimentos)
              .HasForeignKey(m => m.ContaBancariaId)
@@ -83,12 +99,12 @@ public class AppDbContext : DbContext
 
         mb.Entity<Empresa>(e =>
         {
-            e.Property(em => em.Capital).HasColumnType("decimal(18,2)");
+            e.Property(em => em.Capital).HasColumnType("numeric(18,2)");
         });
 
         mb.Entity<Configuracao>(e =>
         {
-            e.Property(c => c.LimiarSaldoBaixo).HasColumnType("decimal(18,2)");
+            e.Property(c => c.LimiarSaldoBaixo).HasColumnType("numeric(18,2)");
         });
 
         SeedData(mb);
@@ -98,41 +114,81 @@ public class AppDbContext : DbContext
     {
         mb.Entity<Empresa>().HasData(new Empresa
         {
-            Id = 1, Nome = "SmartGest, Lda.", NIF = "5417000001",
-            Morada = "Rua da Missão, 42 · Luanda Sul", Cidade = "Luanda",
-            Pais = "Angola", Telefone = "+244 923 000 000",
-            Email = "geral@smartgest.ao", Website = "www.smartgest.ao",
+            Id      = 1,
+            Nome    = "SmartGest, Lda.",
+            NIF     = "5417000001",
+            Morada  = "Rua da Missão, 42 · Luanda Sul",
+            Cidade  = "Luanda",
+            Pais    = "Angola",
+            Telefone = "+244 923 000 000",
+            Email   = "geral@smartgest.ao",
+            Website = "www.smartgest.ao",
             Capital = 10_000_000
         });
 
         mb.Entity<Configuracao>().HasData(new Configuracao { Id = 1 });
 
+        // ─────────────────────────────────────────────────────────────────────
+        // PLANO GERAL DE CONTABILIDADE (PGC) DE ANGOLA — Decreto n.º 82/01
+        //
+        // Estrutura das 8 Classes:
+        //   Classe 1 — Meios Fixos e Investimentos (Ativo Não Corrente)
+        //   Classe 2 — Existências / Inventários (Ativo Corrente)
+        //   Classe 3 — Terceiros (Clientes, Fornecedores, Estado, Pessoal)
+        //   Classe 4 — Meios Monetários (Caixa e Bancos)
+        //   Classe 5 — Capital e Reservas (Capital Próprio)
+        //   Classe 6 — Custos e Perdas por Natureza (Gastos — Natureza Devedora)
+        //   Classe 7 — Proveitos e Ganhos por Natureza (Receitas — Natureza Credora)
+        //   Classe 8 — Resultados
+        // ─────────────────────────────────────────────────────────────────────
+
         mb.Entity<ContaContabil>().HasData(
-            new ContaContabil { Id = 1,  Codigo = "11", Nome = "Caixa e Equivalentes de Caixa",          Grupo = "Ativo",   IsDevedora = true  },
-            new ContaContabil { Id = 2,  Codigo = "12", Nome = "Clientes e Outras Contas a Receber",     Grupo = "Ativo",   IsDevedora = true  },
-            new ContaContabil { Id = 3,  Codigo = "13", Nome = "Inventários e Activos Biológicos",       Grupo = "Ativo",   IsDevedora = true  },
-            new ContaContabil { Id = 4,  Codigo = "14", Nome = "Activos Fixos Tangíveis",                Grupo = "Ativo",   IsDevedora = true  },
-            new ContaContabil { Id = 5,  Codigo = "15", Nome = "Activos Intangíveis",                    Grupo = "Ativo",   IsDevedora = true  },
-            new ContaContabil { Id = 6,  Codigo = "21", Nome = "Fornecedores e Contas a Pagar",          Grupo = "Passivo", IsDevedora = false },
-            new ContaContabil { Id = 7,  Codigo = "22", Nome = "Empréstimos Bancários",                  Grupo = "Passivo", IsDevedora = false },
-            new ContaContabil { Id = 8,  Codigo = "23", Nome = "Encargos sobre Remunerações",            Grupo = "Passivo", IsDevedora = false },
-            new ContaContabil { Id = 9,  Codigo = "24", Nome = "Imposto a Pagar (IRT / IVA)",            Grupo = "Passivo", IsDevedora = false },
-            new ContaContabil { Id = 10, Codigo = "31", Nome = "Capital Social",                         Grupo = "Capital", IsDevedora = false },
-            new ContaContabil { Id = 11, Codigo = "32", Nome = "Reservas Legais",                        Grupo = "Capital", IsDevedora = false },
-            new ContaContabil { Id = 12, Codigo = "33", Nome = "Resultados Transitados",                 Grupo = "Capital", IsDevedora = false },
-            new ContaContabil { Id = 13, Codigo = "71", Nome = "Vendas de Mercadorias",                  Grupo = "Receita", IsDevedora = false },
-            new ContaContabil { Id = 14, Codigo = "72", Nome = "Prestações de Serviços",                 Grupo = "Receita", IsDevedora = false },
-            new ContaContabil { Id = 15, Codigo = "73", Nome = "Outros Rendimentos Operacionais",        Grupo = "Receita", IsDevedora = false },
-            new ContaContabil { Id = 16, Codigo = "78", Nome = "Proveitos e Ganhos Financeiros",         Grupo = "Receita", IsDevedora = false },
-            new ContaContabil { Id = 17, Codigo = "79", Nome = "Proveitos Extraordinários",              Grupo = "Receita", IsDevedora = false },
-            new ContaContabil { Id = 18, Codigo = "61", Nome = "Custo das Mercadorias Vendidas",         Grupo = "Despesa", IsDevedora = true  },
-            new ContaContabil { Id = 19, Codigo = "62", Nome = "Fornecimentos e Serviços Externos",      Grupo = "Despesa", IsDevedora = true  },
-            new ContaContabil { Id = 20, Codigo = "63", Nome = "Gastos com Pessoal",                     Grupo = "Despesa", IsDevedora = true  },
-            new ContaContabil { Id = 21, Codigo = "64", Nome = "Amortizações e Depreciações",            Grupo = "Despesa", IsDevedora = true  },
-            new ContaContabil { Id = 22, Codigo = "65", Nome = "Impostos e Taxas",                       Grupo = "Despesa", IsDevedora = true  },
-            new ContaContabil { Id = 23, Codigo = "66", Nome = "Outros Custos Operacionais",             Grupo = "Despesa", IsDevedora = true  },
-            new ContaContabil { Id = 24, Codigo = "68", Nome = "Custos e Perdas Financeiras",            Grupo = "Despesa", IsDevedora = true  },
-            new ContaContabil { Id = 25, Codigo = "69", Nome = "Custos Extraordinários",                 Grupo = "Despesa", IsDevedora = true  }
+
+            // ── CLASSE 1 — Meios Fixos e Investimentos ────────────────────────
+            new ContaContabil { Id = 1,  Codigo = "11", Nome = "Activos Fixos Tangíveis",          Grupo = "Ativo",   IsDevedora = true  },
+            new ContaContabil { Id = 2,  Codigo = "12", Nome = "Activos Intangíveis",               Grupo = "Ativo",   IsDevedora = true  },
+            new ContaContabil { Id = 3,  Codigo = "13", Nome = "Investimentos Financeiros",         Grupo = "Ativo",   IsDevedora = true  },
+            new ContaContabil { Id = 4,  Codigo = "18", Nome = "Amortizações Acumuladas",           Grupo = "Ativo",   IsDevedora = false }, // retificativa — natureza credora
+
+            // ── CLASSE 2 — Existências / Inventários ──────────────────────────
+            new ContaContabil { Id = 5,  Codigo = "22", Nome = "Mercadorias",                       Grupo = "Ativo",   IsDevedora = true  },
+            new ContaContabil { Id = 6,  Codigo = "26", Nome = "Matérias-Primas e Subsidiárias",    Grupo = "Ativo",   IsDevedora = true  },
+
+            // ── CLASSE 3 — Terceiros ───────────────────────────────────────────
+            new ContaContabil { Id = 7,  Codigo = "31", Nome = "Clientes",                          Grupo = "Ativo",   IsDevedora = true  },
+            new ContaContabil { Id = 8,  Codigo = "32", Nome = "Fornecedores",                      Grupo = "Passivo", IsDevedora = false },
+            new ContaContabil { Id = 9,  Codigo = "33", Nome = "Empréstimos Obtidos",               Grupo = "Passivo", IsDevedora = false },
+            new ContaContabil { Id = 10, Codigo = "34", Nome = "Estado e Outros Entes Públicos",    Grupo = "Passivo", IsDevedora = false }, // IRT / IVA / Contribuições
+            new ContaContabil { Id = 11, Codigo = "36", Nome = "Pessoal",                           Grupo = "Passivo", IsDevedora = false },
+
+            // ── CLASSE 4 — Meios Monetários ────────────────────────────────────
+            new ContaContabil { Id = 12, Codigo = "43", Nome = "Caixa",                             Grupo = "Ativo",   IsDevedora = true  },
+            new ContaContabil { Id = 13, Codigo = "45", Nome = "Depósitos Bancários",               Grupo = "Ativo",   IsDevedora = true  },
+
+            // ── CLASSE 5 — Capital e Reservas ──────────────────────────────────
+            new ContaContabil { Id = 14, Codigo = "51", Nome = "Capital Social",                    Grupo = "Capital", IsDevedora = false },
+            new ContaContabil { Id = 15, Codigo = "55", Nome = "Reservas Legais",                   Grupo = "Capital", IsDevedora = false },
+            new ContaContabil { Id = 16, Codigo = "59", Nome = "Resultados Transitados",            Grupo = "Capital", IsDevedora = false },
+
+            // ── CLASSE 6 — Custos e Perdas por Natureza ───────────────────────
+            new ContaContabil { Id = 17, Codigo = "61", Nome = "Custo das Mercadorias Vendidas e Matérias Consumidas", Grupo = "Despesa", IsDevedora = true },
+            new ContaContabil { Id = 18, Codigo = "62", Nome = "Fornecimentos e Serviços de Terceiros",                Grupo = "Despesa", IsDevedora = true },
+            new ContaContabil { Id = 19, Codigo = "63", Nome = "Gastos com Pessoal",                                   Grupo = "Despesa", IsDevedora = true },
+            new ContaContabil { Id = 20, Codigo = "64", Nome = "Amortizações e Depreciações do Exercício",             Grupo = "Despesa", IsDevedora = true },
+            new ContaContabil { Id = 21, Codigo = "65", Nome = "Impostos e Taxas",                                     Grupo = "Despesa", IsDevedora = true },
+            new ContaContabil { Id = 22, Codigo = "66", Nome = "Outros Custos e Perdas Operacionais",                  Grupo = "Despesa", IsDevedora = true },
+            new ContaContabil { Id = 23, Codigo = "68", Nome = "Custos e Perdas Financeiras",                          Grupo = "Despesa", IsDevedora = true },
+            new ContaContabil { Id = 24, Codigo = "69", Nome = "Custos e Perdas Extraordinárias",                      Grupo = "Despesa", IsDevedora = true },
+
+            // ── CLASSE 7 — Proveitos e Ganhos por Natureza ────────────────────
+            new ContaContabil { Id = 25, Codigo = "71", Nome = "Vendas de Mercadorias e Produtos Acabados", Grupo = "Receita", IsDevedora = false },
+            new ContaContabil { Id = 26, Codigo = "72", Nome = "Prestações de Serviços",                    Grupo = "Receita", IsDevedora = false },
+            new ContaContabil { Id = 27, Codigo = "73", Nome = "Outros Proveitos e Ganhos Operacionais",    Grupo = "Receita", IsDevedora = false },
+            new ContaContabil { Id = 28, Codigo = "78", Nome = "Proveitos e Ganhos Financeiros",            Grupo = "Receita", IsDevedora = false },
+            new ContaContabil { Id = 29, Codigo = "79", Nome = "Proveitos e Ganhos Extraordinários",        Grupo = "Receita", IsDevedora = false },
+
+            // ── CLASSE 8 — Resultados ──────────────────────────────────────────
+            new ContaContabil { Id = 30, Codigo = "88", Nome = "Resultado Líquido do Exercício",    Grupo = "Capital", IsDevedora = false }
         );
 
         mb.Entity<ContaBancaria>().HasData(

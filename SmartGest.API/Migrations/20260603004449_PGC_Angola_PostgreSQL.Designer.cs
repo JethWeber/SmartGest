@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using SmartGest.API.Data;
@@ -11,9 +12,11 @@ using SmartGest.API.Data;
 namespace SmartGest.API.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260603004449_PGC_Angola_PostgreSQL")]
+    partial class PGC_Angola_PostgreSQL
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -650,7 +653,7 @@ namespace SmartGest.API.Migrations
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime?>("AanuladoEm")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("AanuladoPor")
                         .HasMaxLength(150)
@@ -685,10 +688,10 @@ namespace SmartGest.API.Migrations
                         .HasColumnType("integer");
 
                     b.Property<DateTime>("CriadoEm")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<DateTime>("Data")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Descricao")
                         .IsRequired()
@@ -780,7 +783,7 @@ namespace SmartGest.API.Migrations
                         .HasColumnType("integer");
 
                     b.Property<DateTime>("Data")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Descricao")
                         .IsRequired()
@@ -827,7 +830,7 @@ namespace SmartGest.API.Migrations
                         .HasColumnType("text");
 
                     b.Property<DateTime>("UltimaActividade")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<int>("UtilizadorId")
                         .HasColumnType("integer");
@@ -855,7 +858,7 @@ namespace SmartGest.API.Migrations
                         .HasColumnType("text");
 
                     b.Property<DateTime>("CriadoEm")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Email")
                         .IsRequired()

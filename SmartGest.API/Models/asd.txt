@@ -1,0 +1,1303 @@
+Óptima observação. O `switch` fixo é uma armadilha — se o utilizador registar um "Banco Millennium" ou qualquer outro que não esteja na lista, cai no `default` e vai para a conta 11 genérica, sem qualquer aviso.
+
+A solução correcta é eliminar o `switch` de origens e resolver a conta **dinamicamente**, usando a relação que já existe entre `Lancamento` e `ContaBancaria`.
+
+---
+
+**O raciocínio:**
+
+O formulário já envia `ContaBancariaId`. A `ContaBancaria` já tem `NIB`, `Banco`, `SaldoAtual`. O que falta é ligar a `ContaBancaria` a uma `ContaContabil` do PGC — e isso faz-se com um campo novo na entidade `ContaBancaria`.
+
+---
+
+**Passo 1 — acrescentar `ContaContabilId` à entidade `ContaBancaria`:**
+
+```csharp
+// Models/Entities.cs — dentro de ContaBancaria
+public int? ContaContabilId { get; set; }
+public ContaContabil? ContaContabil { get; set; }
+```
+
+Quando o utilizador cria ou edita um banco, escolhe a conta PGC associada (11.1, 12.1.1, 12.1.2, etc.). Fica gravado uma vez, reutilizado sempre.
+
+---
+
+**Passo 2 — o `MotorContabilService` deixa de ter switch de origens:**
+
+```csharp
+public async Task ProcessarAsync(Lancamento lanc)
+{
+    var anteriores = _db.LancamentoDetalhes.Where(d => d.LancamentoId == lanc.Id);
+    _db.LancamentoDetalhes.RemoveRange(anteriores);
+
+    // Conta da categoria — ainda via mapeamento (poucos e estáveis)
+    var contaCategoria = await ResolverContaAsync(CodigoCategoria(lanc.Categoria));
+
+    // Conta da origem — vem do banco registado pelo utilizador
+    var contaOrigem = await ResolverContaOrigemAsync(lanc.ContaBancariaId);
+
+    if (lanc.Tipo == "Entrada")
+    {
+        Adicionar(lanc, contaOrigem.Id,   lanc.Valor, 0);
+        Adicionar(lanc, contaCategoria.Id, 0, lanc.Valor);
+    }
+    else
+    {
+        Adicionar(lanc, contaCategoria.Id, lanc.Valor, 0);
+        Adicionar(lanc, contaOrigem.Id,   0, lanc.Valor);
+    }
+
+    if (GeraImpostoDeSelo(lanc.Categoria))
+    {
+        var is_         = Math.Round(lanc.Valor * 0.01m, 2);
+        lanc.ImpostoSelo = is_;
+        var contaEncargo = await ResolverContaAsync("65");
+        var contaEstado  = await ResolverContaAsync("24");
+        Adicionar(lanc, contaEncargo.Id, is_, 0);
+        Adicionar(lanc, contaEstado.Id,  0,   is_);
+    }
+    else { lanc.ImpostoSelo = 0; }
+}
+
+// Novo — resolve a conta PGC a partir do banco registado
+private async Task<ContaContabil> ResolverContaOrigemAsync(int? contaBancariaId)
+{
+    if (contaBancariaId.HasValue)
+    {
+        var banco = await _db.ContasBancarias
+            .Include(c => c.ContaContabil)
+            .FirstOrDefaultAsync(c => c.Id == contaBancariaId.Value);
+
+        if (banco?.ContaContabil is not null)
+            return banco.ContaContabil;
+    }
+
+    // Fallback seguro: Caixa e Equivalentes (conta 11)
+    return await _db.ContasContabeis.FirstAsync(c => c.Codigo == "11");
+}
+```
+
+---
+
+**Passo 3 — ao criar um banco, o utilizador associa a conta PGC:**
+
+No `ContasBancariasController.Criar`, acrescentar o campo:
+
+```csharp
+// DTOs/Requests — ContaBancariaRequest
+public int? ContaContabilId { get; set; }
+
+// Controller — ao criar a conta bancária
+var conta = new ContaBancaria
+{
+    Banco           = req.Banco,
+    NIB             = req.NIB,
+    // ... restantes campos ...
+    ContaContabilId = req.ContaContabilId,
+};
+```
+
+No frontend, o utilizador vê algo simples como:
+
+```
+Banco: [ Millennium Angola ]
+Tipo de conta PGC: [ Caixa e Equivalentes (11) ▼ ]
+                   [ Depósitos à Ordem (12.1)    ]
+                   [ Outros depósitos (12.2)      ]
+```
+
+Não precisa de saber o código PGC — vê nomes simples, escolhe uma vez, o motor usa sempre.
+
+---
+
+**Passo 4 — migration:**
+
+```bash
+dotnet ef migrations add ContaBancaria_ContaContabilId
+dotnet ef database update
+```
+
+E no seed do `AppDbContext`, actualizar as 4 contas bancárias existentes para apontarem para a conta 11:
+
+```csharp
+new ContaBancaria { Id = 1, ..., ContaContabilId = 1 }, // Id 1 = conta "11"
+new ContaBancaria { Id = 2, ..., ContaContabilId = 1 },
+new ContaBancaria { Id = 3, ..., ContaContabilId = 1 },
+new ContaBancaria { Id = 4, ..., ContaContabilId = 1 },
+```
+
+---
+
+**Resumo do que muda:**
+
+| Antes | Depois |
+|---|---|
+| `switch("Banco BFA") → "12.1.2"` hardcoded | `ContaBancaria.ContaContabilId` configurado pelo utilizador |
+| Banco novo não mapeado → conta errada em silêncio | Banco novo sem conta → fallback explícito para conta 11 + podes adicionar validação |
+| Motor não escala | Motor funciona com qualquer banco angolano ou internacional |
+
+O `switch` de categorias ainda faz sentido por agora — as categorias são estáveis e em número limitado. Mas quando quiseres também dinamizar isso, o mesmo padrão aplica-se: uma tabela `CategoriaLancamento` com `ContaContabilId`. Queres que avancemos para esse lado também, ou primeiro fechamos a migration e o seed?
+
+Vou ler todos os ficheiros relevantes antes de escrever uma linha.Tenho tudo o que preciso. Vou produzir os 7 ficheiros completos agora.
+Vou ler todos os ficheiros relevantes antes de escrever uma linha.Tenho tudo o que preciso. Vou produzir os 7 ficheiros completos agora.
+SmartGest
+/
+
+Estou refatorando um software para essa nova vizão. Vou usar o form abaixo.:
+
+O que aconteceu?
+[ Venda de Mercadorias ]
+Valor
+[ 150.000 Kz ]
+Data
+[ 01/08/2026 ]
+Por onde entrou/saiu o dinheiro?
+[ Banco BFA ]
+Descrição
+[ Venda ao cliente balcão ]
+Comprovativo
+[ recibo.pdf ]
+Aparti
+02:04
+
+Aqui está o formulário interativo do SmartGest, já ligado ao motor contábil em tempo real.
+
+Alguns pontos sobre o que foi construído:
+
+O formulário reflete exatamente a tua visão. O utilizador só vê linguagem humana — "O que aconteceu?", "Por onde entrou/saiu?" — sem qualquer referência a débitos, créditos ou PGC.
+
+O motor contábil reage em tempo real. Ao trocar a categoria ou a origem do dinheiro, as partidas dobradas atualizam automaticamente nos bastidores. Experimenta mudar para "Renda do Espaço" — o Imposto de Selo desaparece porque a regra fiscal angolana não o aplica nesse caso.
+
+O Imposto de Selo é calculado automaticamente. Para "Venda de Mercadorias" e "Prestação de Serviços", o sistema provisiona os 1% nas contas 69.1 e 34.5, exatamente como descrito na tua arquitetura C#.
+
+O botão "Gravar lançamento" pode ser ligado ao teu endpoint POST /api/lancamentos da API ASP.NET Core, enviando o payload com Categoria, Valor, Data, OrigemDinheiro, Descricao e ComprovativoPath.
+
+Queres que continue com o dashboard executivo (saldo, vendas do mês, impostos a pagar) ou com a estrutura da API em C#?
+
+O lançamento foi gravado. Quais são os próximos passos para integrar o motor contábil na API ASP.NET Core com Entity Framework e PostgreSQL?
+02:06
+
+Boa pergunta. Vou dar-te o roteiro completo em etapas práticas.
+1. Estrutura do projeto
+
+Organiza a solução assim:
+
+SmartGest.sln
+├── SmartGest.API          → Controllers, Program.cs
+├── SmartGest.Application  → Services (MotorContabilService, etc.)
+├── SmartGest.Domain       → Entidades (Lancamento, MovimentoContabil)
+└── SmartGest.Infrastructure → DbContext, Migrations, Repositórios
+
+2. Pacotes NuGet necessários
+bash
+
+dotnet add package Npgsql.EntityFrameworkCore.PostgreSQL
+dotnet add package Microsoft.EntityFrameworkCore.Design
+dotnet add package Microsoft.EntityFrameworkCore.Tools
+
+3. Entidades do domínio
+csharp
+
+// Domain/Lancamento.cs
+public class Lancamento
+{
+    public Guid Id { get; set; } = Guid.NewGuid();
+    public string Categoria { get; set; } = string.Empty;
+    public decimal Valor { get; set; }
+    public DateTime Data { get; set; }
+    public string OrigemDinheiro { get; set; } = string.Empty;
+    public string Descricao { get; set; } = string.Empty;
+    public string? ComprovativoPath { get; set; }
+    public decimal ImpostoSeloCalculado { get; set; }
+    public DateTime CriadoEm { get; set; } = DateTime.UtcNow;
+
+    // Navegação
+    public ICollection<MovimentoContabil> Movimentos { get; set; } = [];
+}
+
+// Domain/MovimentoContabil.cs
+public class MovimentoContabil
+{
+    public Guid Id { get; set; } = Guid.NewGuid();
+    public Guid LancamentoId { get; set; }
+    public string ContaPGC { get; set; } = string.Empty;
+    public decimal Debito { get; set; }
+    public decimal Credito { get; set; }
+    public DateTime CriadoEm { get; set; } = DateTime.UtcNow;
+
+    public Lancamento Lancamento { get; set; } = null!;
+}
+
+4. DbContext com PostgreSQL
+csharp
+
+// Infrastructure/SmartGestDbContext.cs
+public class SmartGestDbContext(DbContextOptions<SmartGestDbContext> options)
+    : DbContext(options)
+{
+    public DbSet<Lancamento> Lancamentos => Set<Lancamento>();
+    public DbSet<MovimentoContabil> MovimentosContabeis => Set<MovimentoContabil>();
+
+    protected override void OnModelCreating(ModelBuilder mb)
+    {
+        mb.Entity<Lancamento>(e =>
+        {
+            e.ToTable("lancamentos");
+            e.HasKey(x => x.Id);
+            e.Property(x => x.Valor).HasPrecision(18, 2);
+            e.Property(x => x.ImpostoSeloCalculado).HasPrecision(18, 2);
+            e.HasMany(x => x.Movimentos)
+             .WithOne(x => x.Lancamento)
+             .HasForeignKey(x => x.LancamentoId);
+        });
+
+        mb.Entity<MovimentoContabil>(e =>
+        {
+            e.ToTable("movimentos_contabeis");
+            e.HasKey(x => x.Id);
+            e.Property(x => x.Debito).HasPrecision(18, 2);
+            e.Property(x => x.Credito).HasPrecision(18, 2);
+        });
+    }
+}
+
+5. O Motor Contábil como serviço
+csharp
+
+// Application/MotorContabilService.cs
+public class MotorContabilService
+{
+    public void Processar(Lancamento lancamento)
+    {
+        var contaOrigem = MapearOrigem(lancamento.OrigemDinheiro);
+        var contaCategoria = MapearCategoria(lancamento.Categoria);
+        bool geraIS = GeraImpostoDeSelo(lancamento.Categoria);
+
+        // Partidas principais
+        lancamento.Movimentos.Add(Movimento(lancamento.Id, contaOrigem,   lancamento.Valor, 0));
+        lancamento.Movimentos.Add(Movimento(lancamento.Id, contaCategoria, 0, lancamento.Valor));
+
+        // Imposto de Selo
+        if (geraIS)
+        {
+            decimal is_ = Math.Round(lancamento.Valor * 0.01m, 2);
+            lancamento.ImpostoSeloCalculado = is_;
+            lancamento.Movimentos.Add(Movimento(lancamento.Id, "69.1", is_, 0));
+            lancamento.Movimentos.Add(Movimento(lancamento.Id, "34.5", 0,   is_));
+        }
+    }
+
+    private static MovimentoContabil Movimento(Guid id, string conta, decimal db, decimal cr) =>
+        new() { LancamentoId = id, ContaPGC = conta, Debito = db, Credito = cr };
+
+    private static string MapearCategoria(string c) => c switch
+    {
+        "Venda de Mercadorias"  => "61.1",
+        "Prestação de Serviços" => "62.1",
+        "Renda do Espaço"       => "75.2.1",
+        "Pagamento de Salários" => "72.2",
+        _                       => "78.9"
+    };
+
+    private static string MapearOrigem(string o) => o switch
+    {
+        "Banco BFA" => "12.1.2",
+        "Banco BAI" => "12.1.1",
+        _           => "11.1"
+    };
+
+    private static bool GeraImpostoDeSelo(string c) =>
+        c is "Venda de Mercadorias" or "Prestação de Serviços";
+}
+
+6. O Controller da API
+csharp
+
+// API/Controllers/LancamentosController.cs
+[ApiController]
+[Route("api/[controller]")]
+public class LancamentosController(SmartGestDbContext db, MotorContabilService motor)
+    : ControllerBase
+{
+    [HttpPost]
+    public async Task<IActionResult> Gravar([FromBody] LancamentoDto dto)
+    {
+        var lancamento = new Lancamento
+        {
+            Categoria      = dto.Categoria,
+            Valor          = dto.Valor,
+            Data           = dto.Data,
+            OrigemDinheiro = dto.OrigemDinheiro,
+            Descricao      = dto.Descricao,
+            ComprovativoPath = dto.ComprovativoPath
+        };
+
+        motor.Processar(lancamento);   // Motor gera os movimentos
+        db.Lancamentos.Add(lancamento); // EF grava tudo numa transação
+        await db.SaveChangesAsync();
+
+        return Ok(new { lancamento.Id, lancamento.ImpostoSeloCalculado });
+    }
+
+    [HttpGet("saldo/{banco}")]
+    public async Task<IActionResult> Saldo(string banco)
+    {
+        string conta = banco == "BFA" ? "12.1.2" : "12.1.1";
+
+        decimal saldo = await db.MovimentosContabeis
+            .Where(m => m.ContaPGC == conta)
+            .SumAsync(m => m.Debito - m.Credito);
+
+        return Ok(new { banco, saldo });
+    }
+}
+
+7. Registar tudo no Program.cs
+csharp
+
+// API/Program.cs
+builder.Services.AddDbContext<SmartGestDbContext>(opt =>
+    opt.UseNpgsql(builder.Configuration.GetConnectionString("SmartGest")));
+
+builder.Services.AddScoped<MotorContabilService>();
+
+E no appsettings.json:
+json
+
+"ConnectionStrings": {
+  "SmartGest": "Host=localhost;Database=smartgest;Username=postgres;Password=..."
+}
+
+8. Migrations e base de dados
+bash
+
+dotnet ef migrations add CriarEstrutura --project SmartGest.Infrastructure --startup-project SmartGest.API
+dotnet ef database update --project SmartGest.Infrastructure --startup-project SmartGest.API
+
+Ordem de implementação recomendada
+Fase	O que fazer
+1	Criar entidades + DbContext + migration
+2	Implementar MotorContabilService e testar com xUnit
+3	Criar o controller POST /api/lancamentos
+4	Ligar o formulário front-end ao endpoint
+5	Criar o endpoint GET /saldo para alimentar o dashboard
+
+O passo mais crítico é o passo 2 — o motor contábil deve ter testes unitários antes de qualquer outra coisa, porque é o coração do sistema. Um erro nas contas PGC propaga-se para todos os relatórios.
+
+Queres que avance para os testes unitários do motor, ou para o endpoint do dashboard com DRE e balancete em tempo real?
+
+Olha, eu já tenho o projeto, agora vamos começar assim, vamos refatorar oque já tenho para lhe ajustar ao novo ponto de vista. Vamos começar pelo lançamento.
+02:17
+
+Vou ler o código actual com atenção antes de propor qualquer alteração.
+Visualizou 2 arquivos
+
+Agora tenho o quadro completo. Vou fazer a análise antes de escrever uma linha de código.
+
+O que o teu código actual faz bem:
+
+A estrutura de LancamentoDetalhe (as partidas dobradas) já existe na base de dados e no AppDbContext. O Balancete e o DRE já lêem dessa tabela. A fundação está certa.
+
+O problema central:
+
+O LancamentosController.Criar grava o Lancamento mas nunca preenche LancamentoDetalhe. Isso significa que o Balancete e o DRE estão sempre em branco — lêem uma tabela que nunca recebe dados. O motor contábil está a faltar exactamente neste ponto.
+
+O que vamos fazer em concreto:
+
+Três ficheiros tocados, nada mais:
+
+    Services/MotorContabilService.cs — novo ficheiro, o coração da lógica
+    Controllers/LancamentosController.cs — o Criar e o Atualizar passam a chamar o motor
+    Program.cs — registar o serviço
+
+O modelo Lancamento, o AppDbContext e a migration ficam exactamente como estão — não é necessário migração nova.
+
+Vamos a isso:
+
+Services/MotorContabilService.cs — ficheiro novo, cria dentro da pasta Services:
+csharp
+
+using Microsoft.EntityFrameworkCore;
+using SmartGest.API.Data;
+using SmartGest.API.Models;
+
+namespace SmartGest.API.Services;
+
+public class MotorContabilService
+{
+    private readonly AppDbContext _db;
+    public MotorContabilService(AppDbContext db) => _db = db;
+
+    // ── Ponto de entrada ──────────────────────────────────────────────────────
+    public async Task ProcessarAsync(Lancamento lanc)
+    {
+        // Apaga detalhes anteriores (útil no Atualizar)
+        var anteriores = _db.LancamentoDetalhes.Where(d => d.LancamentoId == lanc.Id);
+        _db.LancamentoDetalhes.RemoveRange(anteriores);
+
+        var contaMovimento  = await ResolverContaAsync(CodigoOrigem(lanc.OrigemDinheiro));
+        var contaCategoria  = await ResolverContaAsync(CodigoCategoria(lanc.Categoria));
+
+        // Partidas principais
+        if (lanc.Tipo == "Entrada")
+        {
+            // Débito: disponibilidades (dinheiro entrou)
+            // Crédito: receita (motivo)
+            Adicionar(lanc, contaMovimento.Id,  lanc.Valor, 0);
+            Adicionar(lanc, contaCategoria.Id,  0, lanc.Valor);
+        }
+        else
+        {
+            // Débito: despesa (motivo)
+            // Crédito: disponibilidades (dinheiro saiu)
+            Adicionar(lanc, contaCategoria.Id,  lanc.Valor, 0);
+            Adicionar(lanc, contaMovimento.Id,  0, lanc.Valor);
+        }
+
+        // Imposto de Selo — apenas receitas operacionais
+        if (GeraImpostoDeSelo(lanc.Categoria))
+        {
+            var is_ = Math.Round(lanc.Valor * 0.01m, 2);
+            lanc.ImpostoSelo = is_;
+
+            var contaEncargo = await ResolverContaAsync("65"); // Impostos e Taxas
+            var contaEstado  = await ResolverContaAsync("24"); // Imposto a Pagar
+            Adicionar(lanc, contaEncargo.Id, is_, 0);
+            Adicionar(lanc, contaEstado.Id,  0, is_);
+        }
+        else
+        {
+            lanc.ImpostoSelo = 0;
+        }
+    }
+
+    // ── Mapeamentos ───────────────────────────────────────────────────────────
+    private static string CodigoCategoria(string categoria) => categoria switch
+    {
+        "Venda de Mercadorias"  => "71",
+        "Prestação de Serviços" => "72",
+        "Renda do Espaço"       => "73",
+        "Pagamento de Salários" => "63",
+        "Fornecimentos/Serviços Externos" => "62",
+        "Outros Custos"         => "66",
+        _                       => "73"  // Outros Rendimentos Operacionais
+    };
+
+    private static string CodigoOrigem(string origem) => origem switch
+    {
+        "Banco BFA" or "Banco BAI" or "Banco BIC"
+        or "Banco BPC" or "Banco ATL" => "11", // Caixa e Equivalentes
+        "Caixa Geral"                 => "11",
+        _                             => "11"
+    };
+
+    private static bool GeraImpostoDeSelo(string categoria) =>
+        categoria is "Venda de Mercadorias" or "Prestação de Serviços";
+
+    // ── Helpers ───────────────────────────────────────────────────────────────
+    private async Task<ContaContabil> ResolverContaAsync(string codigoPrefixo)
+    {
+        var conta = await _db.ContasContabeis
+            .Where(c => c.Activa && c.Codigo == codigoPrefixo)
+            .FirstOrDefaultAsync();
+
+        // Fallback: conta genérica de Outros Rendimentos
+        return conta ?? await _db.ContasContabeis.FirstAsync(c => c.Codigo == "73");
+    }
+
+    private void Adicionar(Lancamento lanc, int contaId, decimal debito, decimal credito)
+    {
+        _db.LancamentoDetalhes.Add(new LancamentoDetalhe
+        {
+            LancamentoId    = lanc.Id,
+            ContaContabilId = contaId,
+            Debito          = debito,
+            Credito         = credito
+        });
+    }
+}
+
+Models/Entities.cs — acrescentar apenas um campo a Lancamento (sem migration nova porque é additive e podemos usar migration vazia):
+csharp
+
+// Dentro da classe Lancamento, a seguir a ReferenciaInterna:
+public decimal ImpostoSelo { get; set; }
+
+Controllers/LancamentosController.cs — substituição completa:
+csharp
+
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using SmartGest.API.Data;
+using SmartGest.API.DTOs.Requests;
+using SmartGest.API.DTOs.Responses;
+using SmartGest.API.Models;
+using SmartGest.API.Services;
+
+namespace SmartGest.API.Controllers;
+
+[ApiController]
+[Route("api/lancamentos")]
+[Authorize]
+public class LancamentosController : ControllerBase
+{
+    private readonly AppDbContext        _db;
+    private readonly MotorContabilService _motor;
+
+    public LancamentosController(AppDbContext db, MotorContabilService motor)
+    {
+        _db    = db;
+        _motor = motor;
+    }
+
+    // ── GET /api/lancamentos ──────────────────────────────────────────────────
+    [HttpGet]
+    public async Task<IActionResult> Listar(
+        [FromQuery] string?   tipo       = null,
+        [FromQuery] DateTime? dataInicio = null,
+        [FromQuery] DateTime? dataFim    = null,
+        [FromQuery] string?   texto      = null,
+        [FromQuery] int?      contaId    = null,
+        [FromQuery] int       pagina     = 1,
+        [FromQuery] int       tamPagina  = 50)
+    {
+        var query = _db.Lancamentos.Include(l => l.ContaBancaria).AsQueryable();
+
+        if (!string.IsNullOrWhiteSpace(tipo))  query = query.Where(l => l.Tipo == tipo);
+        if (dataInicio.HasValue)               query = query.Where(l => l.Data >= dataInicio.Value);
+        if (dataFim.HasValue)                  query = query.Where(l => l.Data <= dataFim.Value);
+        if (!string.IsNullOrWhiteSpace(texto)) query = query.Where(l =>
+            l.Descricao.Contains(texto) || l.Categoria.Contains(texto) || l.Beneficiario.Contains(texto));
+        if (contaId.HasValue)                  query = query.Where(l => l.ContaBancariaId == contaId);
+
+        var total = await query.CountAsync();
+        var items = await query
+            .OrderByDescending(l => l.Data)
+            .Skip((pagina - 1) * tamPagina)
+            .Take(tamPagina)
+            .Select(l => Map(l))
+            .ToListAsync();
+
+        return Ok(new { total, pagina, tamPagina, items });
+    }
+
+    // ── GET /api/lancamentos/{id} ─────────────────────────────────────────────
+    [HttpGet("{id}")]
+    public async Task<IActionResult> Obter(int id)
+    {
+        var l = await _db.Lancamentos
+            .Include(x => x.ContaBancaria)
+            .FirstOrDefaultAsync(x => x.Id == id);
+        return l is null ? NotFound() : Ok(Map(l));
+    }
+
+    // ── POST /api/lancamentos ─────────────────────────────────────────────────
+    [HttpPost]
+    public async Task<IActionResult> Criar([FromBody] LancamentoRequest req)
+    {
+        var lanc = new Lancamento
+        {
+            Data              = req.Data,
+            Descricao         = req.Descricao,
+            Categoria         = req.Categoria,
+            Tipo              = req.Tipo,
+            Valor             = req.Valor,
+            Beneficiario      = req.Beneficiario,
+            MetodoPagamento   = req.MetodoPagamento,
+            CaminhoDocumento  = req.CaminhoDocumento,
+            Observacoes       = req.Observacoes,
+            CentroCusto       = req.CentroCusto,
+            ReferenciaInterna = req.ReferenciaInterna,
+            OrigemDinheiro    = req.OrigemDinheiro,
+            ContaBancariaId   = req.ContaBancariaId,
+        };
+
+        _db.Lancamentos.Add(lanc);
+        await _db.SaveChangesAsync(); // Precisa do Id antes do motor
+
+        // Motor contábil — gera LancamentoDetalhes e calcula ImpostoSelo
+        await _motor.ProcessarAsync(lanc);
+
+        // Actualiza saldo da conta bancária
+        await AtualizarSaldoAsync(req.ContaBancariaId, req.Tipo, req.Valor);
+
+        await _db.SaveChangesAsync();
+
+        return CreatedAtAction(nameof(Obter), new { id = lanc.Id }, Map(lanc));
+    }
+
+    // ── PUT /api/lancamentos/{id} ─────────────────────────────────────────────
+    [HttpPut("{id}")]
+    public async Task<IActionResult> Atualizar(int id, [FromBody] LancamentoRequest req)
+    {
+        var lanc = await _db.Lancamentos.FindAsync(id);
+        if (lanc is null) return NotFound();
+
+        // Reverter o efeito no saldo bancário anterior
+        await AtualizarSaldoAsync(lanc.ContaBancariaId,
+            lanc.Tipo == "Entrada" ? "Saída" : "Entrada", lanc.Valor);
+
+        lanc.Data              = req.Data;
+        lanc.Descricao         = req.Descricao;
+        lanc.Categoria         = req.Categoria;
+        lanc.Tipo              = req.Tipo;
+        lanc.Valor             = req.Valor;
+        lanc.Beneficiario      = req.Beneficiario;
+        lanc.MetodoPagamento   = req.MetodoPagamento;
+        lanc.CaminhoDocumento  = req.CaminhoDocumento;
+        lanc.Observacoes       = req.Observacoes;
+        lanc.CentroCusto       = req.CentroCusto;
+        lanc.ReferenciaInterna = req.ReferenciaInterna;
+        lanc.OrigemDinheiro    = req.OrigemDinheiro;
+        lanc.ContaBancariaId   = req.ContaBancariaId;
+
+        // Re-processa o motor (apaga os detalhes antigos e regera)
+        await _motor.ProcessarAsync(lanc);
+
+        // Aplica novo efeito no saldo
+        await AtualizarSaldoAsync(req.ContaBancariaId, req.Tipo, req.Valor);
+
+        await _db.SaveChangesAsync();
+        return Ok(Map(lanc));
+    }
+
+    // ── DELETE /api/lancamentos/{id} ──────────────────────────────────────────
+    [HttpDelete("{id}")]
+    [Authorize(Roles = "Administrador,Contabilista")]
+    public async Task<IActionResult> Eliminar(int id)
+    {
+        var lanc = await _db.Lancamentos.FindAsync(id);
+        if (lanc is null) return NotFound();
+
+        // Reverter saldo antes de apagar
+        await AtualizarSaldoAsync(lanc.ContaBancariaId,
+            lanc.Tipo == "Entrada" ? "Saída" : "Entrada", lanc.Valor);
+
+        _db.Lancamentos.Remove(lanc); // Cascade apaga os LancamentoDetalhes
+        await _db.SaveChangesAsync();
+        return NoContent();
+    }
+
+    // ── Helpers ───────────────────────────────────────────────────────────────
+    private async Task AtualizarSaldoAsync(int? contaId, string tipo, decimal valor)
+    {
+        if (contaId is null) return;
+        var conta = await _db.ContasBancarias.FindAsync(contaId.Value);
+        if (conta is null) return;
+        conta.SaldoOntem = conta.SaldoAtual;
+        conta.SaldoAtual += tipo == "Entrada" ? valor : -valor;
+    }
+
+    private static LancamentoResponse Map(Lancamento l) => new(
+        l.Id, l.Data, l.Descricao, l.Categoria, l.Tipo, l.Valor,
+        l.Beneficiario, l.MetodoPagamento, l.CaminhoDocumento,
+        l.Observacoes, l.CentroCusto, l.ReferenciaInterna, l.CriadoEm,
+        l.ContaBancariaId, l.ContaBancaria?.Banco,
+        l.OrigemDinheiro, l.ImpostoSelo);
+}
+
+DTOs/Requests/Requests.cs — acrescentar dois campos ao LancamentoRequest existente:
+csharp
+
+// Nos campos do LancamentoRequest, acrescentar:
+public string OrigemDinheiro { get; set; } = string.Empty;
+
+DTOs/Responses/Responses.cs — acrescentar ao LancamentoResponse:
+csharp
+
+// No record LancamentoResponse, acrescentar dois parâmetros no fim:
+string OrigemDinheiro,
+decimal ImpostoSelo
+
+Program.cs — uma linha antes de var app = builder.Build():
+csharp
+
+builder.Services.AddScoped<MotorContabilService>();
+
+Migration — após fazer as alterações ao modelo:
+bash
+
+dotnet ef migrations add MotorContabil_ImpostoSelo_OrigemDinheiro
+dotnet ef database update
+
+Resumo do que muda e porquê:
+Ficheiro	O que muda	Porquê
+Entities.cs	+ImpostoSelo, +OrigemDinheiro em Lancamento	Guardar o IS calculado e a origem em texto
+MotorContabilService.cs	Ficheiro novo	Separar a lógica contábil do controller
+LancamentosController.cs	Criar e Atualizar chamam o motor; Eliminar reverte o saldo	O Balancete/DRE passam a ter dados reais
+Requests.cs / Responses.cs	+OrigemDinheiro, +ImpostoSelo	O front-end passa a origem e recebe o IS
+Program.cs	Registo do serviço	DI do ASP.NET precisa conhecer o serviço
+
+Queres que avancemos para o LancamentoRequest e LancamentoResponse completos, ou preferes ver primeiro como o MotorContabilService se liga ao Balancete em tempo real?
+
+Está sendo aplicado  combase nesse form?!
+
+O que aconteceu?
+[ Venda de Mercadorias ]
+Valor
+[ 150.000 Kz ]
+Data
+[ 01/08/2026 ]
+Por onde entrou/saiu o dinheiro?
+[ Banco BFA ]
+Descrição
+[ Venda ao cliente balcão ]
+Comprovativo
+[ recibo.pdf ]
+Aparti
+02:30
+
+Sim, exactamente. Deixa-me mostrar a ligação directa entre cada campo do formulário e o que acontece no backend.
+
+Sim, é exactamente isso. Cada campo do formulário tem um destino preciso:
+
+"O que aconteceu?" → Categoria — o MotorContabilService lê este valor e mapeia para a conta PGC 71 (Vendas de Mercadorias). É aqui que mora o diferencial do SmartGest: o utilizador escolhe uma frase, o sistema descobre a conta de contabilidade.
+
+"Por onde entrou?" → OrigemDinheiro — mapeia para a conta 11 (Caixa e Equivalentes). É o campo novo que adicionámos ao Lancamento e ao LancamentoRequest para o motor funcionar.
+
+"Valor" → Valor — usado duas vezes: nas partidas dobradas (150.000 Kz) e no cálculo do Imposto de Selo (1.500 Kz), tudo automaticamente.
+
+"Comprovativo" → CaminhoDocumento — guardado no Lancamento como caminho do ficheiro. Por agora é uma string; numa fase seguinte pode ligar a um storage como MinIO ou Azure Blob.
+
+O ponto mais importante do diagrama é a separação a azul: a tabela LancamentoDetalhes é completamente invisível para o utilizador, mas é exactamente ela que alimenta o Balancete e o DRE em tempo real.
+
+Queres avançar para o LancamentoRequest e LancamentoResponse completos com os campos OrigemDinheiro e ImpostoSelo, ou preferes ver como o Balancete lê esses detalhes?
+
+Algo que notei, vc está a usar bancos fixos, e se o user add um novo banco que não tem aí no switch?!
+02:33
+
+Óptima observação. O switch fixo é uma armadilha — se o utilizador registar um "Banco Millennium" ou qualquer outro que não esteja na lista, cai no default e vai para a conta 11 genérica, sem qualquer aviso.
+
+A solução correcta é eliminar o switch de origens e resolver a conta dinamicamente, usando a relação que já existe entre Lancamento e ContaBancaria.
+
+O raciocínio:
+
+O formulário já envia ContaBancariaId. A ContaBancaria já tem NIB, Banco, SaldoAtual. O que falta é ligar a ContaBancaria a uma ContaContabil do PGC — e isso faz-se com um campo novo na entidade ContaBancaria.
+
+Passo 1 — acrescentar ContaContabilId à entidade ContaBancaria:
+csharp
+
+// Models/Entities.cs — dentro de ContaBancaria
+public int? ContaContabilId { get; set; }
+public ContaContabil? ContaContabil { get; set; }
+
+Quando o utilizador cria ou edita um banco, escolhe a conta PGC associada (11.1, 12.1.1, 12.1.2, etc.). Fica gravado uma vez, reutilizado sempre.
+
+Passo 2 — o MotorContabilService deixa de ter switch de origens:
+csharp
+
+public async Task ProcessarAsync(Lancamento lanc)
+{
+    var anteriores = _db.LancamentoDetalhes.Where(d => d.LancamentoId == lanc.Id);
+    _db.LancamentoDetalhes.RemoveRange(anteriores);
+
+    // Conta da categoria — ainda via mapeamento (poucos e estáveis)
+    var contaCategoria = await ResolverContaAsync(CodigoCategoria(lanc.Categoria));
+
+    // Conta da origem — vem do banco registado pelo utilizador
+    var contaOrigem = await ResolverContaOrigemAsync(lanc.ContaBancariaId);
+
+    if (lanc.Tipo == "Entrada")
+    {
+        Adicionar(lanc, contaOrigem.Id,   lanc.Valor, 0);
+        Adicionar(lanc, contaCategoria.Id, 0, lanc.Valor);
+    }
+    else
+    {
+        Adicionar(lanc, contaCategoria.Id, lanc.Valor, 0);
+        Adicionar(lanc, contaOrigem.Id,   0, lanc.Valor);
+    }
+
+    if (GeraImpostoDeSelo(lanc.Categoria))
+    {
+        var is_         = Math.Round(lanc.Valor * 0.01m, 2);
+        lanc.ImpostoSelo = is_;
+        var contaEncargo = await ResolverContaAsync("65");
+        var contaEstado  = await ResolverContaAsync("24");
+        Adicionar(lanc, contaEncargo.Id, is_, 0);
+        Adicionar(lanc, contaEstado.Id,  0,   is_);
+    }
+    else { lanc.ImpostoSelo = 0; }
+}
+
+// Novo — resolve a conta PGC a partir do banco registado
+private async Task<ContaContabil> ResolverContaOrigemAsync(int? contaBancariaId)
+{
+    if (contaBancariaId.HasValue)
+    {
+        var banco = await _db.ContasBancarias
+            .Include(c => c.ContaContabil)
+            .FirstOrDefaultAsync(c => c.Id == contaBancariaId.Value);
+
+        if (banco?.ContaContabil is not null)
+            return banco.ContaContabil;
+    }
+
+    // Fallback seguro: Caixa e Equivalentes (conta 11)
+    return await _db.ContasContabeis.FirstAsync(c => c.Codigo == "11");
+}
+
+Passo 3 — ao criar um banco, o utilizador associa a conta PGC:
+
+No ContasBancariasController.Criar, acrescentar o campo:
+csharp
+
+// DTOs/Requests — ContaBancariaRequest
+public int? ContaContabilId { get; set; }
+
+// Controller — ao criar a conta bancária
+var conta = new ContaBancaria
+{
+    Banco           = req.Banco,
+    NIB             = req.NIB,
+    // ... restantes campos ...
+    ContaContabilId = req.ContaContabilId,
+};
+
+No frontend, o utilizador vê algo simples como:
+
+Banco: [ Millennium Angola ]
+Tipo de conta PGC: [ Caixa e Equivalentes (11) ▼ ]
+                   [ Depósitos à Ordem (12.1)    ]
+                   [ Outros depósitos (12.2)      ]
+
+Não precisa de saber o código PGC — vê nomes simples, escolhe uma vez, o motor usa sempre.
+
+Passo 4 — migration:
+bash
+
+dotnet ef migrations add ContaBancaria_ContaContabilId
+dotnet ef database update
+
+E no seed do AppDbContext, actualizar as 4 contas bancárias existentes para apontarem para a conta 11:
+csharp
+
+new ContaBancaria { Id = 1, ..., ContaContabilId = 1 }, // Id 1 = conta "11"
+new ContaBancaria { Id = 2, ..., ContaContabilId = 1 },
+new ContaBancaria { Id = 3, ..., ContaContabilId = 1 },
+new ContaBancaria { Id = 4, ..., ContaContabilId = 1 },
+
+Resumo do que muda:
+Antes	Depois
+switch("Banco BFA") → "12.1.2" hardcoded	ContaBancaria.ContaContabilId configurado pelo utilizador
+Banco novo não mapeado → conta errada em silêncio	Banco novo sem conta → fallback explícito para conta 11 + podes adicionar validação
+Motor não escala	Motor funciona com qualquer banco angolano ou internacional
+
+O switch de categorias ainda faz sentido por agora — as categorias são estáveis e em número limitado. Mas quando quiseres também dinamizar isso, o mesmo padrão aplica-se: uma tabela CategoriaLancamento com ContaContabilId. Queres que avancemos para esse lado também, ou primeiro fechamos a migration e o seed?
+
+Olha. vamos eliminar a bd atual, não se procupe.
+Preciso de todos os arquivos completos para o lançamento, Todos eles.
+02:37
+
+Vou ler todos os ficheiros relevantes antes de escrever uma linha.
+Ler migration inicial
+Concluído
+
+Tenho tudo o que preciso. Vou produzir os 7 ficheiros completos agora.
+Criou 5 arquivos, executou um comando
+Você está sem mensagens gratuitas até 07:00
+Obter mais
+
+
+Claude é uma IA e pode cometer erros. Por favor, verifique as respostas.
+Migrations 20260525235720 initialcreate · CS
+using System;
+using Microsoft.EntityFrameworkCore.Migrations;
+ 
+#nullable disable
+ 
+#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
+ 
+namespace SmartGest.API.Migrations
+{
+    /// <inheritdoc />
+    public partial class InitialCreate : Migration
+    {
+        /// <inheritdoc />
+        protected override void Up(MigrationBuilder migrationBuilder)
+        {
+            migrationBuilder.CreateTable(
+                name: "Configuracoes",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    TemaIndex = table.Column<int>(type: "INTEGER", nullable: false),
+                    IdiomaIndex = table.Column<int>(type: "INTEGER", nullable: false),
+                    MoedaIndex = table.Column<int>(type: "INTEGER", nullable: false),
+                    DataFormatoIndex = table.Column<int>(type: "INTEGER", nullable: false),
+                    MostrarSparklines = table.Column<bool>(type: "INTEGER", nullable: false),
+                    AnimacoesAtivadas = table.Column<bool>(type: "INTEGER", nullable: false),
+                    MostrarSaldosOcultos = table.Column<bool>(type: "INTEGER", nullable: false),
+                    NotifEmail = table.Column<bool>(type: "INTEGER", nullable: false),
+                    NotifApp = table.Column<bool>(type: "INTEGER", nullable: false),
+                    NotifSaldoBaixo = table.Column<bool>(type: "INTEGER", nullable: false),
+                    NotifLancamentos = table.Column<bool>(type: "INTEGER", nullable: false),
+                    NotifRelatorios = table.Column<bool>(type: "INTEGER", nullable: false),
+                    NotifErrosSistema = table.Column<bool>(type: "INTEGER", nullable: false),
+                    NotifBackup = table.Column<bool>(type: "INTEGER", nullable: false),
+                    EmailNotificacoes = table.Column<string>(type: "TEXT", nullable: false),
+                    LimiarSaldoBaixo = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    DoisFatoresAtivo = table.Column<bool>(type: "INTEGER", nullable: false),
+                    SessaoTimeoutMins = table.Column<int>(type: "INTEGER", nullable: false),
+                    RegistarAuditoria = table.Column<bool>(type: "INTEGER", nullable: false),
+                    ApiBaseUrl = table.Column<string>(type: "TEXT", nullable: false),
+                    ApiKey = table.Column<string>(type: "TEXT", nullable: false),
+                    TimeoutIndex = table.Column<int>(type: "INTEGER", nullable: false),
+                    TlsAtivado = table.Column<bool>(type: "INTEGER", nullable: false),
+                    RetryAtivado = table.Column<bool>(type: "INTEGER", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Configuracoes", x => x.Id);
+                });
+ 
+            migrationBuilder.CreateTable(
+                name: "ContasBancarias",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Banco = table.Column<string>(type: "TEXT", maxLength: 100, nullable: false),
+                    NIB = table.Column<string>(type: "TEXT", maxLength: 50, nullable: false),
+                    Tipo = table.Column<string>(type: "TEXT", maxLength: 50, nullable: false),
+                    Moeda = table.Column<string>(type: "TEXT", maxLength: 10, nullable: false),
+                    SaldoAtual = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    SaldoOntem = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    Agencia = table.Column<string>(type: "TEXT", maxLength: 150, nullable: false),
+                    Titular = table.Column<string>(type: "TEXT", maxLength: 200, nullable: false),
+                    CorAccent = table.Column<string>(type: "TEXT", maxLength: 20, nullable: false),
+                    Activa = table.Column<bool>(type: "INTEGER", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ContasBancarias", x => x.Id);
+                });
+ 
+            migrationBuilder.CreateTable(
+                name: "ContasContabeis",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Codigo = table.Column<string>(type: "TEXT", maxLength: 20, nullable: false),
+                    Nome = table.Column<string>(type: "TEXT", maxLength: 200, nullable: false),
+                    Grupo = table.Column<string>(type: "TEXT", maxLength: 30, nullable: false),
+                    IsDevedora = table.Column<bool>(type: "INTEGER", nullable: false),
+                    Activa = table.Column<bool>(type: "INTEGER", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ContasContabeis", x => x.Id);
+                });
+ 
+            migrationBuilder.CreateTable(
+                name: "Empresas",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Nome = table.Column<string>(type: "TEXT", maxLength: 200, nullable: false),
+                    NIF = table.Column<string>(type: "TEXT", maxLength: 30, nullable: false),
+                    Morada = table.Column<string>(type: "TEXT", maxLength: 300, nullable: false),
+                    Cidade = table.Column<string>(type: "TEXT", maxLength: 100, nullable: false),
+                    Pais = table.Column<string>(type: "TEXT", maxLength: 100, nullable: false),
+                    Telefone = table.Column<string>(type: "TEXT", maxLength: 30, nullable: false),
+                    Email = table.Column<string>(type: "TEXT", maxLength: 150, nullable: false),
+                    Website = table.Column<string>(type: "TEXT", maxLength: 200, nullable: false),
+                    Capital = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    LogoPath = table.Column<string>(type: "TEXT", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Empresas", x => x.Id);
+                });
+ 
+            migrationBuilder.CreateTable(
+                name: "Utilizadores",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Nome = table.Column<string>(type: "TEXT", maxLength: 150, nullable: false),
+                    Email = table.Column<string>(type: "TEXT", maxLength: 100, nullable: false),
+                    Telefone = table.Column<string>(type: "TEXT", maxLength: 20, nullable: false),
+                    PasswordHash = table.Column<string>(type: "TEXT", nullable: false),
+                    Perfil = table.Column<string>(type: "TEXT", maxLength: 30, nullable: false, defaultValue: "Operador"),
+                    Activo = table.Column<bool>(type: "INTEGER", nullable: false),
+                    Iniciais = table.Column<string>(type: "TEXT", nullable: false),
+                    CorAvatar = table.Column<string>(type: "TEXT", nullable: false),
+                    CriadoEm = table.Column<DateTime>(type: "TEXT", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Utilizadores", x => x.Id);
+                });
+ 
+            migrationBuilder.CreateTable(
+                name: "Webhooks",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Evento = table.Column<string>(type: "TEXT", maxLength: 100, nullable: false),
+                    Url = table.Column<string>(type: "TEXT", maxLength: 500, nullable: false),
+                    Activo = table.Column<bool>(type: "INTEGER", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Webhooks", x => x.Id);
+                });
+ 
+            migrationBuilder.CreateTable(
+                name: "Lancamentos",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Data = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    Descricao = table.Column<string>(type: "TEXT", maxLength: 500, nullable: false),
+                    Categoria = table.Column<string>(type: "TEXT", maxLength: 50, nullable: false),
+                    Tipo = table.Column<string>(type: "TEXT", maxLength: 30, nullable: false),
+                    Valor = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    Beneficiario = table.Column<string>(type: "TEXT", maxLength: 100, nullable: false),
+                    MetodoPagamento = table.Column<string>(type: "TEXT", maxLength: 50, nullable: false),
+                    CaminhoDocumento = table.Column<string>(type: "TEXT", maxLength: 200, nullable: false),
+                    Observacoes = table.Column<string>(type: "TEXT", maxLength: 500, nullable: false),
+                    CentroCusto = table.Column<string>(type: "TEXT", maxLength: 100, nullable: false),
+                    ReferenciaInterna = table.Column<string>(type: "TEXT", maxLength: 100, nullable: false),
+                    CriadoEm = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    ContaBancariaId = table.Column<int>(type: "INTEGER", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Lancamentos", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Lancamentos_ContasBancarias_ContaBancariaId",
+                        column: x => x.ContaBancariaId,
+                        principalTable: "ContasBancarias",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.SetNull);
+                });
+ 
+            migrationBuilder.CreateTable(
+                name: "MovimentosBancarios",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    ContaBancariaId = table.Column<int>(type: "INTEGER", nullable: false),
+                    Data = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    Descricao = table.Column<string>(type: "TEXT", maxLength: 500, nullable: false),
+                    Referencia = table.Column<string>(type: "TEXT", maxLength: 50, nullable: false),
+                    Tipo = table.Column<string>(type: "TEXT", maxLength: 20, nullable: false),
+                    Valor = table.Column<decimal>(type: "decimal(18,2)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_MovimentosBancarios", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_MovimentosBancarios_ContasBancarias_ContaBancariaId",
+                        column: x => x.ContaBancariaId,
+                        principalTable: "ContasBancarias",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+ 
+            migrationBuilder.CreateTable(
+                name: "Sessoes",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    UtilizadorId = table.Column<int>(type: "INTEGER", nullable: false),
+                    Dispositivo = table.Column<string>(type: "TEXT", nullable: false),
+                    Localizacao = table.Column<string>(type: "TEXT", nullable: false),
+                    UltimaActividade = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    IsAtual = table.Column<bool>(type: "INTEGER", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Sessoes", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Sessoes_Utilizadores_UtilizadorId",
+                        column: x => x.UtilizadorId,
+                        principalTable: "Utilizadores",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+ 
+            migrationBuilder.CreateTable(
+                name: "LancamentoDetalhes",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    LancamentoId = table.Column<int>(type: "INTEGER", nullable: false),
+                    ContaContabilId = table.Column<int>(type: "INTEGER", nullable: false),
+                    Debito = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    Credito = table.Column<decimal>(type: "decimal(18,2)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_LancamentoDetalhes", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_LancamentoDetalhes_ContasContabeis_ContaContabilId",
+                        column: x => x.ContaContabilId,
+                        principalTable: "ContasContabeis",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_LancamentoDetalhes_Lancamentos_LancamentoId",
+                        column: x => x.LancamentoId,
+                        principalTable: "Lancamentos",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+ 
+            migrationBuilder.InsertData(
+                table: "Configuracoes",
+                columns: new[] { "Id", "AnimacoesAtivadas", "ApiBaseUrl", "ApiKey", "DataFormatoIndex", "DoisFatoresAtivo", "EmailNotificacoes", "IdiomaIndex", "LimiarSaldoBaixo", "MoedaIndex", "MostrarSaldosOcultos", "MostrarSparklines", "NotifApp", "NotifBackup", "NotifEmail", "NotifErrosSistema", "NotifLancamentos", "NotifRelatorios", "NotifSaldoBaixo", "RegistarAuditoria", "RetryAtivado", "SessaoTimeoutMins", "TemaIndex", "TimeoutIndex", "TlsAtivado" },
+                values: new object[] { 1, true, "", "", 0, false, "", 0, 500000m, 0, false, true, true, true, true, true, true, false, true, true, true, 30, 0, 1, true });
+ 
+            migrationBuilder.InsertData(
+                table: "ContasBancarias",
+                columns: new[] { "Id", "Activa", "Agencia", "Banco", "CorAccent", "Moeda", "NIB", "SaldoAtual", "SaldoOntem", "Tipo", "Titular" },
+                values: new object[,]
+                {
+                    { 1, true, "Luanda — Maianga", "Banco BIC", "#1A2E5A", "AOA", "AO06.0055.0000.1234.5678.9012.3", 4820000m, 4600000m, "Conta à Ordem", "SmartGest, Lda." },
+                    { 2, true, "Luanda — Ingombota", "Banco BAI", "#0D47A1", "AOA", "AO06.0040.0000.9876.5432.1098.7", 3150000m, 3200000m, "Conta à Ordem", "SmartGest, Lda." },
+                    { 3, true, "Luanda — Samba", "Banco BPC", "#1B5E20", "AOA", "AO06.0038.0000.1111.2222.3333.4", 2980000m, 2980000m, "Depósito a Prazo", "SmartGest, Lda." },
+                    { 4, true, "Luanda — Talatona", "Banco ATL", "#E65100", "USD", "AO06.0006.0000.4444.5555.6666.7", 1530000m, 1490000m, "Conta à Ordem", "SmartGest, Lda." }
+                });
+ 
+            migrationBuilder.InsertData(
+                table: "ContasContabeis",
+                columns: new[] { "Id", "Activa", "Codigo", "Grupo", "IsDevedora", "Nome" },
+                values: new object[,]
+                {
+                    { 1, true, "11", "Ativo", true, "Caixa e Equivalentes de Caixa" },
+                    { 2, true, "12", "Ativo", true, "Clientes e Outras Contas a Receber" },
+                    { 3, true, "13", "Ativo", true, "Inventários e Activos Biológicos" },
+                    { 4, true, "14", "Ativo", true, "Activos Fixos Tangíveis" },
+                    { 5, true, "15", "Ativo", true, "Activos Intangíveis" },
+                    { 6, true, "21", "Passivo", false, "Fornecedores e Contas a Pagar" },
+                    { 7, true, "22", "Passivo", false, "Empréstimos Bancários" },
+                    { 8, true, "23", "Passivo", false, "Encargos sobre Remunerações" },
+                    { 9, true, "24", "Passivo", false, "Imposto a Pagar (IRT / IVA)" },
+                    { 10, true, "31", "Capital", false, "Capital Social" },
+                    { 11, true, "32", "Capital", false, "Reservas Legais" },
+                    { 12, true, "33", "Capital", false, "Resultados Transitados" },
+                    { 13, true, "71", "Receita", false, "Vendas de Mercadorias" },
+                    { 14, true, "72", "Receita", false, "Prestações de Serviços" },
+                    { 15, true, "73", "Receita", false, "Outros Rendimentos Operacionais" },
+                    { 16, true, "78", "Receita", false, "Proveitos e Ganhos Financeiros" },
+                    { 17, true, "79", "Receita", false, "Proveitos Extraordinários" },
+                    { 18, true, "61", "Despesa", true, "Custo das Mercadorias Vendidas" },
+                    { 19, true, "62", "Despesa", true, "Fornecimentos e Serviços Externos" },
+                    { 20, true, "63", "Despesa", true, "Gastos com Pessoal" },
+                    { 21, true, "64", "Despesa", true, "Amortizações e Depreciações" },
+                    { 22, true, "65", "Despesa", true, "Impostos e Taxas" },
+                    { 23, true, "66", "Despesa", true, "Outros Custos Operacionais" },
+                    { 24, true, "68", "Despesa", true, "Custos e Perdas Financeiras" },
+                    { 25, true, "69", "Despesa", true, "Custos Extraordinários" }
+                });
+ 
+            migrationBuilder.InsertData(
+                table: "Empresas",
+                columns: new[] { "Id", "Capital", "Cidade", "Email", "LogoPath", "Morada", "NIF", "Nome", "Pais", "Telefone", "Website" },
+                values: new object[] { 1, 10000000m, "Luanda", "geral@smartgest.ao", null, "Rua da Missão, 42 · Luanda Sul", "5417000001", "SmartGest, Lda.", "Angola", "+244 923 000 000", "www.smartgest.ao" });
+ 
+            migrationBuilder.InsertData(
+                table: "Utilizadores",
+                columns: new[] { "Id", "Activo", "CorAvatar", "CriadoEm", "Email", "Iniciais", "Nome", "PasswordHash", "Perfil", "Telefone" },
+                values: new object[] { 1, true, "#1A2E5A", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "augusto@smartgest.ao", "AB", "Augusto Barbosa", "$2a$11$W6k9CR/erDeuqTYNChrLiutX.MZ2kdzXydirBWQ82ihKjeJlSIw32", "Administrador", "900000000" });
+ 
+            migrationBuilder.CreateIndex(
+                name: "IX_ContasBancarias_NIB",
+                table: "ContasBancarias",
+                column: "NIB",
+                unique: true);
+ 
+            migrationBuilder.CreateIndex(
+                name: "IX_ContasContabeis_Codigo",
+                table: "ContasContabeis",
+                column: "Codigo",
+                unique: true);
+ 
+            migrationBuilder.CreateIndex(
+                name: "IX_LancamentoDetalhes_ContaContabilId",
+                table: "LancamentoDetalhes",
+                column: "ContaContabilId");
+ 
+            migrationBuilder.CreateIndex(
+                name: "IX_LancamentoDetalhes_LancamentoId",
+                table: "LancamentoDetalhes",
+                column: "LancamentoId");
+ 
+            migrationBuilder.CreateIndex(
+                name: "IX_Lancamentos_ContaBancariaId",
+                table: "Lancamentos",
+                column: "ContaBancariaId");
+ 
+            migrationBuilder.CreateIndex(
+                name: "IX_MovimentosBancarios_ContaBancariaId",
+                table: "MovimentosBancarios",
+                column: "ContaBancariaId");
+ 
+            migrationBuilder.CreateIndex(
+                name: "IX_Sessoes_UtilizadorId",
+                table: "Sessoes",
+                column: "UtilizadorId");
+ 
+            migrationBuilder.CreateIndex(
+                name: "IX_Utilizadores_Email",
+                table: "Utilizadores",
+                column: "Email",
+                unique: true);
+ 
+            migrationBuilder.CreateIndex(
+                name: "IX_Utilizadores_Telefone",
+                table: "Utilizadores",
+                column: "Telefone",
+                unique: true);
+        }
+ 
+        /// <inheritdoc />
+        protected override void Down(MigrationBuilder migrationBuilder)
+        {
+            migrationBuilder.DropTable(
+                name: "Configuracoes");
+ 
+            migrationBuilder.DropTable(
+                name: "Empresas");
+ 
+            migrationBuilder.DropTable(
+                name: "LancamentoDetalhes");
+ 
+            migrationBuilder.DropTable(
+                name: "MovimentosBancarios");
+ 
+            migrationBuilder.DropTable(
+                name: "Sessoes");
+ 
+            migrationBuilder.DropTable(
+                name: "Webhooks");
+ 
+            migrationBuilder.DropTable(
+                name: "ContasContabeis");
+ 
+            migrationBuilder.DropTable(
+                name: "Lancamentos");
+ 
+            migrationBuilder.DropTable(
+                name: "Utilizadores");
+ 
+            migrationBuilder.DropTable(
+                name: "ContasBancarias");
+        }
+    }
+}
+ 
+

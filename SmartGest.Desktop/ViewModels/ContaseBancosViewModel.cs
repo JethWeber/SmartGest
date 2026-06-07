@@ -1,84 +1,117 @@
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Net;
+using System.Net.Http;
+using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using LiveChartsCore;
 using LiveChartsCore.SkiaSharpView;
 using LiveChartsCore.SkiaSharpView.Painting;
 using SkiaSharp;
+using SmartGest.Desktop.Services;
+using static SmartGest.Desktop.Services.ContasBancariasService;
 
 namespace SmartGest.Desktop.ViewModels;
 
 public partial class ContaseBancosViewModel : ViewModelBase
 {
+    private readonly ContasBancariasService _service;
+
     // ── Métricas do Topo ─────────────────────────────────────────────────────
-    [ObservableProperty] private string _saldoConsolidado = "12.480.000 Kzs";
-    [ObservableProperty] private string _totalContas      = "4";
-    [ObservableProperty] private string _movimentosMes   = "87";
-    [ObservableProperty] private string _saldoVariacao   = "+8%";
+    [ObservableProperty] private string _saldoConsolidado = "— Kzs";
+    [ObservableProperty] private string _totalContas      = "—";
+    [ObservableProperty] private string _movimentosMes   = "—";
+    [ObservableProperty] private string _saldoVariacao   = "";
+
+    // ── Estado de carregamento / erro ────────────────────────────────────────
+    [ObservableProperty] private bool   _isLoading    = false;
+    [ObservableProperty] private string _erroMensagem = string.Empty;
 
     // ── Sparklines ───────────────────────────────────────────────────────────
     public ISeries[] SparklineSaldo      { get; }
     public ISeries[] SparklineMovimentos { get; }
 
-    // ── Conta seleccionada (detalhe lateral) ──────────────────────────────
+    // ── Conta seleccionada (detalhe lateral) ─────────────────────────────────
     [ObservableProperty] private ContaBancariaItem? _contaSelecionada;
 
-    // ── Gráfico de evolução ───────────────────────────────────────────────
+    // Notifica a View quando a conta seleccionada muda (para actualizar os itens activos)
+    partial void OnContaSelecionadaChanged(ContaBancariaItem? value)
+    {
+        // Força re-avaliação da propriedade IsActiva em todos os itens da lista
+        foreach (var c in ContasFiltradas)
+            c.NotifyIsActiva(value);
+    }
+
+    // ── Gráfico de evolução ──────────────────────────────────────────────────
     [ObservableProperty] private ISeries[] _seriesEvolucao = Array.Empty<ISeries>();
     public Axis[] EixoX { get; }
     public Axis[] EixoY { get; }
 
-    // ── Filtros de movimentos ─────────────────────────────────────────────
-    [ObservableProperty] private string          _filtroTexto     = string.Empty;
-    [ObservableProperty] private int             _filtroTipoIndex = 0;
+    // ── Filtros de movimentos ────────────────────────────────────────────────
+    [ObservableProperty] private string          _filtroTexto      = string.Empty;
+    [ObservableProperty] private int             _filtroTipoIndex  = 0;
     [ObservableProperty] private DateTimeOffset? _filtroDataInicio = DateTimeOffset.Now.AddDays(-30);
     [ObservableProperty] private DateTimeOffset? _filtroDataFim    = DateTimeOffset.Now;
 
-    // ── Listas principais ─────────────────────────────────────────────────
-    private readonly ObservableCollection<ContaBancariaItem> _todasContas;
-    [ObservableProperty] private ObservableCollection<ContaBancariaItem> _contasFiltradas;
+    // ── Listas principais ────────────────────────────────────────────────────
+    private readonly ObservableCollection<ContaBancariaItem> _todasContas = new();
+    [ObservableProperty] private ObservableCollection<ContaBancariaItem> _contasFiltradas = new();
 
-    private readonly ObservableCollection<MovimentoBancarioItem> _todosMovimentos;
-    [ObservableProperty] private ObservableCollection<MovimentoBancarioItem> _movimentosFiltrados;
+    private readonly ObservableCollection<MovimentoBancarioItem> _todosMovimentos = new();
+    [ObservableProperty] private ObservableCollection<MovimentoBancarioItem> _movimentosFiltrados = new();
     [ObservableProperty] private string _totalMovimentosTexto = string.Empty;
 
-    // ── Estado do Modal "Gerir Contas" ────────────────────────────────────
-    [ObservableProperty] private bool   _modalGerirAberto = false;
+    // ── Estado do Modal "Gerir Contas" ───────────────────────────────────────
+    [ObservableProperty] private bool _modalGerirAberto = false;
 
-    /// <summary>Cópia editável das contas, usada dentro do modal.</summary>
     [ObservableProperty] private ObservableCollection<ContaBancariaEditavel> _contasEditaveis = new();
-
-    /// <summary>Conta a ser editada no formulário lateral do modal (null = modo Adicionar).</summary>
     [ObservableProperty] private ContaBancariaEditavel? _contaEmEdicao;
 
-    // ── Campos do formulário do modal ─────────────────────────────────────
-    [ObservableProperty] private string _formBanco    = string.Empty;
-    [ObservableProperty] private string _formNIB      = string.Empty;
-    [ObservableProperty] private string _formTipo     = "Conta à Ordem";
-    [ObservableProperty] private string _formMoeda    = "AOA";
-    [ObservableProperty] private string _formAgencia  = string.Empty;
-    [ObservableProperty] private string _formTitular  = string.Empty;
+    // ── Campos do formulário do modal ────────────────────────────────────────
+    [ObservableProperty] private string _formBanco     = string.Empty;
+    [ObservableProperty] private string _formNIB       = string.Empty;
+    [ObservableProperty] private string _formTipo      = "Conta à Ordem";
+    [ObservableProperty] private string _formMoeda     = "AOA";
+    [ObservableProperty] private string _formAgencia   = string.Empty;
+    [ObservableProperty] private string _formTitular   = string.Empty;
     [ObservableProperty] private string _formCorAccent = "#1A2E5A";
-    [ObservableProperty] private double _formSaldo    = 0;
-
-    /// <summary>Título do painel de formulário dentro do modal.</summary>
+    [ObservableProperty] private string _formSaldoTexto = "0";
     [ObservableProperty] private string _formTitulo       = "Nova Conta";
     [ObservableProperty] private bool   _formEdicaoActiva = false;
 
-    /// <summary>Texto do botão de guardar — muda consoante o modo.</summary>
     public string FormBotaoTexto => FormEdicaoActiva ? "Actualizar" : "Adicionar";
-
     partial void OnFormEdicaoActivaChanged(bool value) => OnPropertyChanged(nameof(FormBotaoTexto));
 
-    // ── Erros de validação simples ────────────────────────────────────────
-    [ObservableProperty] private string _formErroBanco  = string.Empty;
-    [ObservableProperty] private string _formErroNIB    = string.Empty;
+    // ── Erros de validação do formulário ─────────────────────────────────────
+    [ObservableProperty] private string _formErroBanco   = string.Empty;
+    [ObservableProperty] private string _formErroNIB     = string.Empty;
+    [ObservableProperty] private string _formErroTitular = string.Empty;
+    [ObservableProperty] private string _formErroSaldo   = string.Empty;
 
-    // ─────────────────────────────────────────────────────────────────────
-    public ContaseBancosViewModel()
+    // ── Estado de gravação do modal ──────────────────────────────────────────
+    [ObservableProperty] private bool   _isSaving      = false;
+    [ObservableProperty] private string _erroModal     = string.Empty;
+    [ObservableProperty] private string _sucessoModal  = string.Empty;
+
+    // ── Listas para ComboBox (instância — {Binding} não resolve propriedades estáticas)
+    public IReadOnlyList<string> TiposConta { get; } = new[]
     {
+        "Conta à Ordem", "Depósito a Prazo", "Conta Poupança", "Conta Empresarial"
+    };
+
+    public IReadOnlyList<string> MoedasDisponiveis { get; } = new[]
+    {
+        "AOA", "USD", "EUR"
+    };
+
+    // ─────────────────────────────────────────────────────────────────────────
+    public ContaseBancosViewModel(ContasBancariasService service)
+    {
+        _service = service;
+
         SparklineSaldo      = new ISeries[] { Sparkline(new double[] { 8, 9, 8.5, 10, 11, 10.5, 12, 12.5 }, new SKColor(0x1A, 0x2E, 0x5A)) };
         SparklineMovimentos = new ISeries[] { Sparkline(new double[] { 5, 7,  6,   8,  7,   9,   8,  10  }, new SKColor(0x21, 0x96, 0xF3)) };
 
@@ -87,78 +120,129 @@ public partial class ContaseBancosViewModel : ViewModelBase
         EixoX = new[] { new Axis { Labels = meses, TextSize = 11, LabelsPaint = new SolidColorPaint(new SKColor(0x9A, 0xA0, 0xAB)) } };
         EixoY = new[] { new Axis { Labeler = v => $"{v:N0}k", TextSize = 11, LabelsPaint = new SolidColorPaint(new SKColor(0x9A, 0xA0, 0xAB)) } };
 
-        _todasContas        = new ObservableCollection<ContaBancariaItem>(GerarContas());
-        _contasFiltradas    = new ObservableCollection<ContaBancariaItem>(_todasContas);
-        _todosMovimentos    = new ObservableCollection<MovimentoBancarioItem>(GerarMovimentos());
-        _movimentosFiltrados = new ObservableCollection<MovimentoBancarioItem>(_todosMovimentos);
-
-        ContaSelecionada = _todasContas.FirstOrDefault();
-        AtualizarGraficoEvolucao();
-        AtualizarContador();
+        _ = CarregarContasAsync();
     }
 
-    // ══════════════════════════════════════════════════════════════════════
-    // COMANDOS — Lista / Selecção
-    // ══════════════════════════════════════════════════════════════════════
+    // ══════════════════════════════════════════════════════════════════════════
+    // CARREGAMENTO INICIAL
+    // ══════════════════════════════════════════════════════════════════════════
+
+    /// <summary>
+    /// Alias público chamado pelo MainWindowViewModel quando navega para esta
+    /// página (OnSelectedMenuIndexChanged). Delega em CarregarContasAsync.
+    /// </summary>
+    public Task ActivarAsync() => CarregarContasAsync();
 
     [RelayCommand]
-    private void SelecionarConta(ContaBancariaItem conta)
+    private async Task CarregarContasAsync()
+    {
+        IsLoading    = true;
+        ErroMensagem = string.Empty;
+
+        try
+        {
+            var sumario = await _service.ListarAsync();
+            if (sumario is null)
+            {
+                ErroMensagem = "Não foi possível obter as contas bancárias.";
+                return;
+            }
+
+            _todasContas.Clear();
+            foreach (var dto in sumario.Contas)
+                _todasContas.Add(MapDto(dto));
+
+            ContasFiltradas  = new ObservableCollection<ContaBancariaItem>(_todasContas);
+            SaldoConsolidado = $"{sumario.SaldoConsolidado:N0} Kzs";
+            TotalContas      = sumario.TotalContas.ToString();
+            MovimentosMes    = sumario.MovimentosMes.ToString();
+
+            // Seleccionar a primeira conta e notificar IsActiva
+            var primeira = _todasContas.FirstOrDefault();
+            if (primeira is not null)
+            {
+                ContaSelecionada = primeira;
+                foreach (var c in ContasFiltradas)
+                    c.NotifyIsActiva(ContaSelecionada);
+                await CarregarMovimentosAsync(primeira.Id);
+            }
+
+            AtualizarGraficoEvolucao();
+        }
+        catch (Exception ex)
+        {
+            ErroMensagem = $"Erro ao carregar contas: {ex.Message}";
+        }
+        finally
+        {
+            IsLoading = false;
+        }
+    }
+
+    private async Task CarregarMovimentosAsync(int contaId)
+    {
+        _todosMovimentos.Clear();
+
+        string?   tipo     = FiltroTipoIndex == 1 ? "Crédito" : FiltroTipoIndex == 2 ? "Débito" : null;
+        DateTime? dataIni  = FiltroDataInicio?.Date;
+        DateTime? dataFim  = FiltroDataFim?.Date;
+        string?   texto    = string.IsNullOrWhiteSpace(FiltroTexto) ? null : FiltroTexto.Trim();
+
+        try
+        {
+            var movimentos = await _service.ListarMovimentosAsync(contaId, tipo, dataIni, dataFim, texto);
+            if (movimentos is null) return;
+
+            foreach (var m in movimentos)
+                _todosMovimentos.Add(MapMovimento(m));
+
+            MovimentosFiltrados = new ObservableCollection<MovimentoBancarioItem>(_todosMovimentos);
+            AtualizarContador();
+        }
+        catch (Exception ex)
+        {
+            ErroMensagem = $"Erro ao carregar movimentos: {ex.Message}";
+        }
+    }
+
+    // ══════════════════════════════════════════════════════════════════════════
+    // COMANDOS — Lista / Selecção
+    // ══════════════════════════════════════════════════════════════════════════
+
+    [RelayCommand]
+    private async Task SelecionarConta(ContaBancariaItem conta)
     {
         ContaSelecionada = conta;
+        // Notifica todos os itens para que actualizem o estado activo na View
+        foreach (var c in ContasFiltradas)
+            c.NotifyIsActiva(ContaSelecionada);
+
         AtualizarGraficoEvolucao();
-        MovimentosFiltrados = new ObservableCollection<MovimentoBancarioItem>(
-            _todosMovimentos.Where(m => m.Banco == conta.Banco));
-        AtualizarContador();
+        await CarregarMovimentosAsync(conta.Id);
     }
 
     [RelayCommand]
-    private void Filtrar()
+    private async Task Filtrar()
     {
-        var query = _todosMovimentos.AsEnumerable();
-
-        if (ContaSelecionada is not null)
-            query = query.Where(m => m.Banco == ContaSelecionada.Banco);
-
-        if (!string.IsNullOrWhiteSpace(FiltroTexto))
-        {
-            var termo = FiltroTexto.Trim().ToLower();
-            query = query.Where(m =>
-                m.Descricao.ToLower().Contains(termo) ||
-                m.Referencia.ToLower().Contains(termo));
-        }
-
-        query = FiltroTipoIndex switch
-        {
-            1 => query.Where(m => m.IsCredito),
-            2 => query.Where(m => m.IsDebito),
-            _ => query
-        };
-
-        if (FiltroDataInicio.HasValue)
-            query = query.Where(m => m.DataOrigem >= FiltroDataInicio.Value.Date);
-        if (FiltroDataFim.HasValue)
-            query = query.Where(m => m.DataOrigem <= FiltroDataFim.Value.Date);
-
-        MovimentosFiltrados = new ObservableCollection<MovimentoBancarioItem>(query);
-        AtualizarContador();
+        if (ContaSelecionada is null) return;
+        await CarregarMovimentosAsync(ContaSelecionada.Id);
     }
 
     [RelayCommand]
     private void Exportar() { /* ponto de extensão */ }
 
-    // ══════════════════════════════════════════════════════════════════════
+    // ══════════════════════════════════════════════════════════════════════════
     // COMANDOS — Modal Gerir Contas
-    // ══════════════════════════════════════════════════════════════════════
+    // ══════════════════════════════════════════════════════════════════════════
 
     [RelayCommand]
     private void AbrirGerirContas()
     {
-        // Cria uma cópia editável de cada conta
         ContasEditaveis = new ObservableCollection<ContaBancariaEditavel>(
             _todasContas.Select(c => new ContaBancariaEditavel(c)));
 
-        // Abre o formulário em modo "Nova Conta"
         PrepararFormularioNovo();
+        LimparFeedbackModal();
         ModalGerirAberto = true;
     }
 
@@ -168,90 +252,174 @@ public partial class ContaseBancosViewModel : ViewModelBase
     [RelayCommand]
     private void LimparFormulario() => PrepararFormularioNovo();
 
-    /// <summary>Clique em "Editar" numa linha da lista do modal.</summary>
     [RelayCommand]
     private void EditarContaModal(ContaBancariaEditavel conta)
     {
-        ContaEmEdicao  = conta;
-        FormTitulo     = "Editar Conta";
+        ContaEmEdicao    = conta;
+        FormTitulo       = "Editar Conta";
         FormEdicaoActiva = true;
 
-        FormBanco    = conta.Banco;
-        FormNIB      = conta.NIB;
-        FormTipo     = conta.Tipo;
-        FormMoeda    = conta.Moeda;
-        FormAgencia  = conta.Agencia;
-        FormTitular  = conta.Titular;
-        FormCorAccent = conta.CorAccent;
-        FormSaldo    = conta.SaldoAtual;
+        FormBanco      = conta.Banco;
+        FormNIB        = conta.NIB;
+        FormTipo       = conta.Tipo;
+        FormMoeda      = conta.Moeda;
+        FormAgencia    = conta.Agencia;
+        FormTitular    = conta.Titular;
+        FormCorAccent  = conta.CorAccent;
+        FormSaldoTexto = conta.SaldoAtual.ToString("F2");
 
         LimparErros();
+        LimparFeedbackModal();
     }
 
-    /// <summary>Clique em "Eliminar" numa linha da lista do modal.</summary>
     [RelayCommand]
-    private void EliminarContaModal(ContaBancariaEditavel conta)
+    private async Task EliminarContaModal(ContaBancariaEditavel conta)
     {
-        ContasEditaveis.Remove(conta);
-        if (ContaEmEdicao == conta)
-            PrepararFormularioNovo();
+        LimparFeedbackModal();
+        try
+        {
+            if (conta.Id > 0)
+                await _service.EliminarAsync(conta.Id);
+
+            ContasEditaveis.Remove(conta);
+            if (ContaEmEdicao == conta)
+                PrepararFormularioNovo();
+
+            MostrarSucesso($"Conta «{conta.Banco}» eliminada com sucesso.");
+
+            try { await SincronizarListaPrincipalAsync(); }
+            catch { /* eliminada na API; lista actualiza ao navegar */ }
+        }
+        catch (ApiException ex) when (ex.IsUnauthorized)
+        {
+            ErroModal = "Sem permissão para eliminar contas ou sessão expirada.";
+        }
+        catch (ApiException ex)
+        {
+            ErroModal = $"Erro ao eliminar: {ex.Message}";
+        }
+        catch (HttpRequestException)
+        {
+            ErroModal = $"Sem ligação à API ({ApiClient.BaseUrl}). Verifique se o servidor está activo.";
+        }
+        catch (Exception ex)
+        {
+            ErroModal = $"Erro ao eliminar: {ex.Message}";
+        }
     }
 
-    /// <summary>Guarda (cria ou actualiza) a conta no formulário do modal.</summary>
     [RelayCommand]
-    private void GuardarConta()
+    private async Task GuardarConta()
     {
+        LimparFeedbackModal();
+
         if (!ValidarFormulario()) return;
 
-        if (ContaEmEdicao is not null)
-        {
-            // Actualiza a conta em edição
-            ContaEmEdicao.Banco     = FormBanco;
-            ContaEmEdicao.NIB       = FormNIB;
-            ContaEmEdicao.Tipo      = FormTipo;
-            ContaEmEdicao.Moeda     = FormMoeda;
-            ContaEmEdicao.Agencia   = FormAgencia;
-            ContaEmEdicao.Titular   = FormTitular;
-            ContaEmEdicao.CorAccent = FormCorAccent;
-            ContaEmEdicao.SaldoAtual = FormSaldo;
-            ContaEmEdicao.RefreshIniciais();
-        }
-        else
-        {
-            // Nova conta
-            ContasEditaveis.Add(new ContaBancariaEditavel(
-                banco:     FormBanco,
-                NIB:       FormNIB,
-                tipo:      FormTipo,
-                moeda:     FormMoeda,
-                agencia:   FormAgencia,
-                titular:   FormTitular,
-                corAccent: FormCorAccent,
-                saldoAtual: FormSaldo
-            ));
-        }
+        IsSaving = true;
 
-        PrepararFormularioNovo();
+        // Parse seguro do saldo — validação já garantiu que é número válido
+        decimal saldo = decimal.TryParse(
+            FormSaldoTexto.Replace(',', '.'),
+            System.Globalization.NumberStyles.Any,
+            System.Globalization.CultureInfo.InvariantCulture,
+            out var parsed) ? parsed : 0;
+
+        var emEdicao = ContaEmEdicao is not null && ContaEmEdicao.Id > 0;
+
+        try
+        {
+            var req = new ContaBancariaRequest(
+                Banco:      FormBanco.Trim(),
+                NIB:        FormNIB.Trim(),
+                Tipo:       FormTipo,
+                Moeda:      FormMoeda,
+                SaldoAtual: saldo,
+                Agencia:    FormAgencia.Trim(),
+                Titular:    FormTitular.Trim(),
+                CorAccent:  FormCorAccent.Trim());
+
+            if (emEdicao)
+            {
+                var updated = await _service.AtualizarAsync(ContaEmEdicao!.Id, req)
+                    ?? throw new ApiException(HttpStatusCode.BadGateway,
+                        "A API não devolveu dados da conta actualizada.");
+
+                ContaEmEdicao.Banco      = updated.Banco;
+                ContaEmEdicao.NIB        = updated.NIB;
+                ContaEmEdicao.Tipo       = updated.Tipo;
+                ContaEmEdicao.Moeda      = updated.Moeda;
+                ContaEmEdicao.Agencia    = updated.Agencia;
+                ContaEmEdicao.Titular    = updated.Titular;
+                ContaEmEdicao.CorAccent  = updated.CorAccent;
+                ContaEmEdicao.SaldoAtual = (double)updated.SaldoAtual;
+                ContaEmEdicao.RefreshIniciais();
+
+                MostrarSucesso($"Conta «{updated.Banco}» actualizada com sucesso.");
+            }
+            else
+            {
+                var created = await _service.CriarAsync(req)
+                    ?? throw new ApiException(HttpStatusCode.BadGateway,
+                        "A API não devolveu dados da nova conta.");
+
+                ContasEditaveis.Add(new ContaBancariaEditavel(
+                    id:        created.Id,
+                    banco:     created.Banco,
+                    NIB:       created.NIB,
+                    tipo:      created.Tipo,
+                    moeda:     created.Moeda,
+                    agencia:   created.Agencia,
+                    titular:   created.Titular,
+                    corAccent: created.CorAccent,
+                    saldoAtual:(double)created.SaldoAtual));
+
+                MostrarSucesso($"Conta «{created.Banco}» adicionada com sucesso.");
+            }
+
+            PrepararFormularioNovo();
+
+            try { await SincronizarListaPrincipalAsync(); }
+            catch { /* guardado na API; lista actualiza ao navegar */ }
+        }
+        catch (ApiException ex) when (ex.IsConflict)
+        {
+            ErroModal = "Já existe uma conta com este NIB.";
+        }
+        catch (ApiException ex) when (ex.IsUnauthorized)
+        {
+            ErroModal = "Sem permissão para gerir contas ou sessão expirada. Inicie sessão novamente.";
+        }
+        catch (ApiException ex)
+        {
+            ErroModal = ex.Message.Contains("NIB", StringComparison.OrdinalIgnoreCase)
+                ? "Já existe uma conta com este NIB."
+                : $"Erro ao guardar: {ex.Message}";
+        }
+        catch (HttpRequestException)
+        {
+            ErroModal = $"Sem ligação à API ({ApiClient.BaseUrl}). Verifique se o servidor está activo.";
+        }
+        catch (Exception ex)
+        {
+            ErroModal = $"Erro ao guardar: {ex.Message}";
+        }
+        finally
+        {
+            IsSaving = false;
+        }
     }
 
-    /// <summary>Aplica todas as alterações do modal à lista principal e fecha.</summary>
+    /// <summary>Fecha o modal e recarrega tudo da API para reflectir alterações.</summary>
     [RelayCommand]
-    private void AplicarAlteracoes()
+    private async Task AplicarAlteracoes()
     {
-        _todasContas.Clear();
-        foreach (var e in ContasEditaveis)
-            _todasContas.Add(e.ToItem());
-
-        ContasFiltradas  = new ObservableCollection<ContaBancariaItem>(_todasContas);
-        TotalContas      = _todasContas.Count.ToString();
-        ContaSelecionada = _todasContas.FirstOrDefault();
-        AtualizarGraficoEvolucao();
         ModalGerirAberto = false;
+        await CarregarContasAsync();
     }
 
-    // ══════════════════════════════════════════════════════════════════════
+    // ══════════════════════════════════════════════════════════════════════════
     // HELPERS
-    // ══════════════════════════════════════════════════════════════════════
+    // ══════════════════════════════════════════════════════════════════════════
 
     private void PrepararFormularioNovo()
     {
@@ -265,7 +433,7 @@ public partial class ContaseBancosViewModel : ViewModelBase
         FormAgencia      = string.Empty;
         FormTitular      = string.Empty;
         FormCorAccent    = "#1A2E5A";
-        FormSaldo        = 0;
+        FormSaldoTexto   = "0";
         LimparErros();
     }
 
@@ -279,18 +447,82 @@ public partial class ContaseBancosViewModel : ViewModelBase
             FormErroBanco = "O nome do banco é obrigatório.";
             ok = false;
         }
+
         if (string.IsNullOrWhiteSpace(FormNIB))
         {
             FormErroNIB = "O NIB é obrigatório.";
             ok = false;
         }
+
+        if (string.IsNullOrWhiteSpace(FormTitular))
+        {
+            FormErroTitular = "O titular é obrigatório.";
+            ok = false;
+        }
+
+        if (!decimal.TryParse(
+                FormSaldoTexto?.Replace(',', '.'),
+                System.Globalization.NumberStyles.Any,
+                System.Globalization.CultureInfo.InvariantCulture,
+                out var saldoParsed) || saldoParsed < 0)
+        {
+            FormErroSaldo = "Introduza um valor numérico válido (≥ 0).";
+            ok = false;
+        }
+
+        if (!ok)
+            ErroModal = "Preencha correctamente os campos obrigatórios assinalados com *.";
+
         return ok;
     }
 
     private void LimparErros()
     {
-        FormErroBanco = string.Empty;
-        FormErroNIB   = string.Empty;
+        FormErroBanco   = string.Empty;
+        FormErroNIB     = string.Empty;
+        FormErroTitular = string.Empty;
+        FormErroSaldo   = string.Empty;
+    }
+
+    private void LimparFeedbackModal()
+    {
+        ErroModal    = string.Empty;
+        SucessoModal = string.Empty;
+    }
+
+    private void MostrarSucesso(string mensagem)
+    {
+        ErroModal    = string.Empty;
+        SucessoModal = mensagem;
+    }
+
+    /// <summary>Actualiza a sidebar e métricas sem fechar o modal.</summary>
+    private async Task SincronizarListaPrincipalAsync()
+    {
+        var sumario = await _service.ListarAsync();
+        if (sumario is null) return;
+
+        _todasContas.Clear();
+        foreach (var dto in sumario.Contas)
+            _todasContas.Add(MapDto(dto));
+
+        ContasFiltradas  = new ObservableCollection<ContaBancariaItem>(_todasContas);
+        SaldoConsolidado = $"{sumario.SaldoConsolidado:N0} Kzs";
+        TotalContas      = sumario.TotalContas.ToString();
+        MovimentosMes    = sumario.MovimentosMes.ToString();
+
+        var idSeleccionado = ContaSelecionada?.Id;
+        ContaSelecionada = idSeleccionado.HasValue
+            ? _todasContas.FirstOrDefault(c => c.Id == idSeleccionado.Value) ?? _todasContas.FirstOrDefault()
+            : _todasContas.FirstOrDefault();
+
+        foreach (var c in ContasFiltradas)
+            c.NotifyIsActiva(ContaSelecionada);
+
+        if (ContaSelecionada is not null)
+            await CarregarMovimentosAsync(ContaSelecionada.Id);
+
+        AtualizarGraficoEvolucao();
     }
 
     private void AtualizarContador()
@@ -301,9 +533,9 @@ public partial class ContaseBancosViewModel : ViewModelBase
         if (ContaSelecionada is null) return;
 
         var rng    = new Random(ContaSelecionada.Banco.GetHashCode());
-        var base_  = ContaSelecionada.SaldoAtual / 1_000_000;
+        var baseV  = ContaSelecionada.SaldoAtual / 1_000_000;
         var values = Enumerable.Range(0, 12)
-                               .Select(_ => Math.Round(base_ * (0.7 + rng.NextDouble() * 0.6), 2))
+                               .Select(_ => Math.Round(baseV * (0.7 + rng.NextDouble() * 0.6), 2))
                                .ToArray();
 
         SeriesEvolucao = new ISeries[]
@@ -330,42 +562,16 @@ public partial class ContaseBancosViewModel : ViewModelBase
             Fill   = null, GeometrySize = 0, LineSmoothness = 1
         };
 
-    // ── Dados de demo ─────────────────────────────────────────────────────
+    // ── Mapeamento DTO → Item ─────────────────────────────────────────────────
 
-    private static ContaBancariaItem[] GerarContas() => new[]
-    {
-        new ContaBancariaItem("Banco BIC", "AO06.0055.0000.1234.5678.9012.3", "Conta à Ordem",    "AOA", 4_820_000, 4_600_000, "Luanda — Maianga",    "SmartGest, Lda.", "Bank",        "#1A2E5A"),
-        new ContaBancariaItem("Banco BAI", "AO06.0040.0000.9876.5432.1098.7", "Conta à Ordem",    "AOA", 3_150_000, 3_200_000, "Luanda — Ingombota",  "SmartGest, Lda.", "Bank",        "#0D47A1"),
-        new ContaBancariaItem("Banco BPC", "AO06.0038.0000.1111.2222.3333.4", "Depósito a Prazo", "AOA", 2_980_000, 2_980_000, "Luanda — Samba",      "SmartGest, Lda.", "BankOutline", "#1B5E20"),
-        new ContaBancariaItem("Banco ATL", "AO06.0006.0000.4444.5555.6666.7", "Conta à Ordem",    "USD", 1_530_000, 1_490_000, "Luanda — Talatona",   "SmartGest, Lda.", "Bank",        "#E65100"),
-    };
+    private static ContaBancariaItem MapDto(ContaBancariaDto dto) =>
+        new(dto.Id, dto.Banco, dto.NIB, dto.Tipo, dto.Moeda,
+            (double)dto.SaldoAtual, (double)dto.SaldoOntem,
+            dto.Agencia, dto.Titular, dto.CorAccent);
 
-    private static MovimentoBancarioItem[] GerarMovimentos()
-    {
-        var rng    = new Random(13);
-        var bancos = new[] { "Banco BIC", "Banco BAI", "Banco BPC", "Banco ATL" };
-        var descs  = new[] { "Pagamento a fornecedor", "Recebimento de cliente", "Transferência interna",
-                             "Pagamento de salários",  "Recebimento de serviços", "Imposto — IRT",
-                             "Compra de material",     "Juros creditados" };
-        var refs   = new[] { "TRF", "CHQ", "DEP", "PAG", "REC" };
-        var hoje   = DateTime.Today;
-        var lista  = new MovimentoBancarioItem[40];
-
-        for (int i = 0; i < 40; i++)
-        {
-            bool isCred = rng.NextDouble() > 0.45;
-            double valor = rng.Next(20, 600) * 1000.0;
-            lista[i] = new MovimentoBancarioItem(
-                Data:       hoje.AddDays(-rng.Next(0, 30)).ToString("dd/MM/yyyy"),
-                Banco:      bancos[rng.Next(bancos.Length)],
-                Descricao:  descs[rng.Next(descs.Length)],
-                Referencia: $"{refs[rng.Next(refs.Length)]}-{rng.Next(10000, 99999)}",
-                Tipo:       isCred ? "Crédito" : "Débito",
-                Valor:      valor,
-                DataOrigem: hoje.AddDays(-rng.Next(0, 30)));
-        }
-        return lista;
-    }
+    private static MovimentoBancarioItem MapMovimento(MovimentoBancarioDto m) =>
+        new(m.Data.ToString("dd/MM/yyyy"), m.Banco, m.Descricao,
+            m.Referencia, m.Tipo, (double)m.Valor, m.Data);
 }
 
 // ══════════════════════════════════════════════════════════════════════════════
@@ -374,6 +580,8 @@ public partial class ContaseBancosViewModel : ViewModelBase
 
 public partial class ContaBancariaEditavel : ObservableObject
 {
+    public int Id { get; }
+
     [ObservableProperty] private string _banco;
     [ObservableProperty] private string _nIB;
     [ObservableProperty] private string _tipo;
@@ -386,30 +594,32 @@ public partial class ContaBancariaEditavel : ObservableObject
 
     public ContaBancariaEditavel(ContaBancariaItem item)
     {
-        _banco     = item.Banco;
-        _nIB       = item.NIB;
-        _tipo      = item.Tipo;
-        _moeda     = item.Moeda;
-        _agencia   = item.Agencia;
-        _titular   = item.Titular;
-        _corAccent = item.CorAccent;
+        Id          = item.Id;
+        _banco      = item.Banco;
+        _nIB        = item.NIB;
+        _tipo       = item.Tipo;
+        _moeda      = item.Moeda;
+        _agencia    = item.Agencia;
+        _titular    = item.Titular;
+        _corAccent  = item.CorAccent;
         _saldoAtual = item.SaldoAtual;
-        _iniciais  = item.Iniciais;
+        _iniciais   = item.Iniciais;
     }
 
     public ContaBancariaEditavel(
-        string banco, string NIB, string tipo, string moeda,
+        int id, string banco, string NIB, string tipo, string moeda,
         string agencia, string titular, string corAccent, double saldoAtual)
     {
-        _banco     = banco;
-        _nIB       = NIB;
-        _tipo      = tipo;
-        _moeda     = moeda;
-        _agencia   = agencia;
-        _titular   = titular;
-        _corAccent = corAccent;
+        Id          = id;
+        _banco      = banco;
+        _nIB        = NIB;
+        _tipo       = tipo;
+        _moeda      = moeda;
+        _agencia    = agencia;
+        _titular    = titular;
+        _corAccent  = corAccent;
         _saldoAtual = saldoAtual;
-        _iniciais  = CalcIniciais(banco);
+        _iniciais   = CalcIniciais(banco);
     }
 
     public void RefreshIniciais() => Iniciais = CalcIniciais(Banco);
@@ -418,21 +628,53 @@ public partial class ContaBancariaEditavel : ObservableObject
         string.Concat(banco.Split(' ').Where(w => w.Length > 0).Take(2).Select(w => w[0]));
 
     public string SaldoFmt => $"{SaldoAtual:N0} {Moeda}";
-
-    public ContaBancariaItem ToItem() =>
-        new ContaBancariaItem(Banco, NIB, Tipo, Moeda, SaldoAtual, SaldoAtual,
-                              Agencia, Titular, "Bank", CorAccent);
 }
 
 // ══════════════════════════════════════════════════════════════════════════════
-// Records imutáveis
+// ContaBancariaItem — record imutável para a lista principal
 // ══════════════════════════════════════════════════════════════════════════════
 
-public record ContaBancariaItem(
-    string Banco, string NIB, string Tipo, string Moeda,
-    double SaldoAtual, double SaldoOntem,
-    string Agencia, string Titular, string Icone, string CorAccent)
+/// <summary>
+/// Item da lista principal de contas. Implementa INotifyPropertyChanged via
+/// ObservableObject para que a propriedade <see cref="IsActiva"/> possa ser
+/// atualizada quando a seleção muda no ViewModel pai.
+/// </summary>
+public partial class ContaBancariaItem : ObservableObject
 {
+    public int    Id        { get; }
+    public string Banco     { get; }
+    public string NIB       { get; }
+    public string Tipo      { get; }
+    public string Moeda     { get; }
+    public double SaldoAtual { get; }
+    public double SaldoOntem { get; }
+    public string Agencia   { get; }
+    public string Titular   { get; }
+    public string CorAccent { get; }
+
+    [ObservableProperty] private bool _isActiva;
+
+    public ContaBancariaItem(
+        int id, string banco, string nib, string tipo, string moeda,
+        double saldoAtual, double saldoOntem,
+        string agencia, string titular, string corAccent)
+    {
+        Id        = id;
+        Banco     = banco;
+        NIB       = nib;
+        Tipo      = tipo;
+        Moeda     = moeda;
+        SaldoAtual = saldoAtual;
+        SaldoOntem = saldoOntem;
+        Agencia   = agencia;
+        Titular   = titular;
+        CorAccent = corAccent;
+    }
+
+    /// <summary>Chamado pelo ViewModel pai sempre que a seleção muda.</summary>
+    public void NotifyIsActiva(ContaBancariaItem? seleccionada)
+        => IsActiva = ReferenceEquals(this, seleccionada);
+
     public string SaldoFmt      => $"{SaldoAtual:N0} {Moeda}";
     public double Variacao      => SaldoAtual - SaldoOntem;
     public string VariacaoFmt   => Variacao >= 0 ? $"+{Variacao:N0} {Moeda}" : $"-{Math.Abs(Variacao):N0} {Moeda}";
@@ -441,14 +683,18 @@ public record ContaBancariaItem(
     public string Iniciais      => string.Concat(Banco.Split(' ').Where(w => w.Length > 0).Take(2).Select(w => w[0]));
 }
 
+// ══════════════════════════════════════════════════════════════════════════════
+// MovimentoBancarioItem
+// ══════════════════════════════════════════════════════════════════════════════
+
 public record MovimentoBancarioItem(
     string Data, string Banco, string Descricao,
     string Referencia, string Tipo, double Valor, DateTime DataOrigem)
 {
-    public bool   IsCredito  => Tipo == "Crédito";
-    public bool   IsDebito   => Tipo == "Débito";
-    public string ValorFmt   => IsCredito ? $"+{Valor:N0} Kzs" : $"-{Valor:N0} Kzs";
-    public string CorValor   => IsCredito ? "#43A047" : "#E53935";
-    public string FundoPill  => IsCredito ? "#E8F5E9"  : "#FFEBEE";
-    public string CorPill    => IsCredito ? "#43A047"  : "#E53935";
+    public bool   IsCredito => Tipo == "Crédito";
+    public bool   IsDebito  => Tipo == "Débito";
+    public string ValorFmt  => IsCredito ? $"+{Valor:N0} Kzs" : $"-{Valor:N0} Kzs";
+    public string CorValor  => IsCredito ? "#43A047" : "#E53935";
+    public string FundoPill => IsCredito ? "#E8F5E9"  : "#FFEBEE";
+    public string CorPill   => IsCredito ? "#43A047"  : "#E53935";
 }

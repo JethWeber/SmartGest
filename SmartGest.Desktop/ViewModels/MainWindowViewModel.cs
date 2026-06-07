@@ -1,4 +1,5 @@
 using System;
+using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using SmartGest.Desktop.Services;
 
@@ -30,46 +31,19 @@ public partial class MainWindowViewModel : ViewModelBase
     private readonly ConfiguracoesViewModel _configVm;
 
     // ── Factory para NovoLancamentoViewModel (injectada pelo DI) ─────────────
-    //
-    // PORQUÊ Func<> em vez de injectar NovoLancamentoViewModel directamente?
-    //
-    //   • NovoLancamentoViewModel é Transient: deve ser criado de novo a cada
-    //     abertura do modal, para que os campos comecem limpos.
-    //   • Se fosse injectado directamente, o DI criaria UMA instância no
-    //     arranque e reutilizá-la-ia sempre — os campos ficariam "sujos" entre
-    //     aberturas do modal.
-    //   • Func<T> é o padrão idiomático de .NET DI para "fábrica de Transient":
-    //     cada chamada a _novoLancamentoFactory() resolve uma nova instância
-    //     com as dependências singleton correctas (ApiClient + TokenStore).
-    //
-    // PORQUÊ não usar new NovoLancamentoViewModel()?
-    //
-    //   • O construtor sem parâmetros é o construtor de designer: cria um
-    //     TokenStore vazio, sem token. Qualquer pedido à API resultaria em 401.
-    //   • Só o DI conhece o TokenStore singleton com o token escrito após login.
     private readonly Func<NovoLancamentoViewModel> _novoLancamentoFactory;
 
     // ── Evento que a View subscreve para abrir o modal ────────────────────────
-    /// <summary>
-    /// Disparado quando o utilizador pede um novo lançamento.
-    /// O argumento é um NovoLancamentoViewModel já correctamente construído
-    /// pelo DI — a View apenas abre o modal com este ViewModel como DataContext.
-    ///
-    /// COMO USAR na View (ex.: MainWindow.axaml.cs):
-    ///
-    ///   mainVm.PedirAbrirNovoLancamento += async vm =>
-    ///   {
-    ///       var dialog = new NovoLancamentoView { DataContext = vm };
-    ///       vm.OwnerWindow = this;
-    ///       await dialog.ShowDialog(this);
-    ///   };
-    /// </summary>
     public event Action<NovoLancamentoViewModel>? PedirAbrirNovoLancamento;
 
     // ── Construtor principal (DI) ─────────────────────────────────────────────
+    // ContaseBancosViewModel é injectado pelo DI (Singleton) — garante que usa
+    // o mesmo ApiClient/TokenStore com o token JWT preenchido após login.
     public MainWindowViewModel(
         TokenStore store,
-        Func<NovoLancamentoViewModel> novoLancamentoFactory)
+        Func<NovoLancamentoViewModel> novoLancamentoFactory,
+        LancamentoService lancamentoSvc,
+        ContaseBancosViewModel contasBancosVm)
     {
         _novoLancamentoFactory = novoLancamentoFactory;
 
@@ -78,24 +52,19 @@ public partial class MainWindowViewModel : ViewModelBase
         UsuarioCorAvatar = store.CorAvatar;
 
         _dashboardVm    = new DashboardViewModel();
-        _caixaVm        = new CaixaViewModel();
+        _caixaVm        = new CaixaViewModel(lancamentoSvc);
         _balanceteVm    = new BalanceteViewModel();
         _balancoVm      = new BalancoViewModel();
         _dreVm          = new DreViewModel();
-        _contasBancosVm = new ContaseBancosViewModel();
+        _contasBancosVm = contasBancosVm; // injectado — não criar com "new"!
         _configVm       = new ConfiguracoesViewModel();
 
         _currentPage = _dashboardVm;
 
-        // Subscreve o evento do CaixaViewModel aqui, no ViewModel,
-        // para que a criação do NovoLancamentoViewModel passe sempre pelo DI.
         _caixaVm.OpenNovoLancamento += AbrirNovoLancamento;
     }
 
-    /// <summary>
-    /// Construtor sem parâmetros — usado APENAS pelo Avalonia Designer.
-    /// Em produção o DI resolve sempre o construtor com TokenStore.
-    /// </summary>
+    /// <summary>Construtor sem parâmetros — usado APENAS pelo Avalonia Designer.</summary>
     public MainWindowViewModel() : this(
         new TokenStore
         {
@@ -103,9 +72,9 @@ public partial class MainWindowViewModel : ViewModelBase
             Iniciais  = "AB",
             CorAvatar = "#1A2E5A"
         },
-        // O designer usa o construtor de designer do NovoLancamentoViewModel,
-        // que também é seguro para preview (dados stub, sem chamadas à API).
-        () => new NovoLancamentoViewModel())
+        () => new NovoLancamentoViewModel(),
+        new LancamentoService(new ApiClient(new TokenStore())),
+        new ContaseBancosViewModel(new ContasBancariasService(new ApiClient(new TokenStore()))))
     { }
 
     // ── Navegação ─────────────────────────────────────────────────────────────
@@ -123,17 +92,22 @@ public partial class MainWindowViewModel : ViewModelBase
             6 => _configVm,
             _ => _dashboardVm
         };
+
+        // Activar o ecrã de Contas ao navegar — o token JWT já está preenchido aqui.
+        // Só carrega na primeira visita ou após acção explícita (CarregarContasCommand).
+        if (value == 5)
+            _ = _contasBancosVm.ActivarAsync();
     }
 
     // ── Handler interno ───────────────────────────────────────────────────────
 
-    /// <summary>
-    /// Cria uma instância fresca de NovoLancamentoViewModel via DI
-    /// e notifica a View para abrir o modal.
-    /// </summary>
     private void AbrirNovoLancamento()
     {
-        var vm = _novoLancamentoFactory();    // Transient: campos limpos + token correcto
-        PedirAbrirNovoLancamento?.Invoke(vm); // View abre o modal com este VM
+        var vm = _novoLancamentoFactory();
+
+        // Quando o lançamento for criado com sucesso, recarrega o Caixa
+        vm.LancamentoCriado += _ => Task.Run(async () => await _caixaVm.OnLancamentoCriadoAsync());
+
+        PedirAbrirNovoLancamento?.Invoke(vm);
     }
 }

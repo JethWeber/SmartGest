@@ -85,362 +85,428 @@
 
   </UserControl.Styles>
 
-  <ScrollViewer Background="#F4F6FA">
-    <Border Padding="28,24">
-      <StackPanel Spacing="20">
+  <!-- ══════════════════════════════════════════════════════════════════════
+       RAIZ: Grid com 3 linhas
+         Row 0 — ProgressBar (altura fixa 3 px, sobreposta ao topo)
+         Row 1 — Faixa de erro (Auto; oculta por defeito)
+         Row 2 — Conteúdo principal com ScrollViewer
+       ══════════════════════════════════════════════════════════════════════ -->
+  <Grid RowDefinitions="3, Auto, *">
 
-        <!-- ══════════════════════════════════════════════════════════════
-             CABEÇALHO
-             ══════════════════════════════════════════════════════════════ -->
-        <Grid ColumnDefinitions="*, Auto">
-          <StackPanel Grid.Column="0">
-            <TextBlock Text="Balancete"
-                       FontSize="20" FontWeight="Bold"
-                       Foreground="#1A2E5A"/>
-            <TextBlock Text="Saldos devedores e credores por conta contabilística"
-                       FontSize="12" Foreground="#9AA0AB" Margin="0,2,0,0"/>
-          </StackPanel>
+    <!-- ── PROGRESSBAR ─────────────────────────────────────────────────── -->
+    <ProgressBar Grid.Row="0"
+                 IsIndeterminate="True"
+                 IsVisible="{Binding Carregando}"
+                 Height="3"
+                 VerticalAlignment="Top"
+                 Foreground="#1A2E5A"
+                 Background="Transparent"
+                 ZIndex="10"/>
 
-          <!-- Botão de exportação -->
-          <Button Grid.Column="1" Classes="btn-outline"
-                  Command="{Binding ExportarCommand}"
-                  VerticalAlignment="Center">
-            <StackPanel Orientation="Horizontal" Spacing="6">
-              <mi:MaterialIcon Kind="FileExcelOutline" Width="14" Height="14"/>
-              <TextBlock Text="Exportar" VerticalAlignment="Center"/>
-            </StackPanel>
-          </Button>
-        </Grid>
-
-        <!-- ══════════════════════════════════════════════════════════════
-             CARDS DE MÉTRICAS  (3 colunas)
-             ══════════════════════════════════════════════════════════════ -->
-        <Grid ColumnDefinitions="*, 12, *, 12, *">
-
-          <!-- Total Débitos -->
-          <Border Grid.Column="0" Classes="sg-card">
-            <Grid ColumnDefinitions="*, 100">
-              <StackPanel Grid.Column="0" VerticalAlignment="Center" Spacing="2">
-                <TextBlock Classes="metric-label" Text="Total Débitos"/>
-                <TextBlock Classes="metric-value"
-                           Text="{Binding TotalDebitos}"
-                           Foreground="#2196F3"/>
-              </StackPanel>
-              <lvc:CartesianChart Grid.Column="1"
-                                  Height="50"
-                                  Series="{Binding SparklineDebitos}"
-                                  TooltipPosition="Hidden"
-                                  Background="Transparent"/>
-            </Grid>
-          </Border>
-
-          <!-- Total Créditos -->
-          <Border Grid.Column="2" Classes="sg-card">
-            <Grid ColumnDefinitions="*, 100">
-              <StackPanel Grid.Column="0" VerticalAlignment="Center" Spacing="2">
-                <TextBlock Classes="metric-label" Text="Total Créditos"/>
-                <TextBlock Classes="metric-value"
-                           Text="{Binding TotalCreditos}"
-                           Foreground="#43A047"/>
-              </StackPanel>
-              <lvc:CartesianChart Grid.Column="1"
-                                  Height="50"
-                                  Series="{Binding SparklineCreditos}"
-                                  TooltipPosition="Hidden"
-                                  Background="Transparent"/>
-            </Grid>
-          </Border>
-
-          <!-- Diferença / Saldo -->
-          <Border Grid.Column="4" Classes="sg-card">
-            <Grid ColumnDefinitions="*, 100">
-              <StackPanel Grid.Column="0" VerticalAlignment="Center" Spacing="2">
-                <TextBlock Classes="metric-label" Text="Diferença (Deb. – Cre.)"/>
-                <StackPanel Orientation="Horizontal" Spacing="8" Margin="0,4,0,0">
-                  <TextBlock FontSize="19" FontWeight="Bold"
-                             Text="{Binding DiferencaSaldo}"
-                             Foreground="{Binding CorDiferenca}"/>
-                </StackPanel>
-              </StackPanel>
-              <lvc:CartesianChart Grid.Column="1"
-                                  Height="50"
-                                  Series="{Binding SparklineDif}"
-                                  TooltipPosition="Hidden"
-                                  Background="Transparent"/>
-            </Grid>
-          </Border>
-
-        </Grid>
-
-        <!-- ══════════════════════════════════════════════════════════════
-             BARRA DE FILTROS
-             ══════════════════════════════════════════════════════════════ -->
-        <Border Classes="sg-card" Padding="16,12">
-          <Grid ColumnDefinitions="*, 12, 160, 12, 140, 12, 140, 12, Auto">
-
-            <!-- Pesquisa livre -->
-            <TextBox Grid.Column="0"
-                     Classes="sg-filter"
-                     Watermark="🔍  Pesquisar código ou nome da conta..."
-                     Text="{Binding FiltroTexto}"/>
-
-            <!-- Grupo de contas -->
-            <ComboBox Grid.Column="2"
-                      Classes="sg-filter"
-                      SelectedIndex="{Binding FiltroGrupoIndex}"
-                      Width="160">
-              <ComboBoxItem Content="Todos os grupos"/>
-              <ComboBoxItem Content="Ativo"/>
-              <ComboBoxItem Content="Passivo"/>
-              <ComboBoxItem Content="Capital"/>
-              <ComboBoxItem Content="Receita"/>
-              <ComboBoxItem Content="Despesa"/>
-            </ComboBox>
-
-            <!-- Data início -->
-            <DatePicker Grid.Column="4"
-                        SelectedDate="{Binding FiltroDataInicio}"
-                        FontSize="12"
-                        Height="34"
-                        CornerRadius="7"/>
-
-            <!-- Data fim -->
-            <DatePicker Grid.Column="6"
-                        SelectedDate="{Binding FiltroDataFim}"
-                        FontSize="12"
-                        Height="34"
-                        CornerRadius="7"/>
-
-            <!-- Botão Filtrar -->
-            <Button Grid.Column="8"
-                    Classes="btn-primary"
-                    Command="{Binding FiltrarCommand}"
-                    Padding="14,6">
-              <TextBlock Text="Filtrar" FontSize="12" FontWeight="SemiBold"/>
-            </Button>
-
-          </Grid>
-        </Border>
-
-        <!-- ══════════════════════════════════════════════════════════════
-             TABELA DO BALANCETE
-             ══════════════════════════════════════════════════════════════ -->
-        <Border Classes="sg-card">
-          <DockPanel>
-
-            <!-- Cabeçalho da secção -->
-            <Grid DockPanel.Dock="Top" ColumnDefinitions="*, Auto" Margin="0,0,0,12">
-              <TextBlock Grid.Column="0"
-                         Text="Plano de Contas — Balancete de Verificação"
-                         Classes="section-title" Margin="0"/>
-              <TextBlock Grid.Column="1"
-                         Text="{Binding TotalContasTexto}"
-                         FontSize="11" Foreground="#9AA0AB"
-                         VerticalAlignment="Center"/>
-            </Grid>
-
-            <!-- Legenda dos grupos -->
-            <StackPanel DockPanel.Dock="Top"
-                        Orientation="Horizontal" Spacing="8"
-                        Margin="0,0,0,12">
-              <TextBlock Text="Grupos:" FontSize="11" Foreground="#9AA0AB"
-                         VerticalAlignment="Center"/>
-              <Border Background="#E3F2FD" CornerRadius="4" Padding="8,3">
-                <TextBlock Text="Ativo" FontSize="10" FontWeight="SemiBold" Foreground="#1565C0"/>
-              </Border>
-              <Border Background="#FFEBEE" CornerRadius="4" Padding="8,3">
-                <TextBlock Text="Passivo" FontSize="10" FontWeight="SemiBold" Foreground="#E53935"/>
-              </Border>
-              <Border Background="#F3E5F5" CornerRadius="4" Padding="8,3">
-                <TextBlock Text="Capital" FontSize="10" FontWeight="SemiBold" Foreground="#6A1B9A"/>
-              </Border>
-              <Border Background="#E8F5E9" CornerRadius="4" Padding="8,3">
-                <TextBlock Text="Receita" FontSize="10" FontWeight="SemiBold" Foreground="#2E7D32"/>
-              </Border>
-              <Border Background="#FFF3E0" CornerRadius="4" Padding="8,3">
-                <TextBlock Text="Despesa" FontSize="10" FontWeight="SemiBold" Foreground="#E65100"/>
-              </Border>
-            </StackPanel>
-
-            <DataGrid ItemsSource="{Binding ContasFiltradas}"
-                      AutoGenerateColumns="False"
-                      IsReadOnly="True"
-                      GridLinesVisibility="Horizontal"
-                      HeadersVisibility="Column"
-                      RowBackground="Transparent"
-                      FontSize="12"
-                      MinHeight="340">
-
-              <DataGrid.Columns>
-
-                <!-- Código -->
-                <DataGridTemplateColumn Header="Cód." Width="60">
-                  <DataGridTemplateColumn.CellTemplate>
-                    <DataTemplate x:DataType="vm:BalanceteItem">
-                      <TextBlock Text="{Binding Codigo}"
-                                 VerticalAlignment="Center"
-                                 FontWeight="SemiBold"
-                                 Foreground="#1A2E5A"
-                                 Margin="10,0"/>
-                    </DataTemplate>
-                  </DataGridTemplateColumn.CellTemplate>
-                </DataGridTemplateColumn>
-
-                <!-- Nome da Conta -->
-                <DataGridTemplateColumn Header="Designação da Conta" Width="2*">
-                  <DataGridTemplateColumn.CellTemplate>
-                    <DataTemplate x:DataType="vm:BalanceteItem">
-                      <TextBlock Text="{Binding NomeConta}"
-                                 VerticalAlignment="Center"
-                                 Foreground="#333333"
-                                 Margin="10,0"/>
-                    </DataTemplate>
-                  </DataGridTemplateColumn.CellTemplate>
-                </DataGridTemplateColumn>
-
-                <!-- Grupo (badge colorida) -->
-                <DataGridTemplateColumn Header="Grupo" Width="90">
-                  <DataGridTemplateColumn.CellTemplate>
-                    <DataTemplate x:DataType="vm:BalanceteItem">
-                      <Border Background="{Binding FundoGrupo}"
-                              CornerRadius="4" Padding="8,3"
-                              HorizontalAlignment="Left"
-                              Margin="6,4">
-                        <TextBlock Text="{Binding Grupo}"
-                                   FontSize="10" FontWeight="SemiBold"
-                                   Foreground="{Binding CorGrupo}"/>
-                      </Border>
-                    </DataTemplate>
-                  </DataGridTemplateColumn.CellTemplate>
-                </DataGridTemplateColumn>
-
-                <!-- ── SALDO ANTERIOR ── -->
-                <DataGridTemplateColumn Header="S. Ant. Déb. (Kzs)" Width="*">
-                  <DataGridTemplateColumn.CellTemplate>
-                    <DataTemplate x:DataType="vm:BalanceteItem">
-                      <TextBlock Text="{Binding SaldoAntDebFmt}"
-                                 VerticalAlignment="Center"
-                                 TextAlignment="Right"
-                                 Foreground="#555555"
-                                 Margin="10,0"/>
-                    </DataTemplate>
-                  </DataGridTemplateColumn.CellTemplate>
-                </DataGridTemplateColumn>
-
-                <DataGridTemplateColumn Header="S. Ant. Cre. (Kzs)" Width="*">
-                  <DataGridTemplateColumn.CellTemplate>
-                    <DataTemplate x:DataType="vm:BalanceteItem">
-                      <TextBlock Text="{Binding SaldoAntCreFmt}"
-                                 VerticalAlignment="Center"
-                                 TextAlignment="Right"
-                                 Foreground="#555555"
-                                 Margin="10,0"/>
-                    </DataTemplate>
-                  </DataGridTemplateColumn.CellTemplate>
-                </DataGridTemplateColumn>
-
-                <!-- ── MOVIMENTOS DO PERÍODO ── -->
-                <DataGridTemplateColumn Header="Mov. Déb. (Kzs)" Width="*">
-                  <DataGridTemplateColumn.CellTemplate>
-                    <DataTemplate x:DataType="vm:BalanceteItem">
-                      <TextBlock Text="{Binding MovDebitoFmt}"
-                                 VerticalAlignment="Center"
-                                 TextAlignment="Right"
-                                 Foreground="#1565C0"
-                                 FontWeight="Medium"
-                                 Margin="10,0"/>
-                    </DataTemplate>
-                  </DataGridTemplateColumn.CellTemplate>
-                </DataGridTemplateColumn>
-
-                <DataGridTemplateColumn Header="Mov. Cre. (Kzs)" Width="*">
-                  <DataGridTemplateColumn.CellTemplate>
-                    <DataTemplate x:DataType="vm:BalanceteItem">
-                      <TextBlock Text="{Binding MovCreditoFmt}"
-                                 VerticalAlignment="Center"
-                                 TextAlignment="Right"
-                                 Foreground="#2E7D32"
-                                 FontWeight="Medium"
-                                 Margin="10,0"/>
-                    </DataTemplate>
-                  </DataGridTemplateColumn.CellTemplate>
-                </DataGridTemplateColumn>
-
-                <!-- ── SALDO FINAL ── -->
-                <DataGridTemplateColumn Header="S. Final Déb. (Kzs)" Width="*">
-                  <DataGridTemplateColumn.CellTemplate>
-                    <DataTemplate x:DataType="vm:BalanceteItem">
-                      <TextBlock Text="{Binding SaldoFinDebFmt}"
-                                 VerticalAlignment="Center"
-                                 TextAlignment="Right"
-                                 FontWeight="SemiBold"
-                                 Foreground="#1A2E5A"
-                                 Margin="10,0"/>
-                    </DataTemplate>
-                  </DataGridTemplateColumn.CellTemplate>
-                </DataGridTemplateColumn>
-
-                <DataGridTemplateColumn Header="S. Final Cre. (Kzs)" Width="*">
-                  <DataGridTemplateColumn.CellTemplate>
-                    <DataTemplate x:DataType="vm:BalanceteItem">
-                      <TextBlock Text="{Binding SaldoFinCreFmt}"
-                                 VerticalAlignment="Center"
-                                 TextAlignment="Right"
-                                 FontWeight="SemiBold"
-                                 Foreground="#1A2E5A"
-                                 Margin="10,0"/>
-                    </DataTemplate>
-                  </DataGridTemplateColumn.CellTemplate>
-                </DataGridTemplateColumn>
-
-              </DataGrid.Columns>
-            </DataGrid>
-
-          </DockPanel>
-        </Border>
-
-        <!-- ══════════════════════════════════════════════════════════════
-             RODAPÉ DE TOTAIS
-             ══════════════════════════════════════════════════════════════ -->
-        <Border Classes="sg-card" Padding="16,12"
-                Background="#F0F4FF">
-          <Grid ColumnDefinitions="2*, *, *, *, *, *, *, *">
-
-            <TextBlock Grid.Column="0"
-                       Text="TOTAIS GERAIS"
-                       FontSize="12" FontWeight="Bold"
-                       Foreground="#1A2E5A"
-                       VerticalAlignment="Center"/>
-
-            <!-- Totais calculados dinamicamente via ViewModel -->
-            <TextBlock Grid.Column="3"
-                       Text="{Binding TotalDebitos}"
-                       FontSize="12" FontWeight="Bold"
-                       TextAlignment="Right"
-                       Foreground="#1565C0"
-                       VerticalAlignment="Center"
-                       Margin="10,0"/>
-
-            <TextBlock Grid.Column="4"
-                       Text="{Binding TotalCreditos}"
-                       FontSize="12" FontWeight="Bold"
-                       TextAlignment="Right"
-                       Foreground="#2E7D32"
-                       VerticalAlignment="Center"
-                       Margin="10,0"/>
-
-            <TextBlock Grid.Column="7"
-                       Text="{Binding DiferencaSaldo}"
-                       FontSize="12" FontWeight="Bold"
-                       TextAlignment="Right"
-                       Foreground="{Binding CorDiferenca}"
-                       VerticalAlignment="Center"
-                       Margin="10,0"/>
-
-          </Grid>
-        </Border>
-
-      </StackPanel>
+    <!-- ── FAIXA DE ERRO ──────────────────────────────────────────────── -->
+    <Border Grid.Row="1"
+            IsVisible="{Binding TemErro}"
+            Background="#FFEBEE"
+            CornerRadius="0"
+            Padding="28,10"
+            BorderBrush="#FFCDD2"
+            BorderThickness="0,0,0,1">
+      <Grid ColumnDefinitions="Auto, *, Auto">
+        <mi:MaterialIcon Grid.Column="0"
+                         Kind="AlertCircleOutline"
+                         Width="16" Height="16"
+                         Foreground="#C62828"
+                         VerticalAlignment="Center"
+                         Margin="0,0,8,0"/>
+        <TextBlock Grid.Column="1"
+                   Text="{Binding ErroMensagem}"
+                   Foreground="#C62828"
+                   FontSize="13"
+                   VerticalAlignment="Center"/>
+        <Button Grid.Column="2"
+                Command="{Binding AtualizarCommand}"
+                Background="Transparent"
+                BorderThickness="0"
+                Cursor="Hand"
+                Padding="8,4">
+          <TextBlock Text="Tentar novamente"
+                     FontSize="12"
+                     FontWeight="SemiBold"
+                     Foreground="#C62828"/>
+        </Button>
+      </Grid>
     </Border>
-  </ScrollViewer>
+
+    <!-- ── CONTEÚDO PRINCIPAL ─────────────────────────────────────────── -->
+    <ScrollViewer Grid.Row="2" Background="#F4F6FA">
+      <Border Padding="28,24">
+        <StackPanel Spacing="20">
+
+          <!-- ══════════════════════════════════════════════════════════════
+               CABEÇALHO
+               ══════════════════════════════════════════════════════════════ -->
+          <Grid ColumnDefinitions="*, Auto">
+            <StackPanel Grid.Column="0">
+              <TextBlock Text="Balancete"
+                         FontSize="20" FontWeight="Bold"
+                         Foreground="#1A2E5A"/>
+              <TextBlock Text="Saldos devedores e credores por conta contabilística"
+                         FontSize="12" Foreground="#9AA0AB" Margin="0,2,0,0"/>
+            </StackPanel>
+
+            <StackPanel Grid.Column="1"
+                        Orientation="Horizontal" Spacing="8"
+                        VerticalAlignment="Center">
+              <!-- Botão de atualizar -->
+              <Button Classes="btn-outline"
+                      Command="{Binding AtualizarCommand}">
+                <StackPanel Orientation="Horizontal" Spacing="6">
+                  <mi:MaterialIcon Kind="Refresh" Width="14" Height="14"/>
+                  <TextBlock Text="Atualizar" VerticalAlignment="Center"/>
+                </StackPanel>
+              </Button>
+              <!-- Botão de exportação -->
+              <Button Classes="btn-outline"
+                      Command="{Binding ExportarCommand}">
+                <StackPanel Orientation="Horizontal" Spacing="6">
+                  <mi:MaterialIcon Kind="FileExcelOutline" Width="14" Height="14"/>
+                  <TextBlock Text="Exportar" VerticalAlignment="Center"/>
+                </StackPanel>
+              </Button>
+            </StackPanel>
+          </Grid>
+
+          <!-- ══════════════════════════════════════════════════════════════
+               CARDS DE MÉTRICAS  (3 colunas)
+               ══════════════════════════════════════════════════════════════ -->
+          <Grid ColumnDefinitions="*, 12, *, 12, *">
+
+            <!-- Total Débitos -->
+            <Border Grid.Column="0" Classes="sg-card">
+              <Grid ColumnDefinitions="*, 100">
+                <StackPanel Grid.Column="0" VerticalAlignment="Center" Spacing="2">
+                  <TextBlock Classes="metric-label" Text="Total Débitos"/>
+                  <TextBlock Classes="metric-value"
+                             Text="{Binding TotalDebitos}"
+                             Foreground="#2196F3"/>
+                </StackPanel>
+                <lvc:CartesianChart Grid.Column="1"
+                                    Height="50"
+                                    Series="{Binding SparklineDebitos}"
+                                    TooltipPosition="Hidden"
+                                    Background="Transparent"/>
+              </Grid>
+            </Border>
+
+            <!-- Total Créditos -->
+            <Border Grid.Column="2" Classes="sg-card">
+              <Grid ColumnDefinitions="*, 100">
+                <StackPanel Grid.Column="0" VerticalAlignment="Center" Spacing="2">
+                  <TextBlock Classes="metric-label" Text="Total Créditos"/>
+                  <TextBlock Classes="metric-value"
+                             Text="{Binding TotalCreditos}"
+                             Foreground="#43A047"/>
+                </StackPanel>
+                <lvc:CartesianChart Grid.Column="1"
+                                    Height="50"
+                                    Series="{Binding SparklineCreditos}"
+                                    TooltipPosition="Hidden"
+                                    Background="Transparent"/>
+              </Grid>
+            </Border>
+
+            <!-- Diferença / Saldo -->
+            <Border Grid.Column="4" Classes="sg-card">
+              <Grid ColumnDefinitions="*, 100">
+                <StackPanel Grid.Column="0" VerticalAlignment="Center" Spacing="2">
+                  <TextBlock Classes="metric-label" Text="Diferença (Deb. – Cre.)"/>
+                  <StackPanel Orientation="Horizontal" Spacing="8" Margin="0,4,0,0">
+                    <TextBlock FontSize="19" FontWeight="Bold"
+                               Text="{Binding DiferencaSaldo}"
+                               Foreground="{Binding CorDiferenca}"/>
+                  </StackPanel>
+                </StackPanel>
+                <lvc:CartesianChart Grid.Column="1"
+                                    Height="50"
+                                    Series="{Binding SparklineDif}"
+                                    TooltipPosition="Hidden"
+                                    Background="Transparent"/>
+              </Grid>
+            </Border>
+
+          </Grid>
+
+          <!-- ══════════════════════════════════════════════════════════════
+               BARRA DE FILTROS
+               ══════════════════════════════════════════════════════════════ -->
+          <Border Classes="sg-card" Padding="16,12">
+            <Grid ColumnDefinitions="*, 12, 160, 12, 140, 12, 140, 12, Auto">
+
+              <!-- Pesquisa livre -->
+              <TextBox Grid.Column="0"
+                       Classes="sg-filter"
+                       Watermark="🔍  Pesquisar código ou nome da conta..."
+                       Text="{Binding FiltroTexto}"/>
+
+              <!-- Grupo de contas -->
+              <ComboBox Grid.Column="2"
+                        Classes="sg-filter"
+                        SelectedIndex="{Binding FiltroGrupoIndex}"
+                        Width="160">
+                <ComboBoxItem Content="Todos os grupos"/>
+                <ComboBoxItem Content="Ativo"/>
+                <ComboBoxItem Content="Passivo"/>
+                <ComboBoxItem Content="Capital"/>
+                <ComboBoxItem Content="Receita"/>
+                <ComboBoxItem Content="Despesa"/>
+              </ComboBox>
+
+              <!-- Data início -->
+              <DatePicker Grid.Column="4"
+                          SelectedDate="{Binding FiltroDataInicio}"
+                          FontSize="12"
+                          Height="34"
+                          CornerRadius="7"/>
+
+              <!-- Data fim -->
+              <DatePicker Grid.Column="6"
+                          SelectedDate="{Binding FiltroDataFim}"
+                          FontSize="12"
+                          Height="34"
+                          CornerRadius="7"/>
+
+              <!-- Botão Filtrar -->
+              <Button Grid.Column="8"
+                      Classes="btn-primary"
+                      Command="{Binding FiltrarCommand}"
+                      Padding="14,6">
+                <TextBlock Text="Filtrar" FontSize="12" FontWeight="SemiBold"/>
+              </Button>
+
+            </Grid>
+          </Border>
+
+          <!-- ══════════════════════════════════════════════════════════════
+               TABELA DO BALANCETE
+               ══════════════════════════════════════════════════════════════ -->
+          <Border Classes="sg-card">
+            <DockPanel>
+
+              <!-- Cabeçalho da secção -->
+              <Grid DockPanel.Dock="Top" ColumnDefinitions="*, Auto" Margin="0,0,0,12">
+                <TextBlock Grid.Column="0"
+                           Text="Plano de Contas — Balancete de Verificação"
+                           Classes="section-title" Margin="0"/>
+                <TextBlock Grid.Column="1"
+                           Text="{Binding TotalContasTexto}"
+                           FontSize="11" Foreground="#9AA0AB"
+                           VerticalAlignment="Center"/>
+              </Grid>
+
+              <!-- Legenda dos grupos -->
+              <StackPanel DockPanel.Dock="Top"
+                          Orientation="Horizontal" Spacing="8"
+                          Margin="0,0,0,12">
+                <TextBlock Text="Grupos:" FontSize="11" Foreground="#9AA0AB"
+                           VerticalAlignment="Center"/>
+                <Border Background="#E3F2FD" CornerRadius="4" Padding="8,3">
+                  <TextBlock Text="Ativo" FontSize="10" FontWeight="SemiBold" Foreground="#1565C0"/>
+                </Border>
+                <Border Background="#FFEBEE" CornerRadius="4" Padding="8,3">
+                  <TextBlock Text="Passivo" FontSize="10" FontWeight="SemiBold" Foreground="#E53935"/>
+                </Border>
+                <Border Background="#F3E5F5" CornerRadius="4" Padding="8,3">
+                  <TextBlock Text="Capital" FontSize="10" FontWeight="SemiBold" Foreground="#6A1B9A"/>
+                </Border>
+                <Border Background="#E8F5E9" CornerRadius="4" Padding="8,3">
+                  <TextBlock Text="Receita" FontSize="10" FontWeight="SemiBold" Foreground="#2E7D32"/>
+                </Border>
+                <Border Background="#FFF3E0" CornerRadius="4" Padding="8,3">
+                  <TextBlock Text="Despesa" FontSize="10" FontWeight="SemiBold" Foreground="#E65100"/>
+                </Border>
+              </StackPanel>
+
+              <DataGrid ItemsSource="{Binding ContasFiltradas}"
+                        AutoGenerateColumns="False"
+                        IsReadOnly="True"
+                        GridLinesVisibility="Horizontal"
+                        HeadersVisibility="Column"
+                        RowBackground="Transparent"
+                        FontSize="12"
+                        MinHeight="340">
+
+                <DataGrid.Columns>
+
+                  <!-- Código -->
+                  <DataGridTemplateColumn Header="Cód." Width="60">
+                    <DataGridTemplateColumn.CellTemplate>
+                      <DataTemplate x:DataType="vm:BalanceteItem">
+                        <TextBlock Text="{Binding Codigo}"
+                                   VerticalAlignment="Center"
+                                   FontWeight="SemiBold"
+                                   Foreground="#1A2E5A"
+                                   Margin="10,0"/>
+                      </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                  </DataGridTemplateColumn>
+
+                  <!-- Nome da Conta -->
+                  <DataGridTemplateColumn Header="Designação da Conta" Width="2*">
+                    <DataGridTemplateColumn.CellTemplate>
+                      <DataTemplate x:DataType="vm:BalanceteItem">
+                        <TextBlock Text="{Binding NomeConta}"
+                                   VerticalAlignment="Center"
+                                   Foreground="#333333"
+                                   Margin="10,0"/>
+                      </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                  </DataGridTemplateColumn>
+
+                  <!-- Grupo (badge colorida) -->
+                  <DataGridTemplateColumn Header="Grupo" Width="90">
+                    <DataGridTemplateColumn.CellTemplate>
+                      <DataTemplate x:DataType="vm:BalanceteItem">
+                        <Border Background="{Binding FundoGrupo}"
+                                CornerRadius="4" Padding="8,3"
+                                HorizontalAlignment="Left"
+                                Margin="6,4">
+                          <TextBlock Text="{Binding Grupo}"
+                                     FontSize="10" FontWeight="SemiBold"
+                                     Foreground="{Binding CorGrupo}"/>
+                        </Border>
+                      </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                  </DataGridTemplateColumn>
+
+                  <!-- ── SALDO ANTERIOR ── -->
+                  <DataGridTemplateColumn Header="S. Ant. Déb. (Kzs)" Width="*">
+                    <DataGridTemplateColumn.CellTemplate>
+                      <DataTemplate x:DataType="vm:BalanceteItem">
+                        <TextBlock Text="{Binding SaldoAntDebFmt}"
+                                   VerticalAlignment="Center"
+                                   TextAlignment="Right"
+                                   Foreground="#555555"
+                                   Margin="10,0"/>
+                      </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                  </DataGridTemplateColumn>
+
+                  <DataGridTemplateColumn Header="S. Ant. Cre. (Kzs)" Width="*">
+                    <DataGridTemplateColumn.CellTemplate>
+                      <DataTemplate x:DataType="vm:BalanceteItem">
+                        <TextBlock Text="{Binding SaldoAntCreFmt}"
+                                   VerticalAlignment="Center"
+                                   TextAlignment="Right"
+                                   Foreground="#555555"
+                                   Margin="10,0"/>
+                      </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                  </DataGridTemplateColumn>
+
+                  <!-- ── MOVIMENTOS DO PERÍODO ── -->
+                  <DataGridTemplateColumn Header="Mov. Déb. (Kzs)" Width="*">
+                    <DataGridTemplateColumn.CellTemplate>
+                      <DataTemplate x:DataType="vm:BalanceteItem">
+                        <TextBlock Text="{Binding MovDebitoFmt}"
+                                   VerticalAlignment="Center"
+                                   TextAlignment="Right"
+                                   Foreground="#1565C0"
+                                   FontWeight="Medium"
+                                   Margin="10,0"/>
+                      </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                  </DataGridTemplateColumn>
+
+                  <DataGridTemplateColumn Header="Mov. Cre. (Kzs)" Width="*">
+                    <DataGridTemplateColumn.CellTemplate>
+                      <DataTemplate x:DataType="vm:BalanceteItem">
+                        <TextBlock Text="{Binding MovCreditoFmt}"
+                                   VerticalAlignment="Center"
+                                   TextAlignment="Right"
+                                   Foreground="#2E7D32"
+                                   FontWeight="Medium"
+                                   Margin="10,0"/>
+                      </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                  </DataGridTemplateColumn>
+
+                  <!-- ── SALDO FINAL ── -->
+                  <DataGridTemplateColumn Header="S. Final Déb. (Kzs)" Width="*">
+                    <DataGridTemplateColumn.CellTemplate>
+                      <DataTemplate x:DataType="vm:BalanceteItem">
+                        <TextBlock Text="{Binding SaldoFinDebFmt}"
+                                   VerticalAlignment="Center"
+                                   TextAlignment="Right"
+                                   FontWeight="SemiBold"
+                                   Foreground="#1A2E5A"
+                                   Margin="10,0"/>
+                      </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                  </DataGridTemplateColumn>
+
+                  <DataGridTemplateColumn Header="S. Final Cre. (Kzs)" Width="*">
+                    <DataGridTemplateColumn.CellTemplate>
+                      <DataTemplate x:DataType="vm:BalanceteItem">
+                        <TextBlock Text="{Binding SaldoFinCreFmt}"
+                                   VerticalAlignment="Center"
+                                   TextAlignment="Right"
+                                   FontWeight="SemiBold"
+                                   Foreground="#1A2E5A"
+                                   Margin="10,0"/>
+                      </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                  </DataGridTemplateColumn>
+
+                </DataGrid.Columns>
+              </DataGrid>
+
+            </DockPanel>
+          </Border>
+
+          <!-- ══════════════════════════════════════════════════════════════
+               RODAPÉ DE TOTAIS
+               ══════════════════════════════════════════════════════════════ -->
+          <Border Classes="sg-card" Padding="16,12"
+                  Background="#F0F4FF">
+            <Grid ColumnDefinitions="2*, *, *, *, *, *, *, *">
+
+              <TextBlock Grid.Column="0"
+                         Text="TOTAIS GERAIS"
+                         FontSize="12" FontWeight="Bold"
+                         Foreground="#1A2E5A"
+                         VerticalAlignment="Center"/>
+
+              <TextBlock Grid.Column="3"
+                         Text="{Binding TotalDebitos}"
+                         FontSize="12" FontWeight="Bold"
+                         TextAlignment="Right"
+                         Foreground="#1565C0"
+                         VerticalAlignment="Center"
+                         Margin="10,0"/>
+
+              <TextBlock Grid.Column="4"
+                         Text="{Binding TotalCreditos}"
+                         FontSize="12" FontWeight="Bold"
+                         TextAlignment="Right"
+                         Foreground="#2E7D32"
+                         VerticalAlignment="Center"
+                         Margin="10,0"/>
+
+              <TextBlock Grid.Column="7"
+                         Text="{Binding DiferencaSaldo}"
+                         FontSize="12" FontWeight="Bold"
+                         TextAlignment="Right"
+                         Foreground="{Binding CorDiferenca}"
+                         VerticalAlignment="Center"
+                         Margin="10,0"/>
+
+            </Grid>
+          </Border>
+
+        </StackPanel>
+      </Border>
+    </ScrollViewer>
+
+  </Grid>
+
 </UserControl>

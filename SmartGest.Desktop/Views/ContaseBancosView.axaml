@@ -16,10 +16,7 @@
       <Setter Property="BoxShadow"    Value="0 2 12 0 #0A000000"/>
     </Style>
 
-    <!-- ── Item da sidebar ─────────────────────────────────────────────
-         Um único Button sem Border separado elimina a discrepância de
-         hit-area. O template do ContentPresenter recebe o CornerRadius
-         para que o hover/press preencha exactamente o mesmo espaço.   -->
+    <!-- ── Item da sidebar (estado normal) ───────────────────────────── -->
     <Style Selector="Button.conta-item">
       <Setter Property="Background"                 Value="Transparent"/>
       <Setter Property="BorderThickness"            Value="0"/>
@@ -40,7 +37,7 @@
       <Setter Property="Background" Value="#E3EBFF"/>
     </Style>
 
-    <!-- ── Item activo (conta seleccionada) ─────────────────────────── -->
+    <!-- ── Item da sidebar (estado activo) ───────────────────────────── -->
     <Style Selector="Button.conta-item-activo">
       <Setter Property="Background"                 Value="#EEF2FF"/>
       <Setter Property="BorderThickness"            Value="0"/>
@@ -146,6 +143,16 @@
       <Setter Property="FontSize"        Value="12"/>
     </Style>
 
+    <!-- ── Campo do formulário com erro ─────────────────────────────── -->
+    <Style Selector="TextBox.form-field-error">
+      <Setter Property="Background"      Value="#FFF8F8"/>
+      <Setter Property="BorderBrush"     Value="#E53935"/>
+      <Setter Property="BorderThickness" Value="1"/>
+      <Setter Property="CornerRadius"    Value="7"/>
+      <Setter Property="Padding"         Value="10,8"/>
+      <Setter Property="FontSize"        Value="12"/>
+    </Style>
+
     <!-- ── Linhas alternadas da DataGrid ────────────────────────────── -->
     <Style Selector="DataGridRow:nth-child(odd)">
       <Setter Property="Background" Value="#F9FAFC"/>
@@ -195,22 +202,35 @@
           </Border>
 
           <!-- Lista de contas -->
+          <!-- Estado de carregamento -->
+          <StackPanel DockPanel.Dock="Top"
+                      IsVisible="{Binding IsLoading}"
+                      HorizontalAlignment="Center"
+                      Margin="0,20,0,0" Spacing="8">
+            <mi:MaterialIcon Kind="Loading" Width="24" Height="24" Foreground="#9AA0AB"/>
+            <TextBlock Text="A carregar..." FontSize="12" Foreground="#9AA0AB" HorizontalAlignment="Center"/>
+          </StackPanel>
+
+          <!-- Mensagem de erro na sidebar -->
+          <Border DockPanel.Dock="Top"
+                  IsVisible="{Binding ErroMensagem, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"
+                  Background="#FFEBEE" CornerRadius="8" Padding="12,8" Margin="8,8,8,0">
+            <TextBlock Text="{Binding ErroMensagem}" FontSize="11" Foreground="#E53935" TextWrapping="Wrap"/>
+          </Border>
+
           <ScrollViewer Padding="0,8,0,8">
             <ItemsControl ItemsSource="{Binding ContasFiltradas}">
               <ItemsControl.ItemTemplate>
                 <DataTemplate x:DataType="vm:ContaBancariaItem">
                   <!--
-                    Usamos um único Button (sem Border exterior separado).
-                    A classe é escolhida por MultiBinding com o converter
-                    IsActive que vive no ViewModel — alternativa simples:
-                    dois Buttons com IsVisible. Aqui optamos pelos dois
-                    Buttons sobrepostos num Grid para evitar converters.
+                    Dois botões em Grid — apenas um visível de cada vez,
+                    controlado pela propriedade IsActiva do item
+                    (actualizada pelo ViewModel quando a seleção muda).
                   -->
                   <Grid>
-                    <!-- Estado inactivo -->
+                    <!-- Estado INACTIVO -->
                     <Button Classes="conta-item"
-                            IsVisible="{Binding $parent[UserControl].((vm:ContaseBancosViewModel)DataContext).ContaSelecionada,
-                                        Converter={x:Static ObjectConverters.IsNull}}"
+                            IsVisible="{Binding !IsActiva}"
                             Command="{Binding $parent[UserControl].((vm:ContaseBancosViewModel)DataContext).SelecionarContaCommand}"
                             CommandParameter="{Binding}">
                       <Grid ColumnDefinitions="46, *">
@@ -234,19 +254,12 @@
                       </Grid>
                     </Button>
 
-                    <!-- Estado activo / inactivo — usamos DataTrigger via Classes dinâmicas.
-                         Como Avalonia não tem MultiBinding simples para classes, a solução mais
-                         robusta é emitir sempre os dois botões e controlar visibilidade via
-                         comparação de referência no ViewModel através de uma propriedade calculada.
-                         Por ora ambos os botões disparam o mesmo comando; o estilo activo é
-                         aplicado quando o item É a ContaSelecionada. -->
+                    <!-- Estado ACTIVO -->
                     <Button Classes="conta-item-activo"
-                            IsVisible="{Binding $parent[UserControl].((vm:ContaseBancosViewModel)DataContext).ContaSelecionada,
-                                        Converter={x:Static ObjectConverters.IsNotNull}}"
+                            IsVisible="{Binding IsActiva}"
                             Command="{Binding $parent[UserControl].((vm:ContaseBancosViewModel)DataContext).SelecionarContaCommand}"
                             CommandParameter="{Binding}">
                       <Grid ColumnDefinitions="46, *">
-                        <!-- Barra de acento à esquerda -->
                         <Border Grid.Column="0" Width="36" Height="36" CornerRadius="18"
                                 Background="{Binding CorAccent}" VerticalAlignment="Center" Margin="0,0,10,0">
                           <TextBlock Text="{Binding Iniciais}" FontSize="12" FontWeight="Bold"
@@ -504,19 +517,21 @@
     <!-- ════════════════════════════════════════════════════════════════════
          OVERLAY + MODAL "GERIR CONTAS"
          Visível apenas quando ModalGerirAberto = true.
-         O rodapé fica dentro do RowDefinitions do modal — sem Margin fixo.
          ════════════════════════════════════════════════════════════════════ -->
-    <Grid IsVisible="{Binding ModalGerirAberto}">
+    <!-- Panel + ZIndex: o backdrop não pode ficar por cima do formulário (bloqueava cliques) -->
+    <Panel IsVisible="{Binding ModalGerirAberto}">
 
-      <!-- Fundo semi-transparente: clicar fora fecha -->
-      <Border Background="#80000000">
-        <Button Background="Transparent" BorderThickness="0"
-                HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
-                Command="{Binding FecharModalCommand}"/>
-      </Border>
+      <!-- Fundo semi-transparente — ZIndex 0, atrás do modal -->
+      <Button ZIndex="0"
+              Background="#80000000"
+              BorderThickness="0"
+              HorizontalAlignment="Stretch"
+              VerticalAlignment="Stretch"
+              Command="{Binding FecharModalCommand}"/>
 
-      <!-- Caixa do modal centrada -->
-      <Border Background="White"
+      <!-- Caixa do modal centrada — ZIndex 1, recebe cliques -->
+      <Border ZIndex="1"
+              Background="White"
               CornerRadius="14"
               BoxShadow="0 8 40 0 #28000000"
               Width="940"
@@ -540,7 +555,6 @@
                 <TextBlock Text="Adicione, edite ou elimine contas bancárias"
                            FontSize="12" Foreground="#9AA0AB"/>
               </StackPanel>
-              <!-- Botão X fechar -->
               <Button Grid.Column="1"
                       Background="Transparent" BorderThickness="0"
                       Padding="8" CornerRadius="8" Cursor="Hand"
@@ -552,7 +566,7 @@
           </Border>
 
           <!-- ── Corpo: lista à esquerda + formulário à direita ── -->
-          <Grid Grid.Row="1" ColumnDefinitions="*, 1, 320">
+          <Grid Grid.Row="1" ColumnDefinitions="*, 1, 340">
 
             <!-- Lista de contas no modal -->
             <DockPanel Grid.Column="0">
@@ -636,76 +650,104 @@
                            FontSize="12" FontWeight="SemiBold" Foreground="#1A2E5A"/>
               </Border>
 
+              <!-- Erro global do modal (ex: NIB duplicado, erro de rede) -->
+              <Border DockPanel.Dock="Top"
+                      IsVisible="{Binding ErroModal, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"
+                      Background="#FFEBEE" CornerRadius="8" Padding="12,8" Margin="20,8,20,0">
+                <StackPanel Orientation="Horizontal" Spacing="8">
+                  <mi:MaterialIcon Kind="AlertCircleOutline" Width="14" Height="14" Foreground="#E53935"/>
+                  <TextBlock Text="{Binding ErroModal}" FontSize="11" Foreground="#E53935" TextWrapping="Wrap"/>
+                </StackPanel>
+              </Border>
+
+              <!-- Sucesso global do modal -->
+              <Border DockPanel.Dock="Top"
+                      IsVisible="{Binding SucessoModal, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"
+                      Background="#E8F5E9" CornerRadius="8" Padding="12,8" Margin="20,8,20,0">
+                <StackPanel Orientation="Horizontal" Spacing="8">
+                  <mi:MaterialIcon Kind="CheckCircleOutline" Width="14" Height="14" Foreground="#2E7D32"/>
+                  <TextBlock Text="{Binding SucessoModal}" FontSize="11" Foreground="#1B5E20" TextWrapping="Wrap"/>
+                </StackPanel>
+              </Border>
+
               <ScrollViewer Padding="20,16">
                 <StackPanel Spacing="14">
 
+                  <!-- Nome do Banco -->
                   <StackPanel Spacing="4">
                     <TextBlock Text="Nome do Banco *" Classes="metric-label"/>
-                    <TextBox Classes="form-field" Watermark="Ex: Banco BIC" Text="{Binding FormBanco}"/>
+                    <TextBox Classes="form-field" Watermark="Ex: Banco BIC"
+                             Text="{Binding FormBanco, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
                     <TextBlock Text="{Binding FormErroBanco}" FontSize="10" Foreground="#E53935"
                                IsVisible="{Binding FormErroBanco, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"/>
                   </StackPanel>
 
+                  <!-- NIB -->
                   <StackPanel Spacing="4">
                     <TextBlock Text="NIB *" Classes="metric-label"/>
-                    <TextBox Classes="form-field" Watermark="AO06.0000.0000.…" Text="{Binding FormNIB}"/>
+                    <TextBox Classes="form-field" Watermark="AO06.0000.0000.…"
+                             Text="{Binding FormNIB, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
                     <TextBlock Text="{Binding FormErroNIB}" FontSize="10" Foreground="#E53935"
                                IsVisible="{Binding FormErroNIB, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"/>
                   </StackPanel>
 
+                  <!-- Titular -->
+                  <StackPanel Spacing="4">
+                    <TextBlock Text="Titular *" Classes="metric-label"/>
+                    <TextBox Classes="form-field" Watermark="Ex: SmartGest, Lda."
+                             Text="{Binding FormTitular, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                    <TextBlock Text="{Binding FormErroTitular}" FontSize="10" Foreground="#E53935"
+                               IsVisible="{Binding FormErroTitular, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"/>
+                  </StackPanel>
+
+                  <!-- Tipo de Conta -->
                   <StackPanel Spacing="4">
                     <TextBlock Text="Tipo de Conta" Classes="metric-label"/>
-                    <ComboBox SelectedItem="{Binding FormTipo}" HorizontalAlignment="Stretch" FontSize="12">
-                      <ComboBoxItem Content="Conta à Ordem"/>
-                      <ComboBoxItem Content="Depósito a Prazo"/>
-                      <ComboBoxItem Content="Conta Poupança"/>
-                      <ComboBoxItem Content="Conta Empresarial"/>
-                    </ComboBox>
+                    <!--
+                      Em Avalonia, SelectedItem com string simples não funciona quando os itens
+                      são ComboBoxItem. Usamos SelectedIndex mapeado por propriedade no VM,
+                      ou — solução mais simples — ItemsSource com lista de strings.
+                    -->
+                    <ComboBox ItemsSource="{Binding TiposConta}"
+                              SelectedItem="{Binding FormTipo}"
+                              HorizontalAlignment="Stretch" FontSize="12"/>
                   </StackPanel>
 
+                  <!-- Moeda -->
                   <StackPanel Spacing="4">
                     <TextBlock Text="Moeda" Classes="metric-label"/>
-                    <ComboBox SelectedItem="{Binding FormMoeda}" HorizontalAlignment="Stretch" FontSize="12">
-                      <ComboBoxItem Content="AOA"/>
-                      <ComboBoxItem Content="USD"/>
-                      <ComboBoxItem Content="EUR"/>
-                    </ComboBox>
+                    <ComboBox ItemsSource="{Binding MoedasDisponiveis}"
+                              SelectedItem="{Binding FormMoeda}"
+                              HorizontalAlignment="Stretch" FontSize="12"/>
                   </StackPanel>
 
+                  <!-- Agência -->
                   <StackPanel Spacing="4">
                     <TextBlock Text="Agência" Classes="metric-label"/>
-                    <TextBox Classes="form-field" Watermark="Ex: Luanda — Maianga" Text="{Binding FormAgencia}"/>
+                    <TextBox Classes="form-field" Watermark="Ex: Luanda — Maianga"
+                             Text="{Binding FormAgencia, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
                   </StackPanel>
 
-                  <StackPanel Spacing="4">
-                    <TextBlock Text="Titular" Classes="metric-label"/>
-                    <TextBox Classes="form-field" Watermark="Ex: SmartGest, Lda." Text="{Binding FormTitular}"/>
-                  </StackPanel>
-
+                  <!-- Saldo Inicial -->
                   <StackPanel Spacing="4">
                     <TextBlock Text="Saldo Inicial (Kzs)" Classes="metric-label"/>
-                    <TextBox Classes="form-field" Watermark="0" Text="{Binding FormSaldo}"/>
+                    <TextBox Classes="form-field" Watermark="0"
+                             Text="{Binding FormSaldoTexto, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                    <TextBlock Text="{Binding FormErroSaldo}" FontSize="10" Foreground="#E53935"
+                               IsVisible="{Binding FormErroSaldo, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"/>
                   </StackPanel>
 
+                  <!-- Cor de Destaque -->
                   <StackPanel Spacing="4">
                     <TextBlock Text="Cor de Destaque (hex)" Classes="metric-label"/>
-                    <TextBox Classes="form-field" Watermark="#1A2E5A" Text="{Binding FormCorAccent}"/>
+                    <Grid ColumnDefinitions="*, 10, 36">
+                      <TextBox Grid.Column="0" Classes="form-field" Watermark="#1A2E5A"
+                               Text="{Binding FormCorAccent, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                      <!-- Pré-visualização da cor -->
+                      <Border Grid.Column="2" Width="36" Height="36" CornerRadius="8"
+                              Background="{Binding FormCorAccent}"/>
+                    </Grid>
                   </StackPanel>
-
-                  <!-- Limpar / Guardar -->
-                  <Grid ColumnDefinitions="*, 8, *" Margin="0,4,0,0">
-                    <Button Grid.Column="0" Classes="btn-outline"
-                            HorizontalAlignment="Stretch"
-                            Command="{Binding LimparFormularioCommand}">
-                      <TextBlock Text="Limpar" FontSize="12" FontWeight="SemiBold" HorizontalAlignment="Center"/>
-                    </Button>
-                    <Button Grid.Column="2" Classes="btn-primary"
-                            HorizontalAlignment="Stretch"
-                            Command="{Binding GuardarContaCommand}">
-                      <TextBlock Text="{Binding FormBotaoTexto}"
-                                 FontSize="12" FontWeight="SemiBold" HorizontalAlignment="Center"/>
-                    </Button>
-                  </Grid>
 
                 </StackPanel>
               </ScrollViewer>
@@ -714,31 +756,50 @@
 
           </Grid>
 
-          <!-- ── Rodapé do modal (dentro do RowDefinitions — sem Margin fixo) ── -->
+          <!-- ── Rodapé do modal — acções sempre visíveis ── -->
           <Border Grid.Row="2"
                   Padding="24,14"
                   BorderBrush="#F0F0F0"
                   BorderThickness="0,1,0,0"
                   Background="White">
-            <StackPanel Orientation="Horizontal" Spacing="10" HorizontalAlignment="Right">
-              <Button Classes="btn-outline" Width="130"
-                      Command="{Binding FecharModalCommand}">
-                <TextBlock Text="Cancelar" FontSize="12" FontWeight="SemiBold" HorizontalAlignment="Center"/>
-              </Button>
-              <Button Classes="btn-primary" Width="170"
-                      Command="{Binding AplicarAlteracoesCommand}">
-                <StackPanel Orientation="Horizontal" Spacing="6" HorizontalAlignment="Center">
-                  <mi:MaterialIcon Kind="Check" Width="14" Height="14"/>
-                  <TextBlock Text="Aplicar Alterações" VerticalAlignment="Center"/>
-                </StackPanel>
-              </Button>
-            </StackPanel>
+            <Grid ColumnDefinitions="*, Auto">
+              <TextBlock Grid.Column="0"
+                         VerticalAlignment="Center"
+                         FontSize="11" Foreground="#9AA0AB"
+                         Text="* Campos obrigatórios"/>
+              <StackPanel Grid.Column="1"
+                          Orientation="Horizontal" Spacing="10"
+                          HorizontalAlignment="Right">
+                <Button Classes="btn-outline" MinWidth="110"
+                        Command="{Binding FecharModalCommand}">
+                  <TextBlock Text="Cancelar" FontSize="12" FontWeight="SemiBold"/>
+                </Button>
+                <Button Classes="btn-outline" MinWidth="110"
+                        Command="{Binding LimparFormularioCommand}">
+                  <TextBlock Text="Limpar" FontSize="12" FontWeight="SemiBold"/>
+                </Button>
+                <Button Classes="btn-primary" MinWidth="150"
+                        IsEnabled="{Binding !IsSaving}"
+                        Command="{Binding GuardarContaCommand}">
+                  <StackPanel Orientation="Horizontal" Spacing="6" HorizontalAlignment="Center">
+                    <mi:MaterialIcon Kind="Loading" Width="14" Height="14"
+                                     IsVisible="{Binding IsSaving}"/>
+                    <mi:MaterialIcon Kind="Plus" Width="14" Height="14"
+                                     IsVisible="{Binding !FormEdicaoActiva}"/>
+                    <mi:MaterialIcon Kind="ContentSaveOutline" Width="14" Height="14"
+                                     IsVisible="{Binding FormEdicaoActiva}"/>
+                    <TextBlock Text="{Binding FormBotaoTexto}"
+                               FontSize="12" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                  </StackPanel>
+                </Button>
+              </StackPanel>
+            </Grid>
           </Border>
 
         </Grid>
       </Border>
 
-    </Grid>
+    </Panel>
 
   </Grid>
 </UserControl>

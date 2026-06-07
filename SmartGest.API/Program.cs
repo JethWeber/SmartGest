@@ -3,13 +3,20 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using SmartGest.API.Data;
+using SmartGest.API.Services;
 using System.Text;
+
+AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 
 var builder = WebApplication.CreateBuilder(args);
 
-// ── EF Core + SQLite ──────────────────────────────────────────────────────────
+// ── EF Core + PostgreSQL ──────────────────────────────────────────────────────
 builder.Services.AddDbContext<AppDbContext>(opt =>
-    opt.UseSqlite(builder.Configuration.GetConnectionString("Default")));
+    opt.UseNpgsql(builder.Configuration.GetConnectionString("Default")));
+
+// ── Serviços de Negócio ───────────────────────────────────────────────────────
+builder.Services.AddScoped<ContabilidadeService>();
+builder.Services.AddScoped<RelatoriosService>();
 
 // ── JWT Auth ──────────────────────────────────────────────────────────────────
 var jwtKey = builder.Configuration["Jwt:Key"]!;

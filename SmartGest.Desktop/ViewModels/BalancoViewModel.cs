@@ -1,26 +1,35 @@
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using LiveChartsCore;
 using LiveChartsCore.SkiaSharpView;
 using LiveChartsCore.SkiaSharpView.Painting;
 using SkiaSharp;
+using SmartGest.Desktop.Services;
 
 namespace SmartGest.Desktop.ViewModels;
 
 public partial class BalancoViewModel : ViewModelBase
 {
+    private readonly ContabilidadeService _svc;
+
+    // ── Estado de carregamento ────────────────────────────────────────────────
+    [ObservableProperty] private bool   _carregando   = false;
+    [ObservableProperty] private string _erroMensagem = string.Empty;
+    [ObservableProperty] private bool   _temErro      = false;
+
     // ── Período ───────────────────────────────────────────────────────────────
-    [ObservableProperty] private int    _exercicio     = DateTime.Today.Year;
-    [ObservableProperty] private int    _mesIndex      = DateTime.Today.Month - 1; // 0-based
-    [ObservableProperty] private string _periodoTexto  = string.Empty;
+    [ObservableProperty] private int    _exercicio    = DateTime.Today.Year;
+    [ObservableProperty] private int    _mesIndex     = DateTime.Today.Month - 1;
+    [ObservableProperty] private string _periodoTexto = string.Empty;
 
     // ── Métricas do Topo ──────────────────────────────────────────────────────
-    [ObservableProperty] private string _totalAtivoFmt          = string.Empty;
-    [ObservableProperty] private string _totalPassivoCapitalFmt = string.Empty;
-    [ObservableProperty] private string _resultadoExercicioFmt  = string.Empty;
+    [ObservableProperty] private string _totalAtivoFmt          = "– Kzs";
+    [ObservableProperty] private string _totalPassivoCapitalFmt = "– Kzs";
+    [ObservableProperty] private string _resultadoExercicioFmt  = "– Kzs";
     [ObservableProperty] private string _corResultado           = "#43A047";
     [ObservableProperty] private bool   _estaEquilibrado        = true;
     [ObservableProperty] private string _textoEquilibrio        = "Balanceado ✓";
@@ -28,9 +37,9 @@ public partial class BalancoViewModel : ViewModelBase
     [ObservableProperty] private string _fundoEquilibrio        = "#E8F5E9";
 
     // ── Sparklines ────────────────────────────────────────────────────────────
-    public ISeries[] SparklineAtivo          { get; }
-    public ISeries[] SparklinePassivoCapital { get; }
-    public ISeries[] SparklineResultado      { get; }
+    public ISeries[] SparklineAtivo          { get; } = Sparklines(new SKColor(0x21, 0x96, 0xF3));
+    public ISeries[] SparklinePassivoCapital { get; } = Sparklines(new SKColor(0x1A, 0x2E, 0x5A));
+    public ISeries[] SparklineResultado      { get; } = Sparklines(SKColors.MediumSeaGreen);
 
     // ── ATIVO ─────────────────────────────────────────────────────────────────
     public ObservableCollection<BalancoLinhaItem> AtivoCorrentes    { get; } = new();
@@ -57,32 +66,30 @@ public partial class BalancoViewModel : ViewModelBase
     // ── CAPITAL PRÓPRIO ───────────────────────────────────────────────────────
     public ObservableCollection<BalancoLinhaItem> CapitalProprio { get; } = new();
 
-    [ObservableProperty] private double _totalCapitalProprio = 0;
+    [ObservableProperty] private double _totalCapitalProprio   = 0;
+    [ObservableProperty] private double _totalPassivoMaisCapital = 0;
 
     public string TotalCapitalProprioFmt => $"{TotalCapitalProprio:N0} Kzs";
 
-    // ── Total Passivo + Capital ───────────────────────────────────────────────
-    [ObservableProperty] private double _totalPassivoMaisCapital = 0;
-
     // ─────────────────────────────────────────────────────────────────────────
-    public BalancoViewModel()
+    // Constructor via DI
+    public BalancoViewModel(ContabilidadeService svc)
     {
-        SparklineAtivo          = new ISeries[] { Sparkline(new double[] { 4, 5, 5.5, 6, 7, 8, 7.5, 9 }, new SKColor(0x21, 0x96, 0xF3)) };
-        SparklinePassivoCapital = new ISeries[] { Sparkline(new double[] { 4, 5, 5.5, 6, 7, 8, 7.5, 9 }, new SKColor(0x1A, 0x2E, 0x5A)) };
-        SparklineResultado      = new ISeries[] { Sparkline(new double[] { 1, 2, 1.5, 3, 4, 4, 5, 6   }, SKColors.MediumSeaGreen) };
-
-        CarregarDemoData();
-        RecalcularTotais();
+        _svc = svc;
     }
 
-    // ── Comandos ─────────────────────────────────────────────────────────────
+    // Constructor sem parâmetros para design-time / code-behind
+    public BalancoViewModel() : this(App.Services.GetRequiredService<ContabilidadeService>()) { }
+
+    // ── Inicialização assíncrona chamada pela View ────────────────────────────
+    public async Task InicializarAsync()
+        => await CarregarAsync();
+
+    // ── Comandos ──────────────────────────────────────────────────────────────
 
     [RelayCommand]
-    private void Atualizar()
-    {
-        CarregarDemoData();
-        RecalcularTotais();
-    }
+    private async Task Atualizar()
+        => await CarregarAsync();
 
     [RelayCommand]
     private void Exportar()
@@ -90,102 +97,114 @@ public partial class BalancoViewModel : ViewModelBase
         // TODO: exportar para XLSX / PDF
     }
 
-    // ── Helpers ──────────────────────────────────────────────────────────────
+    // ── Lógica interna ────────────────────────────────────────────────────────
 
-    private void RecalcularTotais()
+    private async Task CarregarAsync()
     {
-        TotalAtivoCorrente    = AtivoCorrentes.Sum(x => x.Valor);
-        TotalAtivoNaoCorrente = AtivoNaoCorrentes.Sum(x => x.Valor);
-        TotalAtivo            = TotalAtivoCorrente + TotalAtivoNaoCorrente;
+        Carregando   = true;
+        TemErro      = false;
+        ErroMensagem = string.Empty;
 
-        TotalPassivoCorrente    = PassivosCorrentes.Sum(x => x.Valor);
-        TotalPassivoNaoCorrente = PassivosNaoCorrentes.Sum(x => x.Valor);
-        TotalPassivo            = TotalPassivoCorrente + TotalPassivoNaoCorrente;
-
-        TotalCapitalProprio     = CapitalProprio.Sum(x => x.Valor);
-        TotalPassivoMaisCapital = TotalPassivo + TotalCapitalProprio;
-
-        double resultado = TotalAtivo - TotalPassivo - (TotalCapitalProprio - CapitalProprio
-            .FirstOrDefault(x => x.Descricao.Contains("Resultado"))?.Valor ?? 0);
-
-        TotalAtivoFmt          = $"{TotalAtivo:N0} Kzs";
-        TotalPassivoCapitalFmt = $"{TotalPassivoMaisCapital:N0} Kzs";
-
-        double resultadoExercicio = CapitalProprio
-            .FirstOrDefault(x => x.Descricao.Contains("Resultado"))?.Valor ?? 0;
-        ResultadoExercicioFmt = $"{resultadoExercicio:N0} Kzs";
-        CorResultado          = resultadoExercicio >= 0 ? "#43A047" : "#E53935";
-
-        bool equilibrado = Math.Abs(TotalAtivo - TotalPassivoMaisCapital) < 1;
-        EstaEquilibrado  = equilibrado;
-        TextoEquilibrio  = equilibrado ? "Balanceado ✓" : "Desequilibrado ✗";
-        CorEquilibrio    = equilibrado ? "#2E7D32" : "#C62828";
-        FundoEquilibrio  = equilibrado ? "#E8F5E9"  : "#FFEBEE";
-
-        var meses = new[] { "Jan","Fev","Mar","Abr","Mai","Jun","Jul","Ago","Set","Out","Nov","Dez" };
-        PeriodoTexto = $"{meses[MesIndex]} {Exercicio}";
-
-        OnPropertyChanged(nameof(TotalAtivoCorrenteFmt));
-        OnPropertyChanged(nameof(TotalAtivoNaoCorrenteFmt));
-        OnPropertyChanged(nameof(TotalPassivoCorrenteFmt));
-        OnPropertyChanged(nameof(TotalPassivoNaoCorrenteFmt));
-        OnPropertyChanged(nameof(TotalCapitalProprioFmt));
-    }
-
-    private void CarregarDemoData()
-    {
-        AtivoCorrentes.Clear();
-        AtivoNaoCorrentes.Clear();
-        PassivosCorrentes.Clear();
-        PassivosNaoCorrentes.Clear();
-        CapitalProprio.Clear();
-
-        // ── ATIVO CORRENTE ────────────────────────────────────────────────────
-        AtivoCorrentes.Add(new("Caixa e Equivalentes de Caixa",  2_340_000));
-        AtivoCorrentes.Add(new("Clientes e Outras Contas a Receber", 1_850_000));
-        AtivoCorrentes.Add(new("Adiantamentos a Fornecedores",      420_000));
-        AtivoCorrentes.Add(new("Inventários e Activos Biológicos",   980_000));
-        AtivoCorrentes.Add(new("Outros Activos Correntes",           210_000));
-
-        // ── ATIVO NÃO CORRENTE ────────────────────────────────────────────────
-        AtivoNaoCorrentes.Add(new("Activos Fixos Tangíveis (bruto)",    8_500_000));
-        AtivoNaoCorrentes.Add(new("(–) Depreciações Acumuladas", -2_100_000, IsDeducao: true));
-        AtivoNaoCorrentes.Add(new("Activos Intangíveis",                  650_000));
-        AtivoNaoCorrentes.Add(new("Participações Financeiras",            300_000));
-        AtivoNaoCorrentes.Add(new("Outros Activos Não Correntes",         180_000));
-
-        // ── PASSIVO CORRENTE ──────────────────────────────────────────────────
-        PassivosCorrentes.Add(new("Fornecedores e Contas a Pagar",    1_240_000));
-        PassivosCorrentes.Add(new("Empréstimos Bancários CP",           600_000));
-        PassivosCorrentes.Add(new("Imposto sobre o Rendimento (IRT)",   180_000));
-        PassivosCorrentes.Add(new("Imposto sobre Valor Acrescentado",    95_000));
-        PassivosCorrentes.Add(new("Outros Passivos Correntes",          320_000));
-
-        // ── PASSIVO NÃO CORRENTE ──────────────────────────────────────────────
-        PassivosNaoCorrentes.Add(new("Empréstimos Bancários LP",      2_500_000));
-        PassivosNaoCorrentes.Add(new("Provisões para Riscos e Encargos", 380_000));
-        PassivosNaoCorrentes.Add(new("Outros Passivos Não Correntes",    220_000));
-
-        // ── CAPITAL PRÓPRIO ───────────────────────────────────────────────────
-        CapitalProprio.Add(new("Capital Social",          3_000_000));
-        CapitalProprio.Add(new("Reservas Legais",           450_000));
-        CapitalProprio.Add(new("Reservas Livres",           320_000));
-        CapitalProprio.Add(new("Resultados Transitados",    840_000));
-        CapitalProprio.Add(new("Resultado do Exercício",    705_000));
-    }
-
-    private static LineSeries<double> Sparkline(double[] values, SKColor color) =>
-        new LineSeries<double>
+        try
         {
-            Values         = values,
-            Stroke         = new SolidColorPaint(color) { StrokeThickness = 2 },
-            Fill           = null,
-            GeometrySize   = 0,
-            LineSmoothness = 1
+            var resp = await _svc.ObterBalancoAsync(Exercicio, MesIndex + 1);
+
+            if (resp is null)
+            {
+                MostrarErro("Sem resposta do servidor.");
+                return;
+            }
+
+            // ── Preencher colecções ────────────────────────────────────────────
+            Preencher(AtivoCorrentes,     resp.AtivoCorrentes);
+            Preencher(AtivoNaoCorrentes,  resp.AtivoNaoCorrentes);
+            Preencher(PassivosCorrentes,  resp.PassivosCorrentes);
+            Preencher(PassivosNaoCorrentes, resp.PassivosNaoCorrentes);
+            Preencher(CapitalProprio,     resp.CapitalProprio);
+
+            // ── Totais ─────────────────────────────────────────────────────────
+            TotalAtivoCorrente     = (double)resp.AtivoCorrentes.Sum(x => x.Valor);
+            TotalAtivoNaoCorrente  = (double)resp.AtivoNaoCorrentes.Sum(x => x.Valor);
+            TotalAtivo             = (double)resp.TotalAtivo;
+
+            TotalPassivoCorrente    = (double)resp.PassivosCorrentes.Sum(x => x.Valor);
+            TotalPassivoNaoCorrente = (double)resp.PassivosNaoCorrentes.Sum(x => x.Valor);
+            TotalPassivo            = (double)resp.TotalPassivo;
+
+            TotalCapitalProprio    = (double)resp.TotalCapital;
+            TotalPassivoMaisCapital= (double)resp.TotalPassivoMaisCapital;
+
+            // ── Métricas do topo ───────────────────────────────────────────────
+            TotalAtivoFmt          = $"{resp.TotalAtivo:N0} Kzs";
+            TotalPassivoCapitalFmt = $"{resp.TotalPassivoMaisCapital:N0} Kzs";
+
+            var resultadoItem = resp.CapitalProprio
+                .FirstOrDefault(x => x.Descricao.Contains("Resultado", StringComparison.OrdinalIgnoreCase));
+            var resultado = resultadoItem?.Valor ?? 0m;
+            ResultadoExercicioFmt = $"{resultado:N0} Kzs";
+            CorResultado          = resultado >= 0 ? "#43A047" : "#E53935";
+
+            bool equilibrado = Math.Abs(resp.TotalAtivo - resp.TotalPassivoMaisCapital) < 1m;
+            EstaEquilibrado  = equilibrado;
+            TextoEquilibrio  = equilibrado ? "Balanceado ✓" : "Desequilibrado ✗";
+            CorEquilibrio    = equilibrado ? "#2E7D32" : "#C62828";
+            FundoEquilibrio  = equilibrado ? "#E8F5E9"  : "#FFEBEE";
+
+            // ── Período ────────────────────────────────────────────────────────
+            var meses = new[] { "Jan","Fev","Mar","Abr","Mai","Jun","Jul","Ago","Set","Out","Nov","Dez" };
+            PeriodoTexto = $"{meses[MesIndex]} {Exercicio}";
+
+            // Notificar propriedades calculadas (sufixo Fmt)
+            OnPropertyChanged(nameof(TotalAtivoCorrenteFmt));
+            OnPropertyChanged(nameof(TotalAtivoNaoCorrenteFmt));
+            OnPropertyChanged(nameof(TotalPassivoCorrenteFmt));
+            OnPropertyChanged(nameof(TotalPassivoNaoCorrenteFmt));
+            OnPropertyChanged(nameof(TotalCapitalProprioFmt));
+        }
+        catch (ApiException ex)
+        {
+            MostrarErro($"Erro da API ({(int)ex.StatusCode}): {ex.Message}");
+        }
+        catch (Exception ex)
+        {
+            MostrarErro($"Erro inesperado: {ex.Message}");
+        }
+        finally
+        {
+            Carregando = false;
+        }
+    }
+
+    private static void Preencher(
+        ObservableCollection<BalancoLinhaItem> coleccao,
+        IEnumerable<BalancoLinhaResponse> fonte)
+    {
+        coleccao.Clear();
+        foreach (var item in fonte)
+            coleccao.Add(new BalancoLinhaItem(item.Descricao, (double)item.Valor, item.IsDeducao));
+    }
+
+    private void MostrarErro(string msg)
+    {
+        ErroMensagem = msg;
+        TemErro      = true;
+    }
+
+    private static ISeries[] Sparklines(SKColor cor) =>
+        new ISeries[]
+        {
+            new LineSeries<double>
+            {
+                Values         = new double[] { 0, 0, 0, 0, 0, 0, 0, 0 },
+                Stroke         = new SolidColorPaint(cor) { StrokeThickness = 2 },
+                Fill           = null,
+                GeometrySize   = 0,
+                LineSmoothness = 1
+            }
         };
 }
 
-// ── Linha de conta no balanço ─────────────────────────────────────────────────
+// ── Record de linha do balanço (inalterado — usado pela View) ─────────────────
 public record BalancoLinhaItem(string Descricao, double Valor, bool IsDeducao = false)
 {
     public string ValorFmt =>

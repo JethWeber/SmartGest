@@ -145,7 +145,19 @@ public class Lancamento
     public string   CentroCusto       { get; set; } = string.Empty;
     [MaxLength(100)]
     public string   ReferenciaInterna { get; set; } = string.Empty;
-    public DateTime CriadoEm         { get; set; } 
+    public decimal  ImpostoSelo       { get; set; }
+    public DateTime CriadoEm         { get; set; }
+
+    // ── SOFT DELETE — Conformidade fiscal angolana ──────────────────────────
+    // Lançamentos contabilísticos nunca são eliminados fisicamente do banco.
+    // A anulação deve ser feita por estorno (lançamento inverso) ou marcação.
+    // AanuladoEm e AanuladoPor garantem a trilha de auditoria exigida por lei.
+    public bool      Anulado      { get; set; } = false;
+    public DateTime? AanuladoEm   { get; set; }
+    [MaxLength(150)]
+    public string?   AanuladoPor  { get; set; }
+    [MaxLength(500)]
+    public string?   MotivoAnulacao { get; set; }
 
     public int?           ContaBancariaId { get; set; }
     public ContaBancaria? ContaBancaria   { get; set; }

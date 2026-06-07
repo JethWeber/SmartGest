@@ -26,19 +26,16 @@ public partial class App : Application
 
     public override void OnFrameworkInitializationCompleted()
     {
-        // ── DI ────────────────────────────────────────────────────────────────
         var collection = new ServiceCollection();
         RegisterServices(collection);
         Services = collection.BuildServiceProvider();
 
-        // Remove validação duplicada do Avalonia
         var pluginsToRemove = BindingPlugins.DataValidators
             .OfType<DataAnnotationsValidationPlugin>()
             .ToArray();
         foreach (var p in pluginsToRemove)
             BindingPlugins.DataValidators.Remove(p);
 
-        // ── Fluxo de janelas ──────────────────────────────────────────────────
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
             var splashVm = new SplashViewModel();
@@ -54,9 +51,6 @@ public partial class App : Application
                     var mainVm = Services.GetRequiredService<MainWindowViewModel>();
                     var main   = new MainWindow { DataContext = mainVm };
 
-                    // PedirAbrirNovoLancamento: cria o modal e abre-o.
-                    // vm.OwnerWindow e DialogClosed são tratados pelo construtor
-                    // de NovoLancamentoView — não precisamos de os repetir aqui.
                     mainVm.PedirAbrirNovoLancamento += async vm =>
                     {
                         var dialog = new NovoLancamentoView { DataContext = vm };
@@ -82,21 +76,33 @@ public partial class App : Application
 
     private static void RegisterServices(IServiceCollection services)
     {
+        // ── Infraestrutura ────────────────────────────────────────────────────
         services.AddSingleton<TokenStore>();
         services.AddSingleton<ApiClient>();
 
+        // ── Serviços de API ───────────────────────────────────────────────────
         services.AddTransient<AuthService>();
         services.AddTransient<LancamentoService>();
         services.AddTransient<ContasBancariasService>();
+        services.AddTransient<ContabilidadeService>();
+        services.AddTransient<CategoriaService>();
 
+        // ── ViewModels simples ────────────────────────────────────────────────
         services.AddTransient<LoginViewModel>();
-        services.AddTransient<NovoLancamentoViewModel>();
+        services.AddTransient<CaixaViewModel>();
 
-        // Factory de Transient: cada chamada resolve uma instância nova com
-        // o TokenStore/ApiClient singleton correctos (token já preenchido).
+        // SINGLETON: estado preservado entre navegações; construído uma única
+        // vez após o login, quando o TokenStore já tem o JWT preenchido.
+        services.AddSingleton<ContaseBancosViewModel>();
+
+        // ── Factory de NovoLancamentoViewModel ────────────────────────────────
         services.AddSingleton<Func<NovoLancamentoViewModel>>(sp =>
-            () => sp.GetRequiredService<NovoLancamentoViewModel>());
+            () => new NovoLancamentoViewModel(
+                sp.GetRequiredService<LancamentoService>(),
+                sp.GetRequiredService<ContasBancariasService>(),
+                sp.GetRequiredService<CategoriaService>()));
 
+        // ── MainWindowViewModel — Singleton, recebe tudo via DI ──────────────
         services.AddSingleton<MainWindowViewModel>();
     }
 }

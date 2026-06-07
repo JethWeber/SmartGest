@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using SmartGest.API.Data;
 
 #nullable disable
@@ -11,95 +12,101 @@ using SmartGest.API.Data;
 namespace SmartGest.API.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260525235720_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20260603010214_PGC_Angola_v2")]
+    partial class PGC_Angola_v2
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
-            modelBuilder.HasAnnotation("ProductVersion", "10.0.0");
+            modelBuilder
+                .HasAnnotation("ProductVersion", "10.0.8")
+                .HasAnnotation("Relational:MaxIdentifierLength", 63);
+
+            NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
             modelBuilder.Entity("SmartGest.API.Models.Configuracao", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<bool>("AnimacoesAtivadas")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("boolean");
 
                     b.Property<string>("ApiBaseUrl")
                         .IsRequired()
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<string>("ApiKey")
                         .IsRequired()
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<int>("DataFormatoIndex")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<bool>("DoisFatoresAtivo")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("boolean");
 
                     b.Property<string>("EmailNotificacoes")
                         .IsRequired()
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<int>("IdiomaIndex")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<decimal>("LimiarSaldoBaixo")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("numeric(18,2)");
 
                     b.Property<int>("MoedaIndex")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<bool>("MostrarSaldosOcultos")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("boolean");
 
                     b.Property<bool>("MostrarSparklines")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("boolean");
 
                     b.Property<bool>("NotifApp")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("boolean");
 
                     b.Property<bool>("NotifBackup")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("boolean");
 
                     b.Property<bool>("NotifEmail")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("boolean");
 
                     b.Property<bool>("NotifErrosSistema")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("boolean");
 
                     b.Property<bool>("NotifLancamentos")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("boolean");
 
                     b.Property<bool>("NotifRelatorios")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("boolean");
 
                     b.Property<bool>("NotifSaldoBaixo")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("boolean");
 
                     b.Property<bool>("RegistarAuditoria")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("boolean");
 
                     b.Property<bool>("RetryAtivado")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("boolean");
 
                     b.Property<int>("SessaoTimeoutMins")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<int>("TemaIndex")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<int>("TimeoutIndex")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<bool>("TlsAtivado")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("boolean");
 
                     b.HasKey("Id");
 
@@ -140,51 +147,53 @@ namespace SmartGest.API.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<bool>("Activa")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("boolean");
 
                     b.Property<string>("Agencia")
                         .IsRequired()
                         .HasMaxLength(150)
-                        .HasColumnType("TEXT");
+                        .HasColumnType("character varying(150)");
 
                     b.Property<string>("Banco")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("TEXT");
+                        .HasColumnType("character varying(100)");
 
                     b.Property<string>("CorAccent")
                         .IsRequired()
                         .HasMaxLength(20)
-                        .HasColumnType("TEXT");
+                        .HasColumnType("character varying(20)");
 
                     b.Property<string>("Moeda")
                         .IsRequired()
                         .HasMaxLength(10)
-                        .HasColumnType("TEXT");
+                        .HasColumnType("character varying(10)");
 
                     b.Property<string>("NIB")
                         .IsRequired()
                         .HasMaxLength(50)
-                        .HasColumnType("TEXT");
+                        .HasColumnType("character varying(50)");
 
                     b.Property<decimal>("SaldoAtual")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("numeric(18,2)");
 
                     b.Property<decimal>("SaldoOntem")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("numeric(18,2)");
 
                     b.Property<string>("Tipo")
                         .IsRequired()
                         .HasMaxLength(50)
-                        .HasColumnType("TEXT");
+                        .HasColumnType("character varying(50)");
 
                     b.Property<string>("Titular")
                         .IsRequired()
                         .HasMaxLength(200)
-                        .HasColumnType("TEXT");
+                        .HasColumnType("character varying(200)");
 
                     b.HasKey("Id");
 
@@ -256,28 +265,30 @@ namespace SmartGest.API.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<bool>("Activa")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("boolean");
 
                     b.Property<string>("Codigo")
                         .IsRequired()
                         .HasMaxLength(20)
-                        .HasColumnType("TEXT");
+                        .HasColumnType("character varying(20)");
 
                     b.Property<string>("Grupo")
                         .IsRequired()
                         .HasMaxLength(30)
-                        .HasColumnType("TEXT");
+                        .HasColumnType("character varying(30)");
 
                     b.Property<bool>("IsDevedora")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("boolean");
 
                     b.Property<string>("Nome")
                         .IsRequired()
                         .HasMaxLength(200)
-                        .HasColumnType("TEXT");
+                        .HasColumnType("character varying(200)");
 
                     b.HasKey("Id");
 
@@ -294,7 +305,7 @@ namespace SmartGest.API.Migrations
                             Codigo = "11",
                             Grupo = "Ativo",
                             IsDevedora = true,
-                            Nome = "Caixa e Equivalentes de Caixa"
+                            Nome = "Activos Fixos Tangíveis"
                         },
                         new
                         {
@@ -303,7 +314,7 @@ namespace SmartGest.API.Migrations
                             Codigo = "12",
                             Grupo = "Ativo",
                             IsDevedora = true,
-                            Nome = "Clientes e Outras Contas a Receber"
+                            Nome = "Activos Intangíveis"
                         },
                         new
                         {
@@ -312,155 +323,146 @@ namespace SmartGest.API.Migrations
                             Codigo = "13",
                             Grupo = "Ativo",
                             IsDevedora = true,
-                            Nome = "Inventários e Activos Biológicos"
+                            Nome = "Investimentos Financeiros"
                         },
                         new
                         {
                             Id = 4,
                             Activa = true,
-                            Codigo = "14",
+                            Codigo = "18",
                             Grupo = "Ativo",
-                            IsDevedora = true,
-                            Nome = "Activos Fixos Tangíveis"
+                            IsDevedora = false,
+                            Nome = "Amortizações Acumuladas"
                         },
                         new
                         {
                             Id = 5,
                             Activa = true,
-                            Codigo = "15",
+                            Codigo = "22",
                             Grupo = "Ativo",
                             IsDevedora = true,
-                            Nome = "Activos Intangíveis"
+                            Nome = "Mercadorias"
                         },
                         new
                         {
                             Id = 6,
                             Activa = true,
-                            Codigo = "21",
-                            Grupo = "Passivo",
-                            IsDevedora = false,
-                            Nome = "Fornecedores e Contas a Pagar"
+                            Codigo = "26",
+                            Grupo = "Ativo",
+                            IsDevedora = true,
+                            Nome = "Matérias-Primas e Subsidiárias"
                         },
                         new
                         {
                             Id = 7,
                             Activa = true,
-                            Codigo = "22",
-                            Grupo = "Passivo",
-                            IsDevedora = false,
-                            Nome = "Empréstimos Bancários"
+                            Codigo = "31",
+                            Grupo = "Ativo",
+                            IsDevedora = true,
+                            Nome = "Clientes"
                         },
                         new
                         {
                             Id = 8,
                             Activa = true,
-                            Codigo = "23",
+                            Codigo = "32",
                             Grupo = "Passivo",
                             IsDevedora = false,
-                            Nome = "Encargos sobre Remunerações"
+                            Nome = "Fornecedores"
                         },
                         new
                         {
                             Id = 9,
                             Activa = true,
-                            Codigo = "24",
+                            Codigo = "33",
                             Grupo = "Passivo",
                             IsDevedora = false,
-                            Nome = "Imposto a Pagar (IRT / IVA)"
+                            Nome = "Empréstimos Obtidos"
                         },
                         new
                         {
                             Id = 10,
                             Activa = true,
-                            Codigo = "31",
+                            Codigo = "34",
+                            Grupo = "Passivo",
+                            IsDevedora = false,
+                            Nome = "Estado e Outros Entes Públicos"
+                        },
+                        new
+                        {
+                            Id = 11,
+                            Activa = true,
+                            Codigo = "36",
+                            Grupo = "Passivo",
+                            IsDevedora = false,
+                            Nome = "Pessoal"
+                        },
+                        new
+                        {
+                            Id = 12,
+                            Activa = true,
+                            Codigo = "43",
+                            Grupo = "Ativo",
+                            IsDevedora = true,
+                            Nome = "Caixa"
+                        },
+                        new
+                        {
+                            Id = 13,
+                            Activa = true,
+                            Codigo = "45",
+                            Grupo = "Ativo",
+                            IsDevedora = true,
+                            Nome = "Depósitos Bancários"
+                        },
+                        new
+                        {
+                            Id = 14,
+                            Activa = true,
+                            Codigo = "51",
                             Grupo = "Capital",
                             IsDevedora = false,
                             Nome = "Capital Social"
                         },
                         new
                         {
-                            Id = 11,
+                            Id = 15,
                             Activa = true,
-                            Codigo = "32",
+                            Codigo = "55",
                             Grupo = "Capital",
                             IsDevedora = false,
                             Nome = "Reservas Legais"
                         },
                         new
                         {
-                            Id = 12,
+                            Id = 16,
                             Activa = true,
-                            Codigo = "33",
+                            Codigo = "59",
                             Grupo = "Capital",
                             IsDevedora = false,
                             Nome = "Resultados Transitados"
                         },
                         new
                         {
-                            Id = 13,
-                            Activa = true,
-                            Codigo = "71",
-                            Grupo = "Receita",
-                            IsDevedora = false,
-                            Nome = "Vendas de Mercadorias"
-                        },
-                        new
-                        {
-                            Id = 14,
-                            Activa = true,
-                            Codigo = "72",
-                            Grupo = "Receita",
-                            IsDevedora = false,
-                            Nome = "Prestações de Serviços"
-                        },
-                        new
-                        {
-                            Id = 15,
-                            Activa = true,
-                            Codigo = "73",
-                            Grupo = "Receita",
-                            IsDevedora = false,
-                            Nome = "Outros Rendimentos Operacionais"
-                        },
-                        new
-                        {
-                            Id = 16,
-                            Activa = true,
-                            Codigo = "78",
-                            Grupo = "Receita",
-                            IsDevedora = false,
-                            Nome = "Proveitos e Ganhos Financeiros"
-                        },
-                        new
-                        {
                             Id = 17,
                             Activa = true,
-                            Codigo = "79",
-                            Grupo = "Receita",
-                            IsDevedora = false,
-                            Nome = "Proveitos Extraordinários"
+                            Codigo = "61",
+                            Grupo = "Despesa",
+                            IsDevedora = true,
+                            Nome = "Custo das Mercadorias Vendidas e Matérias Consumidas"
                         },
                         new
                         {
                             Id = 18,
                             Activa = true,
-                            Codigo = "61",
+                            Codigo = "62",
                             Grupo = "Despesa",
                             IsDevedora = true,
-                            Nome = "Custo das Mercadorias Vendidas"
+                            Nome = "Fornecimentos e Serviços de Terceiros"
                         },
                         new
                         {
                             Id = 19,
-                            Activa = true,
-                            Codigo = "62",
-                            Grupo = "Despesa",
-                            IsDevedora = true,
-                            Nome = "Fornecimentos e Serviços Externos"
-                        },
-                        new
-                        {
-                            Id = 20,
                             Activa = true,
                             Codigo = "63",
                             Grupo = "Despesa",
@@ -469,16 +471,16 @@ namespace SmartGest.API.Migrations
                         },
                         new
                         {
-                            Id = 21,
+                            Id = 20,
                             Activa = true,
                             Codigo = "64",
                             Grupo = "Despesa",
                             IsDevedora = true,
-                            Nome = "Amortizações e Depreciações"
+                            Nome = "Amortizações e Depreciações do Exercício"
                         },
                         new
                         {
-                            Id = 22,
+                            Id = 21,
                             Activa = true,
                             Codigo = "65",
                             Grupo = "Despesa",
@@ -487,16 +489,16 @@ namespace SmartGest.API.Migrations
                         },
                         new
                         {
-                            Id = 23,
+                            Id = 22,
                             Activa = true,
                             Codigo = "66",
                             Grupo = "Despesa",
                             IsDevedora = true,
-                            Nome = "Outros Custos Operacionais"
+                            Nome = "Outros Custos e Perdas Operacionais"
                         },
                         new
                         {
-                            Id = 24,
+                            Id = 23,
                             Activa = true,
                             Codigo = "68",
                             Grupo = "Despesa",
@@ -505,12 +507,66 @@ namespace SmartGest.API.Migrations
                         },
                         new
                         {
-                            Id = 25,
+                            Id = 24,
                             Activa = true,
                             Codigo = "69",
                             Grupo = "Despesa",
                             IsDevedora = true,
-                            Nome = "Custos Extraordinários"
+                            Nome = "Custos e Perdas Extraordinárias"
+                        },
+                        new
+                        {
+                            Id = 25,
+                            Activa = true,
+                            Codigo = "71",
+                            Grupo = "Receita",
+                            IsDevedora = false,
+                            Nome = "Vendas de Mercadorias e Produtos Acabados"
+                        },
+                        new
+                        {
+                            Id = 26,
+                            Activa = true,
+                            Codigo = "72",
+                            Grupo = "Receita",
+                            IsDevedora = false,
+                            Nome = "Prestações de Serviços"
+                        },
+                        new
+                        {
+                            Id = 27,
+                            Activa = true,
+                            Codigo = "73",
+                            Grupo = "Receita",
+                            IsDevedora = false,
+                            Nome = "Outros Proveitos e Ganhos Operacionais"
+                        },
+                        new
+                        {
+                            Id = 28,
+                            Activa = true,
+                            Codigo = "78",
+                            Grupo = "Receita",
+                            IsDevedora = false,
+                            Nome = "Proveitos e Ganhos Financeiros"
+                        },
+                        new
+                        {
+                            Id = 29,
+                            Activa = true,
+                            Codigo = "79",
+                            Grupo = "Receita",
+                            IsDevedora = false,
+                            Nome = "Proveitos e Ganhos Extraordinários"
+                        },
+                        new
+                        {
+                            Id = 30,
+                            Activa = true,
+                            Codigo = "88",
+                            Grupo = "Capital",
+                            IsDevedora = false,
+                            Nome = "Resultado Líquido do Exercício"
                         });
                 });
 
@@ -518,53 +574,55 @@ namespace SmartGest.API.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<decimal>("Capital")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("numeric(18,2)");
 
                     b.Property<string>("Cidade")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("TEXT");
+                        .HasColumnType("character varying(100)");
 
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasMaxLength(150)
-                        .HasColumnType("TEXT");
+                        .HasColumnType("character varying(150)");
 
                     b.Property<string>("LogoPath")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<string>("Morada")
                         .IsRequired()
                         .HasMaxLength(300)
-                        .HasColumnType("TEXT");
+                        .HasColumnType("character varying(300)");
 
                     b.Property<string>("NIF")
                         .IsRequired()
                         .HasMaxLength(30)
-                        .HasColumnType("TEXT");
+                        .HasColumnType("character varying(30)");
 
                     b.Property<string>("Nome")
                         .IsRequired()
                         .HasMaxLength(200)
-                        .HasColumnType("TEXT");
+                        .HasColumnType("character varying(200)");
 
                     b.Property<string>("Pais")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("TEXT");
+                        .HasColumnType("character varying(100)");
 
                     b.Property<string>("Telefone")
                         .IsRequired()
                         .HasMaxLength(30)
-                        .HasColumnType("TEXT");
+                        .HasColumnType("character varying(30)");
 
                     b.Property<string>("Website")
                         .IsRequired()
                         .HasMaxLength(200)
-                        .HasColumnType("TEXT");
+                        .HasColumnType("character varying(200)");
 
                     b.HasKey("Id");
 
@@ -590,68 +648,95 @@ namespace SmartGest.API.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime?>("AanuladoEm")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("AanuladoPor")
+                        .HasMaxLength(150)
+                        .HasColumnType("character varying(150)");
+
+                    b.Property<bool>("Anulado")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(false);
 
                     b.Property<string>("Beneficiario")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("TEXT");
+                        .HasColumnType("character varying(100)");
 
                     b.Property<string>("CaminhoDocumento")
                         .IsRequired()
                         .HasMaxLength(200)
-                        .HasColumnType("TEXT");
+                        .HasColumnType("character varying(200)");
 
                     b.Property<string>("Categoria")
                         .IsRequired()
                         .HasMaxLength(50)
-                        .HasColumnType("TEXT");
+                        .HasColumnType("character varying(50)");
 
                     b.Property<string>("CentroCusto")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("TEXT");
+                        .HasColumnType("character varying(100)");
 
                     b.Property<int?>("ContaBancariaId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<DateTime>("CriadoEm")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<DateTime>("Data")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("Descricao")
                         .IsRequired()
                         .HasMaxLength(500)
-                        .HasColumnType("TEXT");
+                        .HasColumnType("character varying(500)");
+
+                    b.Property<decimal>("ImpostoSelo")
+                        .HasColumnType("numeric(18,2)");
 
                     b.Property<string>("MetodoPagamento")
                         .IsRequired()
                         .HasMaxLength(50)
-                        .HasColumnType("TEXT");
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<string>("MotivoAnulacao")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
 
                     b.Property<string>("Observacoes")
                         .IsRequired()
                         .HasMaxLength(500)
-                        .HasColumnType("TEXT");
+                        .HasColumnType("character varying(500)");
 
                     b.Property<string>("ReferenciaInterna")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("TEXT");
+                        .HasColumnType("character varying(100)");
 
                     b.Property<string>("Tipo")
                         .IsRequired()
                         .HasMaxLength(30)
-                        .HasColumnType("TEXT");
+                        .HasColumnType("character varying(30)");
 
                     b.Property<decimal>("Valor")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("numeric(18,2)");
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Anulado")
+                        .HasDatabaseName("IX_Lancamento_Anulado");
+
                     b.HasIndex("ContaBancariaId");
+
+                    b.HasIndex("Data")
+                        .HasDatabaseName("IX_Lancamento_Data");
 
                     b.ToTable("Lancamentos");
                 });
@@ -660,25 +745,28 @@ namespace SmartGest.API.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<int>("ContaContabilId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<decimal>("Credito")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("numeric(18,2)");
 
                     b.Property<decimal>("Debito")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("numeric(18,2)");
 
                     b.Property<int>("LancamentoId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ContaContabilId");
-
                     b.HasIndex("LancamentoId");
+
+                    b.HasIndex("ContaContabilId", "Debito", "Credito")
+                        .HasDatabaseName("IX_LancamentoDetalhe_ContaContabilId_Debito_Credito");
 
                     b.ToTable("LancamentoDetalhes");
                 });
@@ -687,31 +775,33 @@ namespace SmartGest.API.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<int>("ContaBancariaId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<DateTime>("Data")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("Descricao")
                         .IsRequired()
                         .HasMaxLength(500)
-                        .HasColumnType("TEXT");
+                        .HasColumnType("character varying(500)");
 
                     b.Property<string>("Referencia")
                         .IsRequired()
                         .HasMaxLength(50)
-                        .HasColumnType("TEXT");
+                        .HasColumnType("character varying(50)");
 
                     b.Property<string>("Tipo")
                         .IsRequired()
                         .HasMaxLength(20)
-                        .HasColumnType("TEXT");
+                        .HasColumnType("character varying(20)");
 
                     b.Property<decimal>("Valor")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("numeric(18,2)");
 
                     b.HasKey("Id");
 
@@ -724,24 +814,26 @@ namespace SmartGest.API.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Dispositivo")
                         .IsRequired()
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<bool>("IsAtual")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("boolean");
 
                     b.Property<string>("Localizacao")
                         .IsRequired()
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<DateTime>("UltimaActividade")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<int>("UtilizadorId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 
@@ -754,47 +846,49 @@ namespace SmartGest.API.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<bool>("Activo")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("boolean");
 
                     b.Property<string>("CorAvatar")
                         .IsRequired()
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<DateTime>("CriadoEm")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("TEXT");
+                        .HasColumnType("character varying(100)");
 
                     b.Property<string>("Iniciais")
                         .IsRequired()
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<string>("Nome")
                         .IsRequired()
                         .HasMaxLength(150)
-                        .HasColumnType("TEXT");
+                        .HasColumnType("character varying(150)");
 
                     b.Property<string>("PasswordHash")
                         .IsRequired()
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<string>("Perfil")
                         .IsRequired()
                         .ValueGeneratedOnAdd()
                         .HasMaxLength(30)
-                        .HasColumnType("TEXT")
+                        .HasColumnType("character varying(30)")
                         .HasDefaultValue("Operador");
 
                     b.Property<string>("Telefone")
                         .IsRequired()
                         .HasMaxLength(20)
-                        .HasColumnType("TEXT");
+                        .HasColumnType("character varying(20)");
 
                     b.HasKey("Id");
 
@@ -826,20 +920,22 @@ namespace SmartGest.API.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<bool>("Activo")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("boolean");
 
                     b.Property<string>("Evento")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("TEXT");
+                        .HasColumnType("character varying(100)");
 
                     b.Property<string>("Url")
                         .IsRequired()
                         .HasMaxLength(500)
-                        .HasColumnType("TEXT");
+                        .HasColumnType("character varying(500)");
 
                     b.HasKey("Id");
 
