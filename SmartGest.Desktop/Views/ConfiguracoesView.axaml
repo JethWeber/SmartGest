@@ -7,12 +7,25 @@
 
   <UserControl.Styles>
 
-    <!-- ── Card base ────────────────────────────────────────────────── -->
+    <!-- ── Card base (glass) ───────────────────────────────────────────── -->
     <Style Selector="Border.sg-card">
-      <Setter Property="Background"   Value="White"/>
-      <Setter Property="CornerRadius" Value="10"/>
-      <Setter Property="Padding"      Value="24,20"/>
-      <Setter Property="BoxShadow"    Value="0 2 12 0 #0A000000"/>
+      <Setter Property="CornerRadius"    Value="14"/>
+      <Setter Property="BorderThickness" Value="1"/>
+      <Setter Property="Padding"         Value="24"/>
+      <Setter Property="BoxShadow"       Value="0 4 24 0 #28000000"/>
+      <Setter Property="BorderBrush">
+        <LinearGradientBrush StartPoint="0%,0%" EndPoint="100%,100%">
+          <GradientStop Offset="0"   Color="#30FFFFFF"/>
+          <GradientStop Offset="0.5" Color="#10FFFFFF"/>
+          <GradientStop Offset="1"   Color="#05FFFFFF"/>
+        </LinearGradientBrush>
+      </Setter>
+      <Setter Property="Background">
+        <LinearGradientBrush StartPoint="0%,0%" EndPoint="100%,100%">
+          <GradientStop Offset="0" Color="#16FFFFFF"/>
+          <GradientStop Offset="1" Color="#0AFFFFFF"/>
+        </LinearGradientBrush>
+      </Setter>
     </Style>
 
     <!-- ── Título de grupo dentro de um card ─────────────────────────── -->
@@ -32,8 +45,8 @@
 
     <!-- ── Input ────────────────────────────────────────────────────── -->
     <Style Selector="TextBox.sg-input">
-      <Setter Property="Background"      Value="White"/>
-      <Setter Property="BorderBrush"     Value="#E0E4EA"/>
+      <Setter Property="Background"      Value="#12FFFFFF"/>
+      <Setter Property="BorderBrush"     Value="#25FFFFFF"/>
       <Setter Property="BorderThickness" Value="1"/>
       <Setter Property="CornerRadius"    Value="7"/>
       <Setter Property="Padding"         Value="10,8"/>
@@ -45,8 +58,8 @@
 
     <!-- ── ComboBox ─────────────────────────────────────────────────── -->
     <Style Selector="ComboBox.sg-combo">
-      <Setter Property="Background"      Value="White"/>
-      <Setter Property="BorderBrush"     Value="#E0E4EA"/>
+      <Setter Property="Background"      Value="#12FFFFFF"/>
+      <Setter Property="BorderBrush"     Value="#25FFFFFF"/>
       <Setter Property="BorderThickness" Value="1"/>
       <Setter Property="CornerRadius"    Value="7"/>
       <Setter Property="Padding"         Value="10,8"/>
@@ -97,18 +110,18 @@
 
     <!-- ── Botão outline ────────────────────────────────────────────── -->
     <Style Selector="Button.btn-outline">
-      <Setter Property="Background"      Value="White"/>
-      <Setter Property="Foreground"      Value="#1A2E5A"/>
+      <Setter Property="Background"      Value="Transparent"/>
+      <Setter Property="Foreground"      Value="#E8F0FF"/>
       <Setter Property="FontSize"        Value="12"/>
       <Setter Property="FontWeight"      Value="SemiBold"/>
       <Setter Property="Padding"         Value="14,8"/>
       <Setter Property="CornerRadius"    Value="7"/>
       <Setter Property="Cursor"          Value="Hand"/>
       <Setter Property="BorderThickness" Value="1"/>
-      <Setter Property="BorderBrush"     Value="#DDE3EE"/>
+      <Setter Property="BorderBrush"     Value="#20FFFFFF"/>
     </Style>
     <Style Selector="Button.btn-outline:pointerover /template/ ContentPresenter">
-      <Setter Property="Background" Value="#F4F6FA"/>
+      <Setter Property="Background" Value="#12FFFFFF"/>
     </Style>
 
     <!-- ── Separador horizontal ─────────────────────────────────────── -->
@@ -120,12 +133,12 @@
 
   </UserControl.Styles>
 
-  <DockPanel Background="#F4F6FA">
+  <DockPanel Background="Transparent">
 
     <!-- ══════════════════════════════════════════════════════════════
          CABEÇALHO + TABS  (fixo no topo)
          ══════════════════════════════════════════════════════════════ -->
-    <Border DockPanel.Dock="Top" Background="White"
+    <Border DockPanel.Dock="Top" Background="#16FFFFFF"
             BoxShadow="0 2 8 0 #08000000"
             Padding="28,20,28,0">
       <StackPanel Spacing="16">
@@ -334,7 +347,7 @@
                 <TextBlock Classes="group-title" Text="Logótipo da Empresa"/>
 
                 <!-- Zona do logo -->
-                <Border Background="#F4F6FA" CornerRadius="8"
+                <Border Background="#14FFFFFF" CornerRadius="8"
                   Height="160" BorderBrush="#DDE3EE" BorderThickness="2">
                   <Panel>
                     <!-- Placeholder sem logo -->

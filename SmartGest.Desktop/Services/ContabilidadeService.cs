@@ -37,25 +37,28 @@ public record BalancoApiResponse(
     List<BalancoLinhaResponse> CapitalProprio,
     decimal TotalAtivo,
     decimal TotalPassivo,
-    decimal TotalCapital,
+    decimal TotalCapitalProprio,
     decimal TotalPassivoMaisCapital);
 
 // ── DTOs — DRE ────────────────────────────────────────────────────────────────
 
 public record DreItemResponse(
     string   Codigo,
-    string   Nome,
+    string   Descricao,
     string   Grupo,
     decimal  ValorOrcado,
     decimal  ValorRealizado,
     bool     IsReceita,
     DateTime DataOrigem);
 
+public record DreFluxoMensalItem(string Mes, decimal Receita, decimal Despesa, decimal Lucro);
+
 public record DreSumarioApiResponse(
     decimal              TotalReceitas,
     decimal              TotalCustos,
     decimal              ResultadoLiquido,
-    List<DreItemResponse> Linhas);
+    List<DreItemResponse> Linhas,
+    List<DreFluxoMensalItem> FluxoMensal);
 
 // ── Serviço ───────────────────────────────────────────────────────────────────
 

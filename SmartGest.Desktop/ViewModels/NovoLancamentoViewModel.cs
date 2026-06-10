@@ -58,7 +58,7 @@ public partial class NovoLancamentoViewModel : ViewModelBase
     [ObservableProperty] private int             _categoriaIndex = -1;
 
     // Categorias carregadas da API (filtradas por tipo)
-    [ObservableProperty] private ObservableCollection<string> _categorias = new();
+    [ObservableProperty] private ObservableCollection<CategoriaService.CategoriaItem> _categorias = new();
 
     // ════════════════════════════════════════════════════════════════════════
     // SECÇÃO 2 · FINANCEIRO
@@ -151,9 +151,11 @@ public partial class NovoLancamentoViewModel : ViewModelBase
         ContasOrigem.Add(new ContaItemVm(1, "Banco BIC  ·  4.820.000 Kzs"));
         ContasOrigem.Add(new ContaItemVm(2, "Banco BAI  ·  3.150.000 Kzs"));
         ContasOrigem.Add(new ContaItemVm(3, "Banco BPC  ·  2.980.000 Kzs"));
-        Categorias = new ObservableCollection<string>
+        Categorias = new ObservableCollection<CategoriaService.CategoriaItem>
         {
-            "Venda De Produto", "Prestação De Serviços", "Recebimento De Cliente"
+            new CategoriaService.CategoriaItem(null, "Venda De Produto", "Entrada"),
+            new CategoriaService.CategoriaItem(null, "Prestação De Serviços", "Entrada"),
+            new CategoriaService.CategoriaItem(null, "Recebimento De Cliente", "Entrada")
         };
     }
 
@@ -194,11 +196,11 @@ public partial class NovoLancamentoViewModel : ViewModelBase
         {
             var tipo  = IsEntrada ? "Entrada" : "Saída";
             var lista = await _categoriaSvc.ListarAsync(tipo);
-            Categorias = new ObservableCollection<string>(lista.Select(c => c.Nome));
+            Categorias = new ObservableCollection<CategoriaService.CategoriaItem>(lista);
         }
         catch
         {
-            Categorias = new ObservableCollection<string>();
+            Categorias = new ObservableCollection<CategoriaService.CategoriaItem>();
         }
     }
 
@@ -277,10 +279,14 @@ public partial class NovoLancamentoViewModel : ViewModelBase
                 ? ContasOrigem[ContaOrigemIndex].Id
                 : null;
 
+            var selectedCat = CategoriaIndex >= 0 && CategoriaIndex < Categorias.Count
+                ? Categorias[CategoriaIndex]
+                : null;
+
             var req = new LancamentoService.LancamentoRequest(
                 Data:              DataMovimento?.DateTime ?? DateTime.Today,
                 Descricao:         Descricao.Trim(),
-                Categoria:         CategoriaIndex >= 0 ? Categorias[CategoriaIndex] : string.Empty,
+                Categoria:         selectedCat?.Nome ?? string.Empty,
                 Tipo:              IsEntrada ? "Entrada" : "Saída",
                 Valor:             valorDecimal,
                 Beneficiario:      Beneficiario.Trim(),
@@ -289,7 +295,9 @@ public partial class NovoLancamentoViewModel : ViewModelBase
                 Observacoes:       Observacoes.Length > 500 ? Observacoes[..500] : Observacoes,
                 CentroCusto:       CentroCustoIndex >= 0 ? CentrosCusto[CentroCustoIndex] : string.Empty,
                 ReferenciaInterna: ReferenciaInterna.Trim(),
-                ContaBancariaId:   contaId);
+                ContaBancariaId:   contaId,
+                CategoriaId:       selectedCat?.Id);
+                
 
             var criado = await _lancamentoSvc.CriarAsync(req);
 
@@ -307,7 +315,7 @@ public partial class NovoLancamentoViewModel : ViewModelBase
         catch (ApiException ex)
         { SetErro($"Erro da API ({(int)ex.StatusCode}): {ex.Message}"); }
         catch (HttpRequestException)
-        { SetErro($"Sem ligação à API ({ApiClient.BaseUrl}). Verifique o servidor."); }
+        { SetErro("Sem ligação à API. Verifique se o servidor."); }
         catch (Exception ex)
         { SetErro($"Erro inesperado: {ex.Message}"); }
         finally

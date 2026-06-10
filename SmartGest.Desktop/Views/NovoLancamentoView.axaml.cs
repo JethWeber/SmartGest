@@ -1,4 +1,7 @@
+using System.Linq;
 using Avalonia.Controls;
+using Avalonia.Input;
+using Avalonia.VisualTree;
 using SmartGest.Desktop.ViewModels;
 
 namespace SmartGest.Desktop.Views;
@@ -13,11 +16,22 @@ public partial class NovoLancamentoView : Window
         {
             if (DataContext is NovoLancamentoViewModel vm)
             {
-                // Fechar a janela quando o VM pede (Cancelar ou sucesso após 1,5 s)
                 vm.DialogClosed += Close;
-
-                // Fornece a referência da janela ao VM para o file picker
                 vm.OwnerWindow = this;
+            }
+        };
+
+        PointerPressed += (_, e) =>
+        {
+            if (e.GetCurrentPoint(this).Properties.IsLeftButtonPressed &&
+                e.Source is Avalonia.Visual v &&
+                v.GetVisualAncestors().OfType<Button>().Any() == false &&
+                v.GetVisualAncestors().OfType<TextBox>().Any() == false &&
+                v.GetVisualAncestors().OfType<ComboBox>().Any() == false)
+            {
+                var pos = e.GetPosition(this);
+                if (pos.Y < 80)
+                    BeginMoveDrag(e);
             }
         };
     }

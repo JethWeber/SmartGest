@@ -15,6 +15,7 @@ builder.Services.AddDbContext<AppDbContext>(opt =>
     opt.UseNpgsql(builder.Configuration.GetConnectionString("Default")));
 
 // ── Serviços de Negócio ───────────────────────────────────────────────────────
+builder.Services.AddScoped<IMotorContabil, MotorContabil>();
 builder.Services.AddScoped<ContabilidadeService>();
 builder.Services.AddScoped<RelatoriosService>();
 

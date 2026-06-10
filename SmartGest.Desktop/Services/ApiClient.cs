@@ -23,25 +23,27 @@ public class ApiClient
     private readonly HttpClient  _http;
     private readonly TokenStore  _store;
 
-    // ── Configuração ──────────────────────────────────────────────────────────
-    public const string BaseUrl = "http://localhost:5275/";
-
     private const int    MaxRetries        = 3;
     private const double RetryBaseDelayMs  = 300; // ms — duplica a cada tentativa
 
-    // ─────────────────────────────────────────────────────────────────────────
-    public ApiClient(TokenStore store)
+    // Injeção do HttpClient pelo DI é a forma recomendada. Mantemos um
+    // construtor de fallback (usado apenas pelo Avalonia Designer) que cria
+    // um HttpClient com a BaseAddress padrão.
+    public ApiClient(HttpClient http, TokenStore store)
     {
-        _store = store;
-        _http  = new HttpClient
-        {
-            BaseAddress = new Uri(BaseUrl),
-            Timeout     = Timeout.InfiniteTimeSpan  // controlado por CancellationToken por pedido
-        };
+        _http  = http ?? throw new ArgumentNullException(nameof(http));
+        _store = store ?? throw new ArgumentNullException(nameof(store));
 
         Trace.TraceInformation(
-            $"[ApiClient] Inicializado. BaseUrl={BaseUrl} TokenStore=#{store.GetHashCode()}");
+            $"[ApiClient] Inicializado. BaseUrl={_http.BaseAddress} TokenStore=#{store.GetHashCode()}");
     }
+
+    // Fallback conveniente para designers/testes locais — usa o URL padrão.
+    public ApiClient(TokenStore store) : this(new HttpClient
+    {
+        BaseAddress = new Uri("http://localhost:8080/"),
+        Timeout     = Timeout.InfiniteTimeSpan
+    }, store) { }
 
     // ══════════════════════════════════════════════════════════════════════════
     // API pública

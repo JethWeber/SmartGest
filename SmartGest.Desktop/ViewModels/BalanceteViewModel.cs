@@ -62,7 +62,7 @@ public partial class BalanceteViewModel : ViewModelBase
     // ── Comandos ──────────────────────────────────────────────────────────────
 
     [RelayCommand]
-    private void Filtrar() => AplicarFiltros();
+    private async Task Filtrar() => await CarregarAsync();
 
     [RelayCommand]
     private async Task Atualizar()
@@ -112,13 +112,15 @@ public partial class BalanceteViewModel : ViewModelBase
             DiferencaSaldo = $"{Math.Abs(dif):N0} Kzs";
             CorDiferenca   = dif == 0 ? "#43A047" : "#E53935";
 
-            // Converter DTO → record de apresentação
+            // Converter DTO → record de apresentação (só contas com movimento)
             _todos = new ObservableCollection<BalanceteItem>(
-                resp.Items.Select(i => new BalanceteItem(
-                    i.Codigo, i.Nome, i.Grupo,
-                    i.SaldoAnteriorDebito, i.SaldoAnteriorCredito,
-                    i.MovDebito, i.MovCredito,
-                    i.SaldoFinalDebito, i.SaldoFinalCredito)));
+                resp.Items
+                    .Where(i => TemMovimento(i))
+                    .Select(i => new BalanceteItem(
+                        i.Codigo, i.Nome, i.Grupo,
+                        i.SaldoAnteriorDebito, i.SaldoAnteriorCredito,
+                        i.MovDebito, i.MovCredito,
+                        i.SaldoFinalDebito, i.SaldoFinalCredito)));
 
             AplicarFiltros();
         }
@@ -165,6 +167,11 @@ public partial class BalanceteViewModel : ViewModelBase
         TotalContasTexto = $"{ContasFiltradas.Count} conta(s)";
     }
 
+    private static bool TemMovimento(BalanceteItemResponse i) =>
+        i.SaldoAnteriorDebito  != 0 || i.SaldoAnteriorCredito != 0 ||
+        i.MovDebito            != 0 || i.MovCredito           != 0 ||
+        i.SaldoFinalDebito     != 0 || i.SaldoFinalCredito    != 0;
+
     private void MostrarErro(string msg)
     {
         ErroMensagem = msg;
@@ -203,6 +210,12 @@ public record BalanceteItem(
     public string MovCreditoFmt   => MovCredito > 0 ? $"{MovCredito:N0}" : "–";
     public string SaldoFinDebFmt  => SaldoFinalDebito  > 0 ? $"{SaldoFinalDebito:N0}"  : "–";
     public string SaldoFinCreFmt  => SaldoFinalCredito > 0 ? $"{SaldoFinalCredito:N0}" : "–";
+    public string DiferencaFmt
+        => SaldoFinalDebito == SaldoFinalCredito
+            ? "–"
+            : (SaldoFinalDebito - SaldoFinalCredito) > 0
+                ? $"+{Math.Abs(SaldoFinalDebito - SaldoFinalCredito):N0}"
+                : $"-{Math.Abs(SaldoFinalDebito - SaldoFinalCredito):N0}";
 
     public string CorGrupo => Grupo switch
     {

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
@@ -23,6 +24,10 @@ public partial class BalancoViewModel : ViewModelBase
 
     // ── Período ───────────────────────────────────────────────────────────────
     [ObservableProperty] private int    _exercicio    = DateTime.Today.Year;
+    [ObservableProperty] private int    _exercicioIndex = 0;
+    public IReadOnlyList<int> Exercicios { get; } =
+        new[] { DateTime.Today.Year, DateTime.Today.Year - 1, DateTime.Today.Year - 2 };
+
     [ObservableProperty] private int    _mesIndex     = DateTime.Today.Month - 1;
     [ObservableProperty] private string _periodoTexto = string.Empty;
 
@@ -66,22 +71,28 @@ public partial class BalancoViewModel : ViewModelBase
     // ── CAPITAL PRÓPRIO ───────────────────────────────────────────────────────
     public ObservableCollection<BalancoLinhaItem> CapitalProprio { get; } = new();
 
-    [ObservableProperty] private double _totalCapitalProprio   = 0;
+    [ObservableProperty] private double _totalCapitalProprio    = 0;
     [ObservableProperty] private double _totalPassivoMaisCapital = 0;
 
     public string TotalCapitalProprioFmt => $"{TotalCapitalProprio:N0} Kzs";
 
     // ─────────────────────────────────────────────────────────────────────────
-    // Constructor via DI
     public BalancoViewModel(ContabilidadeService svc)
     {
         _svc = svc;
+        _exercicioIndex = Array.IndexOf(Exercicios.ToArray(), Exercicio);
+        if (_exercicioIndex < 0)
+            _exercicioIndex = 0;
     }
 
-    // Constructor sem parâmetros para design-time / code-behind
+    partial void OnExercicioIndexChanged(int value)
+    {
+        if (value >= 0 && value < Exercicios.Count)
+            Exercicio = Exercicios[value];
+    }
+
     public BalancoViewModel() : this(App.Services.GetRequiredService<ContabilidadeService>()) { }
 
-    // ── Inicialização assíncrona chamada pela View ────────────────────────────
     public async Task InicializarAsync()
         => await CarregarAsync();
 
@@ -115,14 +126,12 @@ public partial class BalancoViewModel : ViewModelBase
                 return;
             }
 
-            // ── Preencher colecções ────────────────────────────────────────────
-            Preencher(AtivoCorrentes,     resp.AtivoCorrentes);
-            Preencher(AtivoNaoCorrentes,  resp.AtivoNaoCorrentes);
-            Preencher(PassivosCorrentes,  resp.PassivosCorrentes);
+            Preencher(AtivoCorrentes,       resp.AtivoCorrentes);
+            Preencher(AtivoNaoCorrentes,    resp.AtivoNaoCorrentes);
+            Preencher(PassivosCorrentes,    resp.PassivosCorrentes);
             Preencher(PassivosNaoCorrentes, resp.PassivosNaoCorrentes);
-            Preencher(CapitalProprio,     resp.CapitalProprio);
+            Preencher(CapitalProprio,       resp.CapitalProprio);
 
-            // ── Totais ─────────────────────────────────────────────────────────
             TotalAtivoCorrente     = (double)resp.AtivoCorrentes.Sum(x => x.Valor);
             TotalAtivoNaoCorrente  = (double)resp.AtivoNaoCorrentes.Sum(x => x.Valor);
             TotalAtivo             = (double)resp.TotalAtivo;
@@ -131,17 +140,24 @@ public partial class BalancoViewModel : ViewModelBase
             TotalPassivoNaoCorrente = (double)resp.PassivosNaoCorrentes.Sum(x => x.Valor);
             TotalPassivo            = (double)resp.TotalPassivo;
 
-            TotalCapitalProprio    = (double)resp.TotalCapital;
-            TotalPassivoMaisCapital= (double)resp.TotalPassivoMaisCapital;
+            // FIX #5: campo correcto — era resp.TotalCapital (inexistente), devia ser TotalCapitalProprio
+            TotalCapitalProprio     = (double)resp.TotalCapitalProprio;
+            TotalPassivoMaisCapital = (double)resp.TotalPassivoMaisCapital;
 
-            // ── Métricas do topo ───────────────────────────────────────────────
             TotalAtivoFmt          = $"{resp.TotalAtivo:N0} Kzs";
             TotalPassivoCapitalFmt = $"{resp.TotalPassivoMaisCapital:N0} Kzs";
 
             var resultadoItem = resp.CapitalProprio
                 .FirstOrDefault(x => x.Descricao.Contains("Resultado", StringComparison.OrdinalIgnoreCase));
             var resultado = resultadoItem?.Valor ?? 0m;
-            ResultadoExercicioFmt = $"{resultado:N0} Kzs";
+            if (resultado == 0)
+                resultado = resp.TotalCapitalProprio - resp.CapitalProprio
+                    .Where(x => !x.Descricao.Contains("Resultado", StringComparison.OrdinalIgnoreCase))
+                    .Sum(x => x.Valor);
+
+            ResultadoExercicioFmt = resultado >= 0
+                ? $"+{resultado:N0} Kzs"
+                : $"-{Math.Abs(resultado):N0} Kzs";
             CorResultado          = resultado >= 0 ? "#43A047" : "#E53935";
 
             bool equilibrado = Math.Abs(resp.TotalAtivo - resp.TotalPassivoMaisCapital) < 1m;
@@ -150,11 +166,9 @@ public partial class BalancoViewModel : ViewModelBase
             CorEquilibrio    = equilibrado ? "#2E7D32" : "#C62828";
             FundoEquilibrio  = equilibrado ? "#E8F5E9"  : "#FFEBEE";
 
-            // ── Período ────────────────────────────────────────────────────────
             var meses = new[] { "Jan","Fev","Mar","Abr","Mai","Jun","Jul","Ago","Set","Out","Nov","Dez" };
             PeriodoTexto = $"{meses[MesIndex]} {Exercicio}";
 
-            // Notificar propriedades calculadas (sufixo Fmt)
             OnPropertyChanged(nameof(TotalAtivoCorrenteFmt));
             OnPropertyChanged(nameof(TotalAtivoNaoCorrenteFmt));
             OnPropertyChanged(nameof(TotalPassivoCorrenteFmt));
@@ -180,7 +194,7 @@ public partial class BalancoViewModel : ViewModelBase
         IEnumerable<BalancoLinhaResponse> fonte)
     {
         coleccao.Clear();
-        foreach (var item in fonte)
+        foreach (var item in fonte.Where(x => x.Valor != 0))
             coleccao.Add(new BalancoLinhaItem(item.Descricao, (double)item.Valor, item.IsDeducao));
     }
 
@@ -204,7 +218,7 @@ public partial class BalancoViewModel : ViewModelBase
         };
 }
 
-// ── Record de linha do balanço (inalterado — usado pela View) ─────────────────
+// ── Record de linha do balanço ────────────────────────────────────────────────
 public record BalancoLinhaItem(string Descricao, double Valor, bool IsDeducao = false)
 {
     public string ValorFmt =>

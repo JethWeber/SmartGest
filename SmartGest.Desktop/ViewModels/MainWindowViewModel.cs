@@ -43,7 +43,11 @@ public partial class MainWindowViewModel : ViewModelBase
         TokenStore store,
         Func<NovoLancamentoViewModel> novoLancamentoFactory,
         LancamentoService lancamentoSvc,
-        ContaseBancosViewModel contasBancosVm)
+        ContaseBancosViewModel contasBancosVm,
+        DashboardViewModel dashboardVm,
+        BalanceteViewModel balanceteVm,
+        BalancoViewModel balancoVm,
+        DreViewModel dreVm)
     {
         _novoLancamentoFactory = novoLancamentoFactory;
 
@@ -51,12 +55,12 @@ public partial class MainWindowViewModel : ViewModelBase
         UsuarioIniciais  = store.Iniciais;
         UsuarioCorAvatar = store.CorAvatar;
 
-        _dashboardVm    = new DashboardViewModel();
+        _dashboardVm    = dashboardVm;
         _caixaVm        = new CaixaViewModel(lancamentoSvc);
-        _balanceteVm    = new BalanceteViewModel();
-        _balancoVm      = new BalancoViewModel();
-        _dreVm          = new DreViewModel();
-        _contasBancosVm = contasBancosVm; // injectado — não criar com "new"!
+        _balanceteVm    = balanceteVm;
+        _balancoVm      = balancoVm;
+        _dreVm          = dreVm;
+        _contasBancosVm = contasBancosVm;
         _configVm       = new ConfiguracoesViewModel();
 
         _currentPage = _dashboardVm;
@@ -74,7 +78,11 @@ public partial class MainWindowViewModel : ViewModelBase
         },
         () => new NovoLancamentoViewModel(),
         new LancamentoService(new ApiClient(new TokenStore())),
-        new ContaseBancosViewModel(new ContasBancariasService(new ApiClient(new TokenStore()))))
+        new ContaseBancosViewModel(new ContasBancariasService(new ApiClient(new TokenStore()))),
+        new DashboardViewModel(new DashboardService(new ApiClient(new TokenStore()))),
+        new BalanceteViewModel(new ContabilidadeService(new ApiClient(new TokenStore()))),
+        new BalancoViewModel(new ContabilidadeService(new ApiClient(new TokenStore()))),
+        new DreViewModel(new ContabilidadeService(new ApiClient(new TokenStore()))))
     { }
 
     // ── Navegação ─────────────────────────────────────────────────────────────
@@ -93,9 +101,15 @@ public partial class MainWindowViewModel : ViewModelBase
             _ => _dashboardVm
         };
 
-        // Activar o ecrã de Contas ao navegar — o token JWT já está preenchido aqui.
-        // Só carrega na primeira visita ou após acção explícita (CarregarContasCommand).
-        if (value == 5)
+        if (value == 0)
+            _ = _dashboardVm.ActivarAsync();
+        else if (value == 2)
+            _ = _balanceteVm.InicializarAsync();
+        else if (value == 3)
+            _ = _balancoVm.InicializarAsync();
+        else if (value == 4)
+            _ = _dreVm.InicializarAsync();
+        else if (value == 5)
             _ = _contasBancosVm.ActivarAsync();
     }
 

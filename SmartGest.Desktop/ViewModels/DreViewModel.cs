@@ -35,10 +35,10 @@ public partial class DreViewModel : ViewModelBase
     public ISeries[] SparklineCustos    { get; } = Sparklines(SKColors.Tomato);
     public ISeries[] SparklineResultado { get; } = Sparklines(new SKColor(0x1A, 0x2E, 0x5A));
 
-    // ── Gráfico de barras (mantido estático por ora; alimentar com endpoint futuro) ──
-    public ISeries[] SeriesGrafico { get; }
-    public Axis[]    EixoX         { get; }
-    public Axis[]    EixoY         { get; }
+    // ── Gráfico de barras ─────────────────────────────────────────────────────
+    [ObservableProperty] private ISeries[] _seriesGrafico = Array.Empty<ISeries>();
+    public Axis[] EixoX { get; private set; } = Array.Empty<Axis>();
+    public Axis[] EixoY { get; private set; } = Array.Empty<Axis>();
 
     // ── Filtros ───────────────────────────────────────────────────────────────
     [ObservableProperty] private int             _filtroAnoIndex     = 0;
@@ -54,39 +54,20 @@ public partial class DreViewModel : ViewModelBase
     [ObservableProperty] private string _totalLinhasTexto = string.Empty;
 
     // ── Totais do rodapé ──────────────────────────────────────────────────────
-    [ObservableProperty] private string _rodapeReceitas      = "– Kzs";
-    [ObservableProperty] private string _rodapeCustos        = "– Kzs";
-    [ObservableProperty] private string _rodapeResultado     = "– Kzs";
-    [ObservableProperty] private string _corRodapeResultado  = "#43A047";
+    [ObservableProperty] private string _rodapeReceitas     = "– Kzs";
+    [ObservableProperty] private string _rodapeCustos       = "– Kzs";
+    [ObservableProperty] private string _rodapeResultado    = "– Kzs";
+    [ObservableProperty] private string _corRodapeResultado = "#43A047";
 
     // ─────────────────────────────────────────────────────────────────────────
-    // Constructor via DI
     public DreViewModel(ContabilidadeService svc)
     {
         _svc = svc;
 
-        // Gráfico de barras — construído uma vez; será actualizado quando
-        // existir um endpoint de séries mensais.
         var meses = new[] { "Jan","Fev","Mar","Abr","Mai","Jun",
                             "Jul","Ago","Set","Out","Nov","Dez" };
 
-        SeriesGrafico = new ISeries[]
-        {
-            new ColumnSeries<double>
-            {
-                Name   = "Receitas",
-                Values = new double[12],
-                Fill   = new SolidColorPaint(SKColors.MediumSeaGreen),
-                Rx = 4, Ry = 4
-            },
-            new ColumnSeries<double>
-            {
-                Name   = "Custos",
-                Values = new double[12],
-                Fill   = new SolidColorPaint(SKColors.Tomato),
-                Rx = 4, Ry = 4
-            }
-        };
+        SeriesGrafico = CriarSeriesGrafico(new double[12], new double[12]);
 
         EixoX = new Axis[]
         {
@@ -101,17 +82,35 @@ public partial class DreViewModel : ViewModelBase
         {
             new Axis
             {
-                Labeler     = v => $"{v:N0}k",
+                Labeler     = v => v >= 1000 ? $"{v / 1000:N0}k" : $"{v:N0}",
                 TextSize    = 11,
-                LabelsPaint = new SolidColorPaint(new SKColor(0x9A, 0xA0, 0xAB))
+                LabelsPaint = new SolidColorPaint(new SKColor(0x9A, 0xA0, 0xAB)),
+                MinLimit    = 0
             }
         };
     }
 
-    // Constructor sem parâmetros para design-time / code-behind
+    private static ISeries[] CriarSeriesGrafico(double[] receitas, double[] custos) =>
+        new ISeries[]
+        {
+            new ColumnSeries<double>
+            {
+                Name   = "Receitas",
+                Values = receitas,
+                Fill   = new SolidColorPaint(new SKColor(0x43, 0xA0, 0x47)),
+                Rx = 4, Ry = 4, MaxBarWidth = 28
+            },
+            new ColumnSeries<double>
+            {
+                Name   = "Custos",
+                Values = custos,
+                Fill   = new SolidColorPaint(new SKColor(0xE5, 0x39, 0x35)),
+                Rx = 4, Ry = 4, MaxBarWidth = 28
+            }
+        };
+
     public DreViewModel() : this(App.Services.GetRequiredService<ContabilidadeService>()) { }
 
-    // ── Inicialização assíncrona chamada pela View ────────────────────────────
     public async Task InicializarAsync()
         => await CarregarAsync();
 
@@ -152,17 +151,24 @@ public partial class DreViewModel : ViewModelBase
                 return;
             }
 
-            // ── Preencher tabela ───────────────────────────────────────────────
             _todos = new ObservableCollection<DreLinhaItem>(
-                resp.Linhas.Select(l => new DreLinhaItem(
-                    l.Codigo, l.Nome, l.Grupo,
-                    (double)l.ValorOrcado, (double)l.ValorRealizado,
-                    l.IsReceita, l.DataOrigem)));
+                resp.Linhas
+                    .Where(l => l.ValorRealizado != 0)
+                    .Select(l => new DreLinhaItem(
+                        l.Codigo, l.Descricao, l.Grupo,
+                        (double)l.ValorOrcado, (double)l.ValorRealizado,
+                        l.IsReceita, l.DataOrigem)));
 
             LinhasFiltradas  = new ObservableCollection<DreLinhaItem>(_todos);
             TotalLinhasTexto = $"{LinhasFiltradas.Count} rubrica(s)";
 
-            // ── Totais do rodapé e cards do topo ──────────────────────────────
+            var fluxo  = resp.FluxoMensal ?? new List<DreFluxoMensalItem>();
+            var recMes = fluxo.Select(f => (double)f.Receita).ToArray();
+            var cusMes = fluxo.Select(f => (double)f.Despesa).ToArray();
+            if (recMes.Length == 0) recMes = new double[12];
+            if (cusMes.Length == 0) cusMes = new double[12];
+            SeriesGrafico = CriarSeriesGrafico(recMes, cusMes);
+
             var rec = (double)resp.TotalReceitas;
             var cus = (double)resp.TotalCustos;
             var res = (double)resp.ResultadoLiquido;
@@ -177,7 +183,6 @@ public partial class DreViewModel : ViewModelBase
             ResultadoLiquido = RodapeResultado;
             CorResultado     = CorRodapeResultado;
 
-            // Variações: não disponíveis via API actual — deixamos vazio
             ReceitasVariacao  = string.Empty;
             CustosVariacao    = string.Empty;
             ResultadoVariacao = string.Empty;
@@ -196,19 +201,15 @@ public partial class DreViewModel : ViewModelBase
         }
     }
 
-    /// <summary>
-    /// Calcula a data de início a partir do filtro de período seleccionado,
-    /// ou usa a data de início manual se o período for "Personalizado".
-    /// </summary>
     private DateTime ResolveFiltroInicio()
     {
         var hoje = DateTime.Today;
         return FiltroPeriodoIndex switch
         {
-            1 => new DateTime(hoje.Year, hoje.Month <= 6 ? 1 : 7, 1),           // Semestral
-            2 => new DateTime(hoje.Year, ((hoje.Month - 1) / 3) * 3 + 1, 1),   // Trimestral
-            3 => new DateTime(hoje.Year, hoje.Month, 1),                         // Mensal
-            _ => FiltroDataInicio?.DateTime ?? new DateTime(hoje.Year, 1, 1)    // Anual / personalizado
+            1 => new DateTime(hoje.Year, hoje.Month <= 6 ? 1 : 7, 1),
+            2 => new DateTime(hoje.Year, ((hoje.Month - 1) / 3) * 3 + 1, 1),
+            3 => new DateTime(hoje.Year, hoje.Month, 1),
+            _ => FiltroDataInicio?.DateTime ?? new DateTime(hoje.Year, 1, 1)
         };
     }
 
@@ -232,7 +233,7 @@ public partial class DreViewModel : ViewModelBase
         };
 }
 
-// ── Record de linha da DRE (inalterado — usado pela View) ─────────────────────
+// ── Record de linha da DRE ────────────────────────────────────────────────────
 public record DreLinhaItem(
     string   Codigo,
     string   Descricao,
@@ -244,19 +245,33 @@ public record DreLinhaItem(
 {
     public double ValorBruto => ValorRealizado;
 
-    public string ValorOrcadoFmt    => $"{ValorOrcado:N0} Kzs";
+    // FIX #9: quando orçado = 0 (sem módulo de orçamento), mostrar "—" em vez
+    // de valores fictícios calculados a partir do realizado
+    public string ValorOrcadoFmt => ValorOrcado == 0
+        ? "—"
+        : $"{ValorOrcado:N0} Kzs";
+
     public string ValorRealizadoFmt => IsReceita
         ? $"+{ValorRealizado:N0} Kzs"
         : $"-{ValorRealizado:N0} Kzs";
 
     public double Desvio    => ValorRealizado - ValorOrcado;
-    public string DesvioFmt => Desvio >= 0
-        ? $"+{Desvio:N0} Kzs"
-        : $"-{Math.Abs(Desvio):N0} Kzs";
-    public string CorDesvio => Desvio >= 0 ? "#43A047" : "#E53935";
+
+    public string DesvioFmt => ValorOrcado == 0
+        ? "—"
+        : Desvio >= 0
+            ? $"+{Desvio:N0} Kzs"
+            : $"-{Math.Abs(Desvio):N0} Kzs";
+
+    public string CorDesvio => ValorOrcado == 0
+        ? "#9AA0AB"
+        : Desvio >= 0 ? "#43A047" : "#E53935";
 
     public double ExecucaoPerc => ValorOrcado == 0 ? 0 : ValorRealizado / ValorOrcado * 100;
-    public string ExecucaoFmt  => $"{ExecucaoPerc:N1}%";
+
+    public string ExecucaoFmt => ValorOrcado == 0
+        ? "—"
+        : $"{ExecucaoPerc:N1}%";
 
     public string CorGrupo   => IsReceita ? "#2E7D32" : "#C62828";
     public string FundoGrupo => IsReceita ? "#E8F5E9"  : "#FFEBEE";

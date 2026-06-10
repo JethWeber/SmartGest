@@ -8,6 +8,6 @@ public partial class DashboardView : UserControl
     public DashboardView()
     {
         InitializeComponent();
-        DataContext = new DashboardViewModel();
+        // Tooltip formatting left to chart defaults for compatibility across versions
     }
 }

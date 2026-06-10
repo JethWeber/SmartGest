@@ -33,21 +33,22 @@ public record ContaContabilRequest(
 
 public record LancamentoRequest(
     DateTime Data,
-    string Descricao,
-    string Categoria,
-    string Tipo,
-    decimal Valor,
-    string Beneficiario,
-    string MetodoPagamento,
-    string CaminhoDocumento,
-    string Observacoes,
-    string CentroCusto,
-    string ReferenciaInterna,
-    int? ContaBancariaId);
+    string   Descricao,
+    string   Tipo,
+    decimal  Valor,
+    int      CategoriaId,          // obrigatório — não é mais nullable
+    string?  Beneficiario,
+    string?  MetodoPagamento,
+    string?  CaminhoDocumento,
+    string?  Observacoes,
+    string?  CentroCusto,
+    string?  ReferenciaInterna,
+    int?     ContaBancariaId);
 
 public record ContaBancariaRequest(
     string Banco, string NIB, string Tipo, string Moeda,
-    decimal SaldoAtual, string Agencia, string Titular, string CorAccent);
+    decimal SaldoAtual, string Agencia, string Titular, string CorAccent,
+    int? ContaContabilId = null);
 
 public record MovimentoBancarioRequest(
     int ContaBancariaId, DateTime Data, string Descricao,

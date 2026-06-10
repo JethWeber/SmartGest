@@ -1,12 +1,11 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using SmartGest.API.Services;
 using Microsoft.EntityFrameworkCore;
 using SmartGest.API.Data;
 using SmartGest.API.DTOs.Requests;
 using SmartGest.API.DTOs.Responses;
 using SmartGest.API.Models;
-using SmartGest.API.Services;
-
 namespace SmartGest.API.Controllers;
 
 // ── PLANO DE CONTAS ───────────────────────────────────────────────────────────
@@ -94,10 +93,7 @@ public class BalanceteController : ControllerBase
         [FromQuery] DateTime? dataInicio = null,
         [FromQuery] DateTime? dataFim    = null,
         [FromQuery] string?   grupo      = null)
-    {
-        var resultado = await _relatorios.ObterBalanceteAsync(dataInicio, dataFim, grupo);
-        return Ok(resultado);
-    }
+        => Ok(await _relatorios.ObterBalanceteAsync(dataInicio, dataFim, grupo));
 }
 
 // ── BALANÇO PATRIMONIAL ───────────────────────────────────────────────────────
@@ -114,10 +110,7 @@ public class BalancoController : ControllerBase
     public async Task<IActionResult> Obter(
         [FromQuery] int? ano = null,
         [FromQuery] int? mes = null)
-    {
-        var resultado = await _relatorios.ObterBalancoAsync(ano, mes);
-        return Ok(resultado);
-    }
+        => Ok(await _relatorios.ObterBalancoAsync(ano, mes));
 }
 
 // ── DRE ───────────────────────────────────────────────────────────────────────
@@ -134,8 +127,26 @@ public class DreController : ControllerBase
     public async Task<IActionResult> Obter(
         [FromQuery] DateTime? dataInicio = null,
         [FromQuery] DateTime? dataFim    = null)
-    {
-        var resultado = await _relatorios.ObterDreAsync(dataInicio, dataFim);
-        return Ok(resultado);
-    }
+        => Ok(await _relatorios.ObterDreAsync(dataInicio, dataFim));
+}
+
+// ── FLUXO DE CAIXA ────────────────────────────────────────────────────────────
+
+[ApiController]
+[Route("api/fluxo-caixa")]
+[Authorize]
+public class FluxoCaixaController : ControllerBase
+{
+    private readonly RelatoriosService _relatorios;
+    public FluxoCaixaController(RelatoriosService relatorios) => _relatorios = relatorios;
+
+    /// <summary>
+    /// Retorna o fluxo de caixa do período, agrupado por tipo de operação.
+    /// GET /api/fluxo-caixa?dataInicio=2025-01-01&amp;dataFim=2025-12-31
+    /// </summary>
+    [HttpGet]
+    public async Task<IActionResult> Obter(
+        [FromQuery] DateTime? dataInicio = null,
+        [FromQuery] DateTime? dataFim    = null)
+        => Ok(await _relatorios.ObterFluxoCaixaAsync(dataInicio, dataFim));
 }

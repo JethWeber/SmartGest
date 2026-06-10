@@ -46,7 +46,8 @@ public record DreItemResponse(
 
 public record DreSumarioResponse(
     decimal TotalReceitas, decimal TotalCustos, decimal ResultadoLiquido,
-    List<DreItemResponse> Linhas);
+    List<DreItemResponse> Linhas,
+    List<FluxoMensalItem> FluxoMensal);
 
 public record LancamentoResponse(
     int Id, DateTime Data, string Descricao, string Categoria,
@@ -57,6 +58,7 @@ public record LancamentoResponse(
 
 public record DashboardResponse(
     decimal TotalReceita, decimal TotalDespesa, decimal LucroLiquido,
+    decimal ReceitaAnoAnterior, decimal DespesaAnoAnterior, decimal LucroAnoAnterior,
     List<FluxoMensalItem> FluxoMensal,
     List<LancamentoResponse> UltimasMovimentacoes);
 

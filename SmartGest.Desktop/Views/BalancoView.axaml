@@ -8,12 +8,25 @@
 
   <UserControl.Styles>
 
-    <!-- ── Card base ────────────────────────────────────────────────── -->
+    <!-- ── Card base (glass) ───────────────────────────────────────────── -->
     <Style Selector="Border.sg-card">
-      <Setter Property="Background"   Value="White"/>
-      <Setter Property="CornerRadius" Value="10"/>
-      <Setter Property="Padding"      Value="20,16"/>
-      <Setter Property="BoxShadow"    Value="0 2 12 0 #0A000000"/>
+      <Setter Property="CornerRadius"    Value="14"/>
+      <Setter Property="BorderThickness" Value="1"/>
+      <Setter Property="Padding"         Value="20"/>
+      <Setter Property="BoxShadow"       Value="0 4 24 0 #28000000"/>
+      <Setter Property="BorderBrush">
+        <LinearGradientBrush StartPoint="0%,0%" EndPoint="100%,100%">
+          <GradientStop Offset="0"   Color="#30FFFFFF"/>
+          <GradientStop Offset="0.5" Color="#10FFFFFF"/>
+          <GradientStop Offset="1"   Color="#05FFFFFF"/>
+        </LinearGradientBrush>
+      </Setter>
+      <Setter Property="Background">
+        <LinearGradientBrush StartPoint="0%,0%" EndPoint="100%,100%">
+          <GradientStop Offset="0" Color="#16FFFFFF"/>
+          <GradientStop Offset="1" Color="#0AFFFFFF"/>
+        </LinearGradientBrush>
+      </Setter>
     </Style>
 
     <!-- ── Títulos de secção ─────────────────────────────────────────── -->
@@ -47,9 +60,13 @@
     <!-- ── Linha de conta ───────────────────────────────────────────── -->
     <Style Selector="Border.conta-linha">
       <Setter Property="Padding" Value="12,7"/>
+      <Setter Property="Background" Value="Transparent"/>
+    </Style>
+    <Style Selector="Border.conta-linha:nth-child(odd)">
+      <Setter Property="Background" Value="#F9FAFC"/>
     </Style>
     <Style Selector="Border.conta-linha:pointerover">
-      <Setter Property="Background" Value="#F9FAFC"/>
+      <Setter Property="Background" Value="#E8F0FA"/>
     </Style>
 
     <!-- ── Linha de subtotal ─────────────────────────────────────────── -->
@@ -119,7 +136,7 @@
 
   </UserControl.Styles>
 
-  <ScrollViewer Background="#F4F6FA">
+  <ScrollViewer Background="Transparent">
     <Border Padding="28,24">
       <StackPanel Spacing="20">
 
@@ -186,11 +203,9 @@
             <!-- Exercício (ano) -->
             <ComboBox Grid.Column="4"
                       Classes="sg-filter"
-                      SelectedIndex="0">
-              <ComboBoxItem Content="2025"/>
-              <ComboBoxItem Content="2024"/>
-              <ComboBoxItem Content="2023"/>
-            </ComboBox>
+                      SelectedIndex="{Binding ExercicioIndex}"
+                      ItemsSource="{Binding Exercicios}"
+                      Width="120"/>
 
             <Button Grid.Column="6"
                     Classes="btn-primary"
@@ -272,7 +287,7 @@
             <StackPanel Spacing="0">
 
               <!-- Título da coluna -->
-              <Border Background="#E3F2FD" CornerRadius="7" Padding="14,10" Margin="0,0,0,14">
+              <Border Background="#14FFFFFF" CornerRadius="7" Padding="14,10" Margin="0,0,0,14">
                 <StackPanel Orientation="Horizontal" Spacing="10">
                   <mi:MaterialIcon Kind="TrendingUp" Width="16" Height="16" Foreground="#1565C0"/>
                   <TextBlock Text="ATIVO"
@@ -283,7 +298,7 @@
               </Border>
 
               <!-- ── ATIVO CORRENTE ──────────────────────────────────── -->
-              <Border Classes="sub-header">
+              <Border Classes="sub-header" Background="#12FFFFFF">
                 <TextBlock Text="Ativo Corrente"
                            FontSize="12" FontWeight="Bold"
                            Foreground="#1A2E5A"/>
@@ -410,7 +425,7 @@
               </Border>
 
               <!-- ── PASSIVO CORRENTE ────────────────────────────────── -->
-              <Border Classes="sub-header" Background="#FFF3E0">
+              <Border Classes="sub-header" Background="#14FFFFFF">
                 <TextBlock Text="Passivo Corrente"
                            FontSize="12" FontWeight="Bold"
                            Foreground="#E65100"/>
@@ -457,7 +472,7 @@
               <Border Classes="separador"/>
 
               <!-- ── PASSIVO NÃO CORRENTE ────────────────────────────── -->
-              <Border Classes="sub-header" Background="#FFF3E0">
+              <Border Classes="sub-header" Background="#14FFFFFF">
                 <TextBlock Text="Passivo Não Corrente"
                            FontSize="12" FontWeight="Bold"
                            Foreground="#E65100"/>
@@ -504,7 +519,7 @@
               <Border Classes="separador"/>
 
               <!-- ── CAPITAL PRÓPRIO ──────────────────────────────────── -->
-              <Border Classes="sub-header" Background="#E8F5E9">
+              <Border Classes="sub-header" Background="#14FFFFFF">
                 <TextBlock Text="Capital Próprio"
                            FontSize="12" FontWeight="Bold"
                            Foreground="#2E7D32"/>
@@ -571,7 +586,7 @@
         <!-- ══════════════════════════════════════════════════════════════
              RODAPÉ — nota contabilística
              ══════════════════════════════════════════════════════════════ -->
-        <Border Classes="sg-card" Padding="16,12" Background="#FAFBFF">
+        <Border Classes="sg-card" Padding="16,12" Background="#16FFFFFF">
           <Grid ColumnDefinitions="Auto, *, Auto">
             <mi:MaterialIcon Grid.Column="0"
                              Kind="InformationOutline"

@@ -1,0 +1,16 @@
+# ── Override para desenvolvimento local ───────────────────────────────────────
+# Activo automaticamente quando se corre "docker compose up" em dev.
+# Em produção use: docker compose -f docker-compose.yml up
+
+services:
+  api:
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+    # Swagger UI disponível em desenvolvimento
+    # Aceder em: http://localhost:8080/swagger
+
+  postgres:
+    # Porta já exposta no docker-compose.yml principal
+    # Pode ligar com: psql -h localhost -U postgres -d smartgest
+    environment:
+      POSTGRES_PASSWORD: PostegrePass@root2026

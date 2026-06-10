@@ -84,7 +84,7 @@ public partial class LoginViewModel : ViewModelBase
         }
         catch (HttpRequestException)
         {
-            SetError($"Sem ligação à API ({ApiClient.BaseUrl}). Verifique se o servidor está activo.");
+            SetError("Sem ligação à API. Verifique se o servidor está activo.");
         }
         catch (Exception ex)
         {

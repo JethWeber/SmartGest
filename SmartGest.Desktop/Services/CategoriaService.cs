@@ -22,5 +22,8 @@ public class CategoriaService
         return resp ?? new List<CategoriaItem>();
     }
 
-    public record CategoriaItem(string Nome, string Tipo);
+    public record CategoriaItem(int? Id, string Nome, string Tipo)
+    {
+        public override string ToString() => Nome;
+    }
 }

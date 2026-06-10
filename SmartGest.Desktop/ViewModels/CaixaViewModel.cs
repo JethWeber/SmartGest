@@ -15,77 +15,67 @@ namespace SmartGest.Desktop.ViewModels;
 
 public partial class CaixaViewModel : ViewModelBase
 {
-    // ── Dependências ──────────────────────────────────────────────────────────
     private readonly LancamentoService _lancamentoSvc;
 
-    // ── Eventos ───────────────────────────────────────────────────────────────
     public event Action? OpenNovoLancamento;
 
-    // ── Métricas do Topo ──────────────────────────────────────────────────────
-    [ObservableProperty] private string _saldoCaixa       = "—";
+    [ObservableProperty] private string _saldoCaixa       = "—"; 
     [ObservableProperty] private string _entradasDia      = "—";
     [ObservableProperty] private string _saidasDia        = "—";
-    [ObservableProperty] private string _entradasVariacao = "";
-    [ObservableProperty] private string _saidasVariacao   = "";
+    [ObservableProperty] private string _entradasVariacao = string.Empty;
+    [ObservableProperty] private string _saidasVariacao   = string.Empty;
+    [ObservableProperty] private string _saldoVariacao      = string.Empty;
+    [ObservableProperty] private string _corEntradasVar    = "#43A047";
+    [ObservableProperty] private string _corSaidasVar      = "#E53935";
+    [ObservableProperty] private string _corSaldoVar       = "#1A2E5A";
+    [ObservableProperty] private string _fundoEntradasVar  = "#E8F5E9";
+    [ObservableProperty] private string _fundoSaidasVar    = "#FFEBEE";
+    [ObservableProperty] private string _fundoSaldoVar     = "#E8EAF6";
 
-    // ── Sparklines ────────────────────────────────────────────────────────────
-    public ISeries[] SparklineSaldo    { get; } = Sparkline(new double[] { 0 }, new SKColor(0x1A, 0x2E, 0x5A));
-    public ISeries[] SparklineEntradas { get; } = Sparkline(new double[] { 0 }, SKColors.MediumSeaGreen);
-    public ISeries[] SparklineSaidas   { get; } = Sparkline(new double[] { 0 }, SKColors.Tomato);
+    [ObservableProperty] private ISeries[] _sparklineSaldo    = Array.Empty<ISeries>();
+    [ObservableProperty] private ISeries[] _sparklineEntradas = Array.Empty<ISeries>();
+    [ObservableProperty] private ISeries[] _sparklineSaidas   = Array.Empty<ISeries>();
 
-    // ── Filtros ───────────────────────────────────────────────────────────────
-    [ObservableProperty] private string           _filtroTexto     = string.Empty;
-    [ObservableProperty] private int              _filtroTipoIndex = 0;
+    [ObservableProperty] private string           _filtroTexto      = string.Empty;
+    [ObservableProperty] private int              _filtroTipoIndex  = 0;
     [ObservableProperty] private DateTimeOffset?  _filtroDataInicio = DateTimeOffset.Now.AddDays(-30);
     [ObservableProperty] private DateTimeOffset?  _filtroDataFim    = DateTimeOffset.Now;
 
-    // ── Tabela ────────────────────────────────────────────────────────────────
     [ObservableProperty] private ObservableCollection<LancamentoCaixaItem> _lancamentosFiltrados = new();
     [ObservableProperty] private string _totalLancamentosTexto = string.Empty;
 
-    // ── Estado ────────────────────────────────────────────────────────────────
-    [ObservableProperty] private bool   _isLoading       = false;
-    [ObservableProperty] private bool   _temErro         = false;
-    [ObservableProperty] private string _erroMensagem    = string.Empty;
+    [ObservableProperty] private bool   _isLoading    = false;
+    [ObservableProperty] private bool   _temErro      = false;
+    [ObservableProperty] private string _erroMensagem = string.Empty;
 
-    // ── Paginação ─────────────────────────────────────────────────────────────
     private int _totalRegistos = 0;
     private int _paginaAtual   = 1;
     private const int TamPagina = 50;
 
-    // ─────────────────────────────────────────────────────────────────────────
-    // CONSTRUTORES
-    // ─────────────────────────────────────────────────────────────────────────
-
-    /// <summary>Construtor principal — DI em produção.</summary>
     public CaixaViewModel(LancamentoService lancamentoSvc)
     {
         _lancamentoSvc = lancamentoSvc;
         _ = CarregarAsync();
     }
 
-    /// <summary>Construtor sem parâmetros — apenas para o Avalonia Designer.</summary>
     public CaixaViewModel()
     {
-        var stubStore = new TokenStore();
-        var stubApi   = new ApiClient(stubStore);
+        var stubApi = new ApiClient(new TokenStore());
         _lancamentoSvc = new LancamentoService(stubApi);
 
-        // Dados de demo para o designer
         LancamentosFiltrados = new ObservableCollection<LancamentoCaixaItem>
         {
-            new(1, "01/06/2026", "Entrada", "Venda de produto",         "Venda de produto",    "Banco BIC", 500_000m, 500_000m, new DateTime(2026,6,1)),
-            new(2, "02/06/2026", "Saída",   "Compra de matéria-prima",  "Despesas gerais",     "Banco BAI", 200_000m, 300_000m, new DateTime(2026,6,2)),
+            new(1, "01/06/2026", "Entrada", "Venda de produto", "Venda de produto", "Banco BIC", 500_000m, 500_000m, new DateTime(2026,6,1)),
+            new(2, "02/06/2026", "Saída",   "Compra de matéria-prima", "Despesas gerais", "Banco BAI", 200_000m, 300_000m, new DateTime(2026,6,2)),
         };
         TotalLancamentosTexto = "2 lançamento(s)";
         SaldoCaixa   = "300.000 Kzs";
         EntradasDia  = "500.000 Kzs";
         SaidasDia    = "200.000 Kzs";
+        SparklineSaldo    = Sparkline(new[] { 100.0, 120, 90, 150, 130, 180, 300 }, new SKColor(0x1A, 0x2E, 0x5A));
+        SparklineEntradas = Sparkline(new[] { 50.0, 80, 40, 120, 60, 90, 500 }, SKColors.MediumSeaGreen);
+        SparklineSaidas   = Sparkline(new[] { 30.0, 40, 50, 70, 45, 60, 200 }, SKColors.Tomato);
     }
-
-    // ─────────────────────────────────────────────────────────────────────────
-    // CARREGAMENTO
-    // ─────────────────────────────────────────────────────────────────────────
 
     private async Task CarregarAsync(int pagina = 1)
     {
@@ -113,41 +103,21 @@ public partial class CaixaViewModel : ViewModelBase
             _totalRegistos = resp.Total;
             _paginaAtual   = pagina;
 
-            // Calcula saldo acumulado localmente (lista ordenada desc — invertemos)
-            var ordenados = resp.Items
-                .OrderBy(l => l.Data)
-                .ToList();
-
+            var ordenados = resp.Items.OrderBy(l => l.Data).ToList();
             decimal saldoAcum = 0;
             var mapeados = ordenados.Select(l =>
             {
                 saldoAcum += l.Tipo == "Entrada" ? l.Valor : -l.Valor;
                 return new LancamentoCaixaItem(
-                    Id:          l.Id,
-                    Data:        l.Data.ToString("dd/MM/yyyy"),
-                    Tipo:        l.Tipo,
-                    Descricao:   l.Descricao,
-                    Categoria:   l.Categoria,
-                    Conta:       l.ContaBancariaNome ?? "—",
-                    ValorBruto:  l.Valor,
-                    SaldoAcum:   saldoAcum,
-                    DataOrigem:  l.Data);
-            })
-            .OrderByDescending(l => l.DataOrigem)
-            .ToList();
+                    l.Id, l.Data.ToString("dd/MM/yyyy"), l.Tipo, l.Descricao,
+                    l.Categoria, l.ContaBancariaNome ?? "—",
+                    l.Valor, saldoAcum, l.Data);
+            }).OrderByDescending(l => l.DataOrigem).ToList();
 
-            LancamentosFiltrados = new ObservableCollection<LancamentoCaixaItem>(mapeados);
+            LancamentosFiltrados  = new ObservableCollection<LancamentoCaixaItem>(mapeados);
             TotalLancamentosTexto = $"{resp.Total} lançamento(s)";
 
-            // Métricas do topo
-            var hoje     = DateTime.Today;
-            var entradas = resp.Items.Where(l => l.Tipo == "Entrada").Sum(l => l.Valor);
-            var saidas   = resp.Items.Where(l => l.Tipo == "Saída").Sum(l => l.Valor);
-            var saldo    = entradas - saidas;
-
-            SaldoCaixa  = $"{saldo:N0} Kzs";
-            EntradasDia = $"{entradas:N0} Kzs";
-            SaidasDia   = $"{saidas:N0} Kzs";
+            await ActualizarMetricasAsync();
         }
         catch (ApiException ex)
         {
@@ -157,7 +127,7 @@ public partial class CaixaViewModel : ViewModelBase
         catch (HttpRequestException)
         {
             TemErro      = true;
-            ErroMensagem = $"Sem ligação à API ({ApiClient.BaseUrl}). Verifique o servidor.";
+            ErroMensagem = "Sem ligação à API. Verifique se o servidor.";
         }
         catch (Exception ex)
         {
@@ -170,9 +140,101 @@ public partial class CaixaViewModel : ViewModelBase
         }
     }
 
-    // ─────────────────────────────────────────────────────────────────────────
-    // COMANDOS
-    // ─────────────────────────────────────────────────────────────────────────
+    private async Task ActualizarMetricasAsync()
+    {
+        var fimFiltro = FiltroDataFim?.Date ?? DateTime.Today;
+        var inicioSpark = fimFiltro.AddDays(-13);
+
+        var spark = await _lancamentoSvc.ListarAsync(
+            dataInicio: inicioSpark,
+            dataFim:    fimFiltro,
+            tamPagina:  500);
+
+        var items = spark.Items;
+        if (!items.Any())
+        {
+            SaldoCaixa      = "0 Kzs";
+            EntradasDia     = "0 Kzs";
+            SaidasDia       = "0 Kzs";
+            SaldoVariacao   = "—";
+            EntradasVariacao = "—";
+            SaidasVariacao  = "—";
+            CorSaldoVar     = "#9AA0AB";
+            CorEntradasVar  = "#9AA0AB";
+            CorSaidasVar    = "#9AA0AB";
+            FundoSaldoVar   = "#F4F6FA";
+            FundoEntradasVar = "#F4F6FA";
+            FundoSaidasVar  = "#F4F6FA";
+            SparklineEntradas = Sparkline(new[] { 0.0 }, SKColors.Gray);
+            SparklineSaidas   = Sparkline(new[] { 0.0 }, SKColors.Gray);
+            SparklineSaldo    = Sparkline(new[] { 0.0 }, SKColors.Gray);
+            return;
+        }
+
+        var ultimoDia = items.Max(l => l.Data.Date);
+        var ontem = ultimoDia.AddDays(-1);
+
+        decimal SomaDia(DateTime dia, string tipo) =>
+            items.Where(l => l.Data.Date == dia && l.Tipo == tipo).Sum(l => l.Valor);
+
+        var entUltimo  = SomaDia(ultimoDia, "Entrada");
+        var saiUltimo  = SomaDia(ultimoDia, "Saída");
+        var entOntem   = SomaDia(ontem, "Entrada");
+        var saiOntem   = SomaDia(ontem, "Saída");
+        var saldoUltimo = entUltimo - saiUltimo;
+        var saldoOntem  = entOntem - saiOntem;
+
+        SaldoCaixa  = $"{saldoUltimo:N0} Kzs";
+        EntradasDia = $"{entUltimo:N0} Kzs";
+        SaidasDia   = $"{saiUltimo:N0} Kzs";
+
+        AplicarVariacao(entUltimo, entOntem, false, (t, c, f) =>
+        {
+            EntradasVariacao = t; CorEntradasVar = c; FundoEntradasVar = f;
+        });
+        AplicarVariacao(saiUltimo, saiOntem, true, (t, c, f) =>
+        {
+            SaidasVariacao = t; CorSaidasVar = c; FundoSaidasVar = f;
+        });
+        AplicarVariacao(saldoUltimo, saldoOntem, false, (t, c, f) =>
+        {
+            SaldoVariacao = t; CorSaldoVar = c; FundoSaldoVar = f;
+        });
+
+        var dias = Enumerable.Range(0, 14).Select(i => inicioSpark.AddDays(i)).ToList();
+        var entSerie = dias.Select(d => (double)SomaDia(d, "Entrada")).ToArray();
+        var saiSerie = dias.Select(d => (double)SomaDia(d, "Saída")).ToArray();
+        var salSerie = dias.Select(d => (double)(SomaDia(d, "Entrada") - SomaDia(d, "Saída"))).ToArray();
+
+        SparklineEntradas = Sparkline(entSerie, new SKColor(0x43, 0xA0, 0x47));
+        SparklineSaidas   = Sparkline(saiSerie, new SKColor(0xE5, 0x39, 0x35));
+        SparklineSaldo    = Sparkline(salSerie, new SKColor(0x1A, 0x2E, 0x5A));
+    }
+
+    private static void AplicarVariacao(
+        decimal atual, decimal anterior, bool invertido,
+        Action<string, string, string> aplicar)
+    {
+        if (anterior == 0 && atual == 0)
+        {
+            aplicar("— vs ontem", "#9AA0AB", "#F4F6FA");
+            return;
+        }
+        if (anterior == 0)
+        {
+            var cor = invertido ? "#E53935" : "#43A047";
+            aplicar("↑ Novo", cor, invertido ? "#FFEBEE" : "#E8F5E9");
+            return;
+        }
+
+        var pct = (double)((atual - anterior) / Math.Abs(anterior) * 100m);
+        var subiu = pct >= 0;
+        var positivo = invertido ? !subiu : subiu;
+        var sinal = subiu ? "↑" : "↓";
+        aplicar($"{sinal} {Math.Abs(pct):F0}% vs ontem",
+            positivo ? "#43A047" : "#E53935",
+            positivo ? "#E8F5E9" : "#FFEBEE");
+    }
 
     [RelayCommand]
     private async Task FiltrarAsync() => await CarregarAsync(1);
@@ -181,33 +243,24 @@ public partial class CaixaViewModel : ViewModelBase
     private async Task RefrescarAsync() => await CarregarAsync(_paginaAtual);
 
     [RelayCommand]
-    private void NovaEntrada() => OpenNovoLancamento?.Invoke();
+    private void NovaTransacao() => OpenNovoLancamento?.Invoke();
 
-    [RelayCommand]
-    private void NovaSaida() => OpenNovoLancamento?.Invoke();
-
-    // Chamado pelo CaixaView quando um novo lançamento é criado no modal
     public async Task OnLancamentoCriadoAsync() => await CarregarAsync(1);
-
-    // ─────────────────────────────────────────────────────────────────────────
-    // HELPERS
-    // ─────────────────────────────────────────────────────────────────────────
 
     private static ISeries[] Sparkline(double[] values, SKColor color) =>
         new ISeries[]
         {
             new LineSeries<double>
             {
-                Values         = values,
+                Values         = values.Length > 0 ? values : new[] { 0.0 },
                 Stroke         = new SolidColorPaint(color) { StrokeThickness = 2 },
-                Fill           = null,
+                Fill           = new SolidColorPaint(color.WithAlpha(40)),
                 GeometrySize   = 0,
-                LineSmoothness = 1
+                LineSmoothness = 0.7
             }
         };
 }
 
-// ── Record de linha da tabela ─────────────────────────────────────────────────
 public record LancamentoCaixaItem(
     int      Id,
     string   Data,
@@ -219,9 +272,9 @@ public record LancamentoCaixaItem(
     decimal  SaldoAcum,
     DateTime DataOrigem)
 {
-    public bool   IsEntrada       => Tipo == "Entrada";
-    public bool   IsSaida         => Tipo == "Saída";
-    public string ValorFormatado  => IsEntrada ? $"+{ValorBruto:N0} Kzs" : $"-{ValorBruto:N0} Kzs";
-    public string SaldoAcumulado  => $"{SaldoAcum:N0} Kzs";
-    public string CorValor        => IsEntrada ? "#43A047" : "#E53935";
+    public bool   IsEntrada      => Tipo == "Entrada";
+    public bool   IsSaida        => Tipo == "Saída";
+    public string ValorFormatado => IsEntrada ? $"+{ValorBruto:N0} Kzs" : $"-{ValorBruto:N0} Kzs";
+    public string SaldoAcumulado => $"{SaldoAcum:N0} Kzs";
+    public string CorValor       => IsEntrada ? "#43A047" : "#E53935";
 }

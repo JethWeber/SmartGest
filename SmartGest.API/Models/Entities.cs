@@ -130,6 +130,8 @@ public class Lancamento
     public string   Descricao         { get; set; } = string.Empty;
     [MaxLength(50)]
     public string   Categoria         { get; set; } = string.Empty;
+    public int?      CategoriaContabilId { get; set; }
+    public CategoriaContabil? CategoriaContabil { get; set; }
     [MaxLength(30)]
     public string   Tipo              { get; set; } = string.Empty; // Entrada | Saída
     public decimal  Valor             { get; set; }
@@ -198,6 +200,8 @@ public class ContaBancaria
     [MaxLength(20)]
     public string  CorAccent { get; set; } = "#1A2E5A";
     public bool    Activa    { get; set; } = true;
+    public int?          ContaContabilId { get; set; }
+    public ContaContabil? ContaContabil  { get; set; }
 
     public ICollection<MovimentoBancario> Movimentos  { get; set; } = new List<MovimentoBancario>();
     public ICollection<Lancamento>        Lancamentos { get; set; } = new List<Lancamento>();

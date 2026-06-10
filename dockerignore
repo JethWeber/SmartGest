@@ -1,0 +1,26 @@
+# Artefactos de build locais
+**/bin/
+**/obj/
+
+# Projecto Desktop (GUI nativa — não entra no container)
+SmartGest.Desktop/
+
+# Ficheiros de IDE e sistema
+.vs/
+.vscode/
+*.user
+*.suo
+.DS_Store
+Thumbs.db
+
+# Ficheiros de ambiente local (não sobrescrever segredos)
+**/appsettings.Development.json
+
+# Git
+.git/
+.gitignore
+
+# Documentação e testes
+*.md
+**/Tests/
+**/test/

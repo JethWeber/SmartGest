@@ -2,24 +2,319 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              x:Class="SmartGest.Desktop.App"
              xmlns:local="using:SmartGest.Desktop"
-             RequestedThemeVariant="Light">
-             <!-- "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options. -->
+             RequestedThemeVariant="Dark">
 
-    <TrayIcon.Icons>
-        <TrayIcons>
-            <TrayIcon Icon="avares://SmartGest.Desktop/Assets/SmartGest_-_ImaLogo01.ico" 
-                      ToolTipText="SmartGest ERP" />
-        </TrayIcons>
-    </TrayIcon.Icons>
-    
-    <Application.DataTemplates>
-        <local:ViewLocator/>
+  <TrayIcon.Icons>
+    <TrayIcons>
+      <TrayIcon Icon="avares://SmartGest.Desktop/Assets/SmartGest_-_ImaLogo01.ico"
+                ToolTipText="SmartGest ERP" />
+    </TrayIcons>
+  </TrayIcon.Icons>
 
-    </Application.DataTemplates>
-  
-    <Application.Styles>
-        <FluentTheme />
-        <StyleInclude Source="avares://Avalonia.Controls.DataGrid/Themes/Fluent.xaml"/>
-        <StyleInclude Source="avares://Material.Icons.Avalonia/MaterialIconStyles.axaml"/>
-    </Application.Styles>
+  <Application.DataTemplates>
+    <local:ViewLocator/>
+  </Application.DataTemplates>
+
+  <Application.Styles>
+    <FluentTheme />
+    <StyleInclude Source="avares://Avalonia.Controls.DataGrid/Themes/Fluent.xaml"/>
+    <StyleInclude Source="avares://Material.Icons.Avalonia/MaterialIconStyles.axaml"/>
+
+    <!-- =====================================================
+         SMARTGEST · ESTILOS GLOBAIS GLASSMORPHISM
+         Paleta: #0A1628 dark | #2196F3 azul | #1565C0 azul escuro
+         ===================================================== -->
+
+    <!-- === TEXTBOX === -->
+    <Style Selector="TextBox.sg-input">
+      <Setter Property="Height"               Value="46"/>
+      <Setter Property="FontSize"             Value="13"/>
+      <Setter Property="Foreground"           Value="#E8F0FF"/>
+      <Setter Property="Background"           Value="#12FFFFFF"/>
+      <Setter Property="BorderBrush"          Value="#25FFFFFF"/>
+      <Setter Property="BorderThickness"      Value="1"/>
+      <Setter Property="CornerRadius"         Value="10"/>
+      <Setter Property="Padding"              Value="14,0"/>
+      <Setter Property="HorizontalAlignment"  Value="Stretch"/>
+      <Setter Property="CaretBrush"           Value="#2196F3"/>
+      <Setter Property="SelectionBrush"       Value="#402196F3"/>
+    </Style>
+    <!-- Override do border interno do FluentTheme (evita fundo preto no foco) -->
+    <Style Selector="TextBox.sg-input /template/ Border#PART_BorderElement">
+      <Setter Property="Background" Value="Transparent"/>
+    </Style>
+    <Style Selector="TextBox.sg-input:focus /template/ Border#PART_BorderElement">
+      <Setter Property="Background" Value="Transparent"/>
+    </Style>
+    <Style Selector="TextBox.sg-input:pointerover /template/ Border#PART_BorderElement">
+      <Setter Property="Background" Value="Transparent"/>
+    </Style>
+    <Style Selector="TextBox.sg-input:focus">
+      <Setter Property="BorderBrush" Value="#602196F3"/>
+      <Setter Property="Background"  Value="#1E2196F3"/>
+    </Style>
+    <Style Selector="TextBox.sg-input:pointerover">
+      <Setter Property="BorderBrush" Value="#40FFFFFF"/>
+    </Style>
+
+    <!-- === BOTÃO PRIMÁRIO === -->
+    <Style Selector="Button.sg-btn-primary">
+      <Setter Property="Height"                    Value="46"/>
+      <Setter Property="FontSize"                  Value="14"/>
+      <Setter Property="FontWeight"                Value="SemiBold"/>
+      <Setter Property="Foreground"                Value="White"/>
+      <Setter Property="CornerRadius"              Value="10"/>
+      <Setter Property="HorizontalContentAlignment" Value="Center"/>
+      <Setter Property="HorizontalAlignment"       Value="Stretch"/>
+      <Setter Property="Cursor"                    Value="Hand"/>
+      <Setter Property="BorderThickness"           Value="1"/>
+      <Setter Property="BorderBrush"               Value="#402196F3"/>
+      <Setter Property="Background">
+        <LinearGradientBrush StartPoint="0%,0%" EndPoint="100%,100%">
+          <GradientStop Offset="0" Color="#CC1976D2"/>
+          <GradientStop Offset="1" Color="#CC2196F3"/>
+        </LinearGradientBrush>
+      </Setter>
+    </Style>
+    <Style Selector="Button.sg-btn-primary:pointerover /template/ ContentPresenter">
+      <Setter Property="Background">
+        <LinearGradientBrush StartPoint="0%,0%" EndPoint="100%,100%">
+          <GradientStop Offset="0" Color="#EE1565C0"/>
+          <GradientStop Offset="1" Color="#EE1976D2"/>
+        </LinearGradientBrush>
+      </Setter>
+    </Style>
+    <Style Selector="Button.sg-btn-primary:pressed /template/ ContentPresenter">
+      <Setter Property="Background">
+        <LinearGradientBrush StartPoint="0%,0%" EndPoint="100%,100%">
+          <GradientStop Offset="0" Color="#FF0D47A1"/>
+          <GradientStop Offset="1" Color="#FF1565C0"/>
+        </LinearGradientBrush>
+      </Setter>
+    </Style>
+
+    <!-- === BOTÃO SECUNDÁRIO === -->
+    <Style Selector="Button.sg-btn-secondary">
+      <Setter Property="Height"                    Value="46"/>
+      <Setter Property="FontSize"                  Value="13"/>
+      <Setter Property="FontWeight"                Value="Medium"/>
+      <Setter Property="Foreground"                Value="#C8DCFF"/>
+      <Setter Property="CornerRadius"              Value="10"/>
+      <Setter Property="HorizontalContentAlignment" Value="Center"/>
+      <Setter Property="HorizontalAlignment"       Value="Stretch"/>
+      <Setter Property="Cursor"                    Value="Hand"/>
+      <Setter Property="BorderThickness"           Value="1"/>
+      <Setter Property="BorderBrush"               Value="#28FFFFFF"/>
+      <Setter Property="Background"                Value="#14FFFFFF"/>
+    </Style>
+    <Style Selector="Button.sg-btn-secondary:pointerover /template/ ContentPresenter">
+      <Setter Property="Background" Value="#20FFFFFF"/>
+    </Style>
+
+    <!-- === BOTÃO LINK === -->
+    <Style Selector="Button.sg-link">
+      <Setter Property="Background"      Value="Transparent"/>
+      <Setter Property="BorderThickness" Value="0"/>
+      <Setter Property="Foreground"      Value="#7EB8F7"/>
+      <Setter Property="FontSize"        Value="12.5"/>
+      <Setter Property="Cursor"          Value="Hand"/>
+      <Setter Property="Padding"         Value="0"/>
+    </Style>
+    <Style Selector="Button.sg-link:pointerover /template/ ContentPresenter">
+      <Setter Property="Background" Value="Transparent"/>
+      <Setter Property="Foreground" Value="#42A5F5"/>
+    </Style>
+
+    <!-- === BOTÃO DANGER === -->
+    <Style Selector="Button.sg-btn-danger">
+      <Setter Property="Height"                    Value="46"/>
+      <Setter Property="FontSize"                  Value="13"/>
+      <Setter Property="FontWeight"                Value="SemiBold"/>
+      <Setter Property="Foreground"                Value="White"/>
+      <Setter Property="CornerRadius"              Value="10"/>
+      <Setter Property="HorizontalContentAlignment" Value="Center"/>
+      <Setter Property="HorizontalAlignment"       Value="Stretch"/>
+      <Setter Property="Cursor"                    Value="Hand"/>
+      <Setter Property="BorderThickness"           Value="1"/>
+      <Setter Property="BorderBrush"               Value="#40E53935"/>
+      <Setter Property="Background">
+        <LinearGradientBrush StartPoint="0%,0%" EndPoint="100%,100%">
+          <GradientStop Offset="0" Color="#CCB71C1C"/>
+          <GradientStop Offset="1" Color="#CCE53935"/>
+        </LinearGradientBrush>
+      </Setter>
+    </Style>
+
+    <!-- === CARD GLASS === -->
+    <Style Selector="Border.sg-card">
+      <Setter Property="CornerRadius"    Value="14"/>
+      <Setter Property="BorderThickness" Value="1"/>
+      <Setter Property="Padding"         Value="20"/>
+      <Setter Property="BoxShadow"       Value="0 4 24 0 #28000000"/>
+      <Setter Property="BorderBrush">
+        <LinearGradientBrush StartPoint="0%,0%" EndPoint="100%,100%">
+          <GradientStop Offset="0"   Color="#30FFFFFF"/>
+          <GradientStop Offset="0.5" Color="#10FFFFFF"/>
+          <GradientStop Offset="1"   Color="#05FFFFFF"/>
+        </LinearGradientBrush>
+      </Setter>
+      <Setter Property="Background">
+        <LinearGradientBrush StartPoint="0%,0%" EndPoint="100%,100%">
+          <GradientStop Offset="0" Color="#16FFFFFF"/>
+          <GradientStop Offset="1" Color="#0AFFFFFF"/>
+        </LinearGradientBrush>
+      </Setter>
+    </Style>
+
+    <!-- === CARD GLASS AZUL (destaque/KPI) === -->
+    <Style Selector="Border.sg-card-accent">
+      <Setter Property="CornerRadius"    Value="14"/>
+      <Setter Property="BorderThickness" Value="1"/>
+      <Setter Property="Padding"         Value="20"/>
+      <Setter Property="BoxShadow"       Value="0 4 28 0 #402196F3"/>
+      <Setter Property="BorderBrush"     Value="#402196F3"/>
+      <Setter Property="Background">
+        <LinearGradientBrush StartPoint="0%,0%" EndPoint="100%,100%">
+          <GradientStop Offset="0" Color="#201976D2"/>
+          <GradientStop Offset="1" Color="#142196F3"/>
+        </LinearGradientBrush>
+      </Setter>
+    </Style>
+
+    <!-- === PROGRESSBAR === -->
+    <Style Selector="ProgressBar.sg-progress">
+      <Setter Property="Height"          Value="5"/>
+      <Setter Property="CornerRadius"    Value="3"/>
+      <Setter Property="Background"      Value="#28FFFFFF"/>
+      <Setter Property="Foreground"      Value="#2196F3"/>
+      <Setter Property="BorderThickness" Value="0"/>
+    </Style>
+
+    <!-- === LABEL DE CAMPO === -->
+    <Style Selector="TextBlock.sg-label">
+      <Setter Property="FontSize"    Value="10"/>
+      <Setter Property="FontWeight"  Value="Medium"/>
+      <Setter Property="Foreground"  Value="#50FFFFFF"/>
+      <Setter Property="LetterSpacing" Value="1.2"/>
+    </Style>
+
+    <!-- === TEXTO DE ERRO === -->
+    <Style Selector="TextBlock.sg-error">
+      <Setter Property="Foreground"   Value="#FF8A80"/>
+      <Setter Property="FontSize"     Value="12"/>
+      <Setter Property="TextWrapping" Value="Wrap"/>
+    </Style>
+
+    <!-- === SEPARADOR GLASS === -->
+    <Style Selector="Border.sg-divider">
+      <Setter Property="Height" Value="1"/>
+      <Setter Property="Background">
+        <LinearGradientBrush StartPoint="0%,0%" EndPoint="100%,0%">
+          <GradientStop Offset="0"   Color="Transparent"/>
+          <GradientStop Offset="0.5" Color="#22FFFFFF"/>
+          <GradientStop Offset="1"   Color="Transparent"/>
+        </LinearGradientBrush>
+      </Setter>
+    </Style>
+
+    <!-- === SEPARADOR GLASS AZUL (accent) === -->
+    <Style Selector="Border.sg-divider-accent">
+      <Setter Property="Height" Value="1"/>
+      <Setter Property="Background">
+        <LinearGradientBrush StartPoint="0%,0%" EndPoint="100%,0%">
+          <GradientStop Offset="0"   Color="Transparent"/>
+          <GradientStop Offset="0.5" Color="#302196F3"/>
+          <GradientStop Offset="1"   Color="Transparent"/>
+        </LinearGradientBrush>
+      </Setter>
+    </Style>
+
+    <!-- === DATAGRID GLASS === -->
+    <Style Selector="DataGrid.sg-grid">
+      <Setter Property="Background"           Value="Transparent"/>
+      <Setter Property="BorderThickness"      Value="0"/>
+      <Setter Property="RowBackground"             Value="Transparent"/>
+      <Setter Property="HorizontalGridLinesBrush" Value="#12FFFFFF"/>
+      <Setter Property="VerticalGridLinesBrush"   Value="Transparent"/>
+      <Setter Property="Foreground"           Value="#D0E4FF"/>
+      <Setter Property="FontSize"             Value="13"/>
+    </Style>
+    <Style Selector="DataGrid.sg-grid DataGridColumnHeader">
+      <Setter Property="Background"   Value="#14FFFFFF"/>
+      <Setter Property="Foreground"   Value="#60FFFFFF"/>
+      <Setter Property="FontSize"     Value="10"/>
+      <Setter Property="FontWeight"   Value="Medium"/>
+      <Setter Property="Padding"      Value="12,10"/>
+    </Style>
+    <Style Selector="DataGrid.sg-grid DataGridRow:pointerover /template/ Rectangle#BackgroundRectangle">
+      <Setter Property="Fill"    Value="#12FFFFFF"/>
+      <Setter Property="Opacity" Value="1"/>
+    </Style>
+    <Style Selector="DataGrid.sg-grid DataGridRow:selected /template/ Rectangle#BackgroundRectangle">
+      <Setter Property="Fill"    Value="#1E2196F3"/>
+      <Setter Property="Opacity" Value="1"/>
+    </Style>
+
+    <!-- === SCROLLBAR GLASS === -->
+    <Style Selector="ScrollBar">
+      <Setter Property="Background" Value="Transparent"/>
+    </Style>
+    <Style Selector="ScrollBar /template/ Border">
+      <Setter Property="Background" Value="Transparent"/>
+    </Style>
+    <Style Selector="ScrollBar /template/ Thumb">
+      <Setter Property="Background"   Value="#28FFFFFF"/>
+      <Setter Property="CornerRadius" Value="4"/>
+    </Style>
+    <Style Selector="ScrollBar /template/ Thumb:pointerover">
+      <Setter Property="Background" Value="#40FFFFFF"/>
+    </Style>
+
+    <!-- === COMBOBOX GLASS === -->
+    <Style Selector="ComboBox.sg-combo">
+      <Setter Property="Height"          Value="46"/>
+      <Setter Property="FontSize"        Value="13"/>
+      <Setter Property="Foreground"      Value="#E8F0FF"/>
+      <Setter Property="Background"      Value="#12FFFFFF"/>
+      <Setter Property="BorderBrush"     Value="#25FFFFFF"/>
+      <Setter Property="BorderThickness" Value="1"/>
+      <Setter Property="CornerRadius"    Value="10"/>
+      <Setter Property="Padding"         Value="14,0"/>
+      <Setter Property="HorizontalAlignment" Value="Stretch"/>
+    </Style>
+    <Style Selector="ComboBox.sg-combo:focus">
+      <Setter Property="BorderBrush" Value="#602196F3"/>
+    </Style>
+    <Style Selector="ComboBox.sg-combo /template/ Border#Background">
+      <Setter Property="Background" Value="Transparent"/>
+    </Style>
+
+    <!-- === CHECKBOX GLASS === -->
+    <Style Selector="CheckBox.sg-check">
+      <Setter Property="Foreground" Value="#C8DCFF"/>
+      <Setter Property="FontSize"   Value="13"/>
+    </Style>
+
+    <!-- === MENU LATERAL (NavigationView / ListBox como nav) === -->
+    <Style Selector="ListBoxItem.sg-nav-item">
+      <Setter Property="Height"      Value="44"/>
+      <Setter Property="FontSize"    Value="13"/>
+      <Setter Property="Foreground"  Value="#80FFFFFF"/>
+      <Setter Property="Background"  Value="Transparent"/>
+      <Setter Property="CornerRadius" Value="10"/>
+      <Setter Property="Padding"     Value="12,0"/>
+      <Setter Property="Cursor"      Value="Hand"/>
+    </Style>
+    <Style Selector="ListBoxItem.sg-nav-item:pointerover /template/ ContentPresenter">
+      <Setter Property="Background" Value="#12FFFFFF"/>
+    </Style>
+    <Style Selector="ListBoxItem.sg-nav-item:selected /template/ ContentPresenter">
+      <Setter Property="Background" Value="#1E2196F3"/>
+    </Style>
+    <Style Selector="ListBoxItem.sg-nav-item:selected">
+      <Setter Property="Foreground" Value="#FFFFFF"/>
+    </Style>
+
+  </Application.Styles>
+
 </Application>

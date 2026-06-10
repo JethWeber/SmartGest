@@ -58,7 +58,8 @@ public class LancamentoService
         string   Observacoes,
         string   CentroCusto,
         string   ReferenciaInterna,
-        int?     ContaBancariaId);
+        int?     ContaBancariaId,
+        int?     CategoriaId);
 
     public record LancamentoResponse(
         int      Id,

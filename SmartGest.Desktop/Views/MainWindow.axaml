@@ -8,12 +8,13 @@
         Title="SmartGest - Automatize Numeros. Multiplique Resultados."
         Width="1280" Height="760"
         WindowStartupLocation="CenterScreen"
-        Background="#F4F6F9"
-        Icon="avares://SmartGest.Desktop/Assets/SmartGest_-_ImaLogo01.ico">
+        Background="#080E1E"
+        Icon="avares://SmartGest.Desktop/Assets/SmartGest_-_ImaLogo01.ico"
+        TransparencyLevelHint="AcrylicBlur,Transparent">
 
   <Window.Styles>
 
-    <!-- Overlay: escurece o conteudo quando a sidebar esta aberta -->
+    <!-- Overlay escuro sobre conteúdo quando sidebar abre -->
     <Style Selector="Border.overlay">
       <Setter Property="Background"       Value="#000000"/>
       <Setter Property="Opacity"          Value="0"/>
@@ -24,25 +25,23 @@
         </Transitions>
       </Setter>
     </Style>
-    <!-- O seletor :pointerover na sidebar nao alcanca o overlay irma no Grid.
-         Usamos a classe "expanded" que e adicionada via code-behind. -->
 
-    <!-- Sidebar: animacao de largura -->
+    <!-- Sidebar: animação de largura -->
     <Style Selector="Border.sidebar">
-      <Setter Property="Width" Value="64"/>
+      <Setter Property="Width" Value="68"/>
       <Setter Property="Transitions">
         <Transitions>
-          <DoubleTransition Property="Width" Duration="0:0:0.22" Easing="CubicEaseInOut"/>
+          <DoubleTransition Property="Width" Duration="0:0:0.25" Easing="CubicEaseInOut"/>
         </Transitions>
       </Setter>
     </Style>
     <Style Selector="Border.sidebar:pointerover">
-      <Setter Property="Width" Value="240"/>
+      <Setter Property="Width" Value="244"/>
     </Style>
 
-    <!-- Logo completo: visivel so quando hover -->
+    <!-- Logo completo: visível só no hover -->
     <Style Selector="Image.logo-full">
-      <Setter Property="Opacity"  Value="0"/>
+      <Setter Property="Opacity"   Value="0"/>
       <Setter Property="IsVisible" Value="False"/>
       <Setter Property="Transitions">
         <Transitions>
@@ -51,11 +50,11 @@
       </Setter>
     </Style>
     <Style Selector="Border.sidebar:pointerover Image.logo-full">
-      <Setter Property="Opacity"  Value="1"/>
+      <Setter Property="Opacity"   Value="1"/>
       <Setter Property="IsVisible" Value="True"/>
     </Style>
 
-    <!-- ImaLogo pequeno: some no hover -->
+    <!-- Ícone pequeno: some no hover -->
     <Style Selector="Image.logo-icon">
       <Setter Property="Opacity" Value="1"/>
       <Setter Property="Transitions">
@@ -68,9 +67,9 @@
       <Setter Property="Opacity" Value="0"/>
     </Style>
 
-    <!-- Labels de texto: ocultos quando fechado -->
+    <!-- Labels do menu: ocultos quando fechado -->
     <Style Selector="TextBlock.menu-label">
-      <Setter Property="Opacity"  Value="0"/>
+      <Setter Property="Opacity"   Value="0"/>
       <Setter Property="IsVisible" Value="False"/>
       <Setter Property="Transitions">
         <Transitions>
@@ -79,13 +78,13 @@
       </Setter>
     </Style>
     <Style Selector="Border.sidebar:pointerover TextBlock.menu-label">
-      <Setter Property="Opacity"  Value="1"/>
+      <Setter Property="Opacity"   Value="1"/>
       <Setter Property="IsVisible" Value="True"/>
     </Style>
 
-    <!-- Info do utilizador no rodape -->
+    <!-- Info do utilizador no rodapé -->
     <Style Selector="StackPanel.user-info">
-      <Setter Property="Opacity"  Value="0"/>
+      <Setter Property="Opacity"   Value="0"/>
       <Setter Property="IsVisible" Value="False"/>
       <Setter Property="Transitions">
         <Transitions>
@@ -94,7 +93,7 @@
       </Setter>
     </Style>
     <Style Selector="Border.sidebar:pointerover StackPanel.user-info">
-      <Setter Property="Opacity"  Value="1"/>
+      <Setter Property="Opacity"   Value="1"/>
       <Setter Property="IsVisible" Value="True"/>
     </Style>
 
@@ -102,7 +101,7 @@
     <Style Selector="ListBoxItem.menu-item">
       <Setter Property="Padding"      Value="0"/>
       <Setter Property="Height"       Value="44"/>
-      <Setter Property="CornerRadius" Value="8"/>
+      <Setter Property="CornerRadius" Value="10"/>
       <Setter Property="Margin"       Value="0,2"/>
       <Setter Property="Cursor"       Value="Hand"/>
       <Setter Property="Background"   Value="Transparent"/>
@@ -117,34 +116,44 @@
       <Setter Property="Background" Value="Transparent"/>
     </Style>
 
-    <!-- Circulo do icone -->
+    <!-- Círculo do ícone -->
     <Style Selector="Border.icon-circle">
       <Setter Property="Width"        Value="36"/>
       <Setter Property="Height"       Value="36"/>
       <Setter Property="CornerRadius" Value="18"/>
-      <Setter Property="Background"   Value="#F0F4F8"/>
-      <Setter Property="BoxShadow"    Value="0 2 6 0 #18000000"/>
+      <Setter Property="Background"   Value="#18FFFFFF"/>
+      <Setter Property="BoxShadow"    Value="0 2 8 0 #20000000"/>
     </Style>
     <Style Selector="ListBoxItem.menu-item:pointerover Border.icon-circle">
-      <Setter Property="Background" Value="#E3F0FF"/>
-      <Setter Property="BoxShadow"  Value="0 3 8 0 #28000000"/>
+      <Setter Property="Background" Value="#28FFFFFF"/>
+      <Setter Property="BoxShadow"  Value="0 3 10 0 #302196F3"/>
     </Style>
     <Style Selector="ListBoxItem.menu-item:selected Border.icon-circle">
-      <Setter Property="Background" Value="#2196F3"/>
-      <Setter Property="BoxShadow"  Value="0 3 10 0 #402196F3"/>
+      <Setter Property="Background">
+        <LinearGradientBrush StartPoint="0%,0%" EndPoint="100%,100%">
+          <GradientStop Offset="0" Color="#CC1976D2"/>
+          <GradientStop Offset="1" Color="#CC2196F3"/>
+        </LinearGradientBrush>
+      </Setter>
+      <Setter Property="BoxShadow" Value="0 3 12 0 #502196F3"/>
     </Style>
     <Style Selector="ListBoxItem.menu-item:selected:pointerover Border.icon-circle">
-      <Setter Property="Background" Value="#1E88E5"/>
+      <Setter Property="Background">
+        <LinearGradientBrush StartPoint="0%,0%" EndPoint="100%,100%">
+          <GradientStop Offset="0" Color="#EE1565C0"/>
+          <GradientStop Offset="1" Color="#EE1976D2"/>
+        </LinearGradientBrush>
+      </Setter>
     </Style>
 
-    <!-- Icones -->
+    <!-- Ícones MaterialIcon -->
     <Style Selector="ListBoxItem.menu-item mi|MaterialIcon">
-      <Setter Property="Foreground" Value="#7B8FA6"/>
+      <Setter Property="Foreground" Value="#55FFFFFF"/>
       <Setter Property="Width"      Value="18"/>
       <Setter Property="Height"     Value="18"/>
     </Style>
     <Style Selector="ListBoxItem.menu-item:pointerover mi|MaterialIcon">
-      <Setter Property="Foreground" Value="#2196F3"/>
+      <Setter Property="Foreground" Value="#42A5F5"/>
     </Style>
     <Style Selector="ListBoxItem.menu-item:selected mi|MaterialIcon">
       <Setter Property="Foreground" Value="White"/>
@@ -152,16 +161,16 @@
 
     <!-- Texto dos itens -->
     <Style Selector="ListBoxItem.menu-item TextBlock.menu-label">
-      <Setter Property="Foreground" Value="#44546A"/>
+      <Setter Property="Foreground" Value="#70FFFFFF"/>
       <Setter Property="FontSize"   Value="13"/>
       <Setter Property="FontWeight" Value="Medium"/>
     </Style>
     <Style Selector="ListBoxItem.menu-item:selected TextBlock.menu-label">
-      <Setter Property="Foreground" Value="#2196F3"/>
+      <Setter Property="Foreground" Value="#E8F0FF"/>
       <Setter Property="FontWeight" Value="SemiBold"/>
     </Style>
     <Style Selector="ListBoxItem.menu-item:pointerover TextBlock.menu-label">
-      <Setter Property="Foreground" Value="#2196F3"/>
+      <Setter Property="Foreground" Value="#C8DCFF"/>
     </Style>
 
   </Window.Styles>
@@ -175,156 +184,236 @@
     </DataTemplate>
   </Window.DataTemplates>
 
-  <!-- Grid raiz -->
-  <Grid>
-    <Grid.ColumnDefinitions>
-      <ColumnDefinition Width="64"/>
-      <ColumnDefinition Width="*"/>
-    </Grid.ColumnDefinitions>
+  <!-- Fundo dark global + orbes de luz -->
+  <Panel>
 
-    <!-- Conteudo principal -->
-    <ContentControl Grid.Column="1" Content="{Binding CurrentPage}"/>
-
-    <!-- Overlay escuro: cobre tudo, fica entre conteudo e sidebar.
-         A opacidade e controlada via code-behind (PointerEntered/Exited). -->
-    <Border x:Name="SidebarOverlay"
-            Classes="overlay"
-            Grid.Column="0"
-            Grid.ColumnSpan="2"
-            ZIndex="5"/>
-
-    <!-- SIDEBAR -->
-    <Border x:Name="Sidebar"
-            Classes="sidebar"
-            Grid.Column="0"
-            Grid.ColumnSpan="2"
-            ZIndex="10"
-            HorizontalAlignment="Left"
-            Background="#FFFFFF"
-            Padding="12,16"
-            ClipToBounds="True"
-            BoxShadow="2 0 16 0 #14000000">
-
-      <Grid RowDefinitions="Auto, *, Auto">
-
-        <!-- Logo -->
-        <Border Grid.Row="0"
-                BorderBrush="#F0F0F0" BorderThickness="0,0,0,1"
-                Padding="0,0,0,14" Margin="0,0,0,12"
-                Height="52">
-          <Grid>
-            <Image Classes="logo-icon"
-                   Source="/Assets/SmartGest_-_ImaLogo1.png"
-                   Width="32" Height="32"
-                   HorizontalAlignment="Center"
-                   VerticalAlignment="Center"
-                   Stretch="Uniform"/>
-            <Image Classes="logo-full"
-                   Source="/Assets/smartgest_logo.png"
-                   Height="32"
-                   HorizontalAlignment="Left"
-                   VerticalAlignment="Center"
-                   Stretch="Uniform"/>
-          </Grid>
-        </Border>
-
-        <!-- Menu -->
-        <ListBox Grid.Row="1"
-                 Background="Transparent"
-                 BorderThickness="0"
-                 SelectedIndex="{Binding SelectedMenuIndex}">
-
-          <ListBoxItem Classes="menu-item">
-            <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Spacing="10" Margin="2,0">
-              <Border Classes="icon-circle">
-                <mi:MaterialIcon Kind="ViewDashboard" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-              </Border>
-              <TextBlock Classes="menu-label" Text="Dashboard Principal" VerticalAlignment="Center"/>
-            </StackPanel>
-          </ListBoxItem>
-
-          <ListBoxItem Classes="menu-item">
-            <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Spacing="10" Margin="2,0">
-              <Border Classes="icon-circle">
-                <mi:MaterialIcon Kind="CashRegister" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-              </Border>
-              <TextBlock Classes="menu-label" Text="Caixa" VerticalAlignment="Center"/>
-            </StackPanel>
-          </ListBoxItem>
-
-          <ListBoxItem Classes="menu-item">
-            <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Spacing="10" Margin="2,0">
-              <Border Classes="icon-circle">
-                <mi:MaterialIcon Kind="ScaleBalance" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-              </Border>
-              <TextBlock Classes="menu-label" Text="Balancete" VerticalAlignment="Center"/>
-            </StackPanel>
-          </ListBoxItem>
-
-          <ListBoxItem Classes="menu-item">
-            <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Spacing="10" Margin="2,0">
-              <Border Classes="icon-circle">
-                <mi:MaterialIcon Kind="ChartBarStacked" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-              </Border>
-              <TextBlock Classes="menu-label" Text="Balanco Patrimonial" VerticalAlignment="Center"/>
-            </StackPanel>
-          </ListBoxItem>
-
-          <ListBoxItem Classes="menu-item">
-            <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Spacing="10" Margin="2,0">
-              <Border Classes="icon-circle">
-                <mi:MaterialIcon Kind="FileChartOutline" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-              </Border>
-              <TextBlock Classes="menu-label" Text="DRE" VerticalAlignment="Center"/>
-            </StackPanel>
-          </ListBoxItem>
-
-          <ListBoxItem Classes="menu-item">
-            <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Spacing="10" Margin="2,0">
-              <Border Classes="icon-circle">
-                <mi:MaterialIcon Kind="Bank" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-              </Border>
-              <TextBlock Classes="menu-label" Text="Contas e Bancos" VerticalAlignment="Center"/>
-            </StackPanel>
-          </ListBoxItem>
-
-          <ListBoxItem Classes="menu-item">
-            <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Spacing="10" Margin="2,0">
-              <Border Classes="icon-circle">
-                <mi:MaterialIcon Kind="CogOutline" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-              </Border>
-              <TextBlock Classes="menu-label" Text="Configuracoes" VerticalAlignment="Center"/>
-            </StackPanel>
-          </ListBoxItem>
-
-        </ListBox>
-
-        <!-- Perfil -->
-        <Border Grid.Row="2"
-                BorderBrush="#F0F0F0" BorderThickness="0,1,0,0"
-                Padding="0,12,0,0">
-          <StackPanel Orientation="Horizontal" Spacing="10">
-            <Border Width="36" Height="36" CornerRadius="18"
-                    Background="#E3F2FD"
-                    BoxShadow="0 2 6 0 #18000000"
-                    HorizontalAlignment="Center">
-              <TextBlock Text="AB"
-                         VerticalAlignment="Center"
-                         HorizontalAlignment="Center"
-                         FontWeight="Bold"
-                         Foreground="#2196F3"/>
-            </Border>
-            <StackPanel Classes="user-info" VerticalAlignment="Center">
-              <TextBlock Text="{Binding UsuarioNome}"
-                         FontSize="13" FontWeight="SemiBold" Foreground="#333333"/>
-              <TextBlock Text="Administrador"
-                         FontSize="11" Foreground="#888888"/>
-            </StackPanel>
-          </StackPanel>
-        </Border>
-
-      </Grid>
+    <!-- Gradiente de fundo -->
+    <Border>
+      <Border.Background>
+        <LinearGradientBrush StartPoint="0%,0%" EndPoint="100%,100%">
+          <GradientStop Offset="0"    Color="#080E1E"/>
+          <GradientStop Offset="0.5"  Color="#0A1628"/>
+          <GradientStop Offset="1"    Color="#060D1A"/>
+        </LinearGradientBrush>
+      </Border.Background>
     </Border>
 
-  </Grid>
+    <!-- Orbe topo direito -->
+    <Ellipse Width="600" Height="600"
+             HorizontalAlignment="Right" VerticalAlignment="Top"
+             Margin="0,-200,-150,0" Opacity="0.10">
+      <Ellipse.Fill>
+        <RadialGradientBrush>
+          <GradientStop Offset="0" Color="#2196F3"/>
+          <GradientStop Offset="1" Color="Transparent"/>
+        </RadialGradientBrush>
+      </Ellipse.Fill>
+    </Ellipse>
+
+    <!-- Orbe fundo esquerdo -->
+    <Ellipse Width="400" Height="400"
+             HorizontalAlignment="Left" VerticalAlignment="Bottom"
+             Margin="-80,0,0,-80" Opacity="0.08">
+      <Ellipse.Fill>
+        <RadialGradientBrush>
+          <GradientStop Offset="0" Color="#1565C0"/>
+          <GradientStop Offset="1" Color="Transparent"/>
+        </RadialGradientBrush>
+      </Ellipse.Fill>
+    </Ellipse>
+
+    <!-- Grid principal -->
+    <Grid>
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="68"/>
+        <ColumnDefinition Width="*"/>
+      </Grid.ColumnDefinitions>
+
+      <!-- Conteúdo principal -->
+      <ContentControl Grid.Column="1"
+                      Content="{Binding CurrentPage}"
+                      Margin="0"/>
+
+      <!-- Overlay escuro (entre conteúdo e sidebar) -->
+      <Border x:Name="SidebarOverlay"
+              Classes="overlay"
+              Grid.Column="0"
+              Grid.ColumnSpan="2"
+              ZIndex="5"/>
+
+      <!-- ===== SIDEBAR GLASS ===== -->
+      <Border x:Name="Sidebar"
+              Classes="sidebar"
+              Grid.Column="0"
+              Grid.ColumnSpan="2"
+              ZIndex="10"
+              HorizontalAlignment="Left"
+              ClipToBounds="True"
+              Padding="12,16"
+              BorderThickness="0,0,1,0"
+              BoxShadow="4 0 32 0 #30000000">
+
+        <!-- Fundo glass da sidebar -->
+        <Border.Background>
+          <LinearGradientBrush StartPoint="0%,0%" EndPoint="100%,100%">
+            <GradientStop Offset="0" Color="#1AFFFFFF"/>
+            <GradientStop Offset="1" Color="#0EFFFFFF"/>
+          </LinearGradientBrush>
+        </Border.Background>
+        <Border.BorderBrush>
+          <LinearGradientBrush StartPoint="0%,0%" EndPoint="0%,100%">
+            <GradientStop Offset="0"   Color="#30FFFFFF"/>
+            <GradientStop Offset="0.5" Color="#12FFFFFF"/>
+            <GradientStop Offset="1"   Color="#05FFFFFF"/>
+          </LinearGradientBrush>
+        </Border.BorderBrush>
+
+        <Grid RowDefinitions="Auto,*,Auto">
+
+          <!-- Logo -->
+          <Border Grid.Row="0"
+                  BorderThickness="0,0,0,1"
+                  Padding="0,0,0,14"
+                  Margin="0,0,0,12"
+                  Height="52">
+            <Border.BorderBrush>
+              <LinearGradientBrush StartPoint="0%,0%" EndPoint="100%,0%">
+                <GradientStop Offset="0"   Color="Transparent"/>
+                <GradientStop Offset="0.5" Color="#20FFFFFF"/>
+                <GradientStop Offset="1"   Color="Transparent"/>
+              </LinearGradientBrush>
+            </Border.BorderBrush>
+            <Grid>
+              <Image Classes="logo-icon"
+                     Source="/Assets/SmartGest_-_ImaLogo1.png"
+                     Width="32" Height="32"
+                     HorizontalAlignment="Center"
+                     VerticalAlignment="Center"
+                     Stretch="Uniform"/>
+              <Image Classes="logo-full"
+                     Source="/Assets/smartgest_logo_white.png"
+                     Height="28"
+                     HorizontalAlignment="Left"
+                     VerticalAlignment="Center"
+                     Stretch="Uniform"/>
+            </Grid>
+          </Border>
+
+          <!-- Menu -->
+          <ListBox Grid.Row="1"
+                   Background="Transparent"
+                   BorderThickness="0"
+                   SelectedIndex="{Binding SelectedMenuIndex}">
+
+            <ListBoxItem Classes="menu-item">
+              <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Spacing="10" Margin="2,0">
+                <Border Classes="icon-circle">
+                  <mi:MaterialIcon Kind="ViewDashboard" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                </Border>
+                <TextBlock Classes="menu-label" Text="Dashboard Principal" VerticalAlignment="Center"/>
+              </StackPanel>
+            </ListBoxItem>
+
+            <ListBoxItem Classes="menu-item">
+              <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Spacing="10" Margin="2,0">
+                <Border Classes="icon-circle">
+                  <mi:MaterialIcon Kind="CashRegister" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                </Border>
+                <TextBlock Classes="menu-label" Text="Caixa" VerticalAlignment="Center"/>
+              </StackPanel>
+            </ListBoxItem>
+
+            <ListBoxItem Classes="menu-item">
+              <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Spacing="10" Margin="2,0">
+                <Border Classes="icon-circle">
+                  <mi:MaterialIcon Kind="ScaleBalance" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                </Border>
+                <TextBlock Classes="menu-label" Text="Balancete" VerticalAlignment="Center"/>
+              </StackPanel>
+            </ListBoxItem>
+
+            <ListBoxItem Classes="menu-item">
+              <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Spacing="10" Margin="2,0">
+                <Border Classes="icon-circle">
+                  <mi:MaterialIcon Kind="ChartBarStacked" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                </Border>
+                <TextBlock Classes="menu-label" Text="Balanco Patrimonial" VerticalAlignment="Center"/>
+              </StackPanel>
+            </ListBoxItem>
+
+            <ListBoxItem Classes="menu-item">
+              <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Spacing="10" Margin="2,0">
+                <Border Classes="icon-circle">
+                  <mi:MaterialIcon Kind="FileChartOutline" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                </Border>
+                <TextBlock Classes="menu-label" Text="DRE" VerticalAlignment="Center"/>
+              </StackPanel>
+            </ListBoxItem>
+
+            <ListBoxItem Classes="menu-item">
+              <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Spacing="10" Margin="2,0">
+                <Border Classes="icon-circle">
+                  <mi:MaterialIcon Kind="Bank" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                </Border>
+                <TextBlock Classes="menu-label" Text="Contas e Bancos" VerticalAlignment="Center"/>
+              </StackPanel>
+            </ListBoxItem>
+
+            <ListBoxItem Classes="menu-item">
+              <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Spacing="10" Margin="2,0">
+                <Border Classes="icon-circle">
+                  <mi:MaterialIcon Kind="CogOutline" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                </Border>
+                <TextBlock Classes="menu-label" Text="Configuracoes" VerticalAlignment="Center"/>
+              </StackPanel>
+            </ListBoxItem>
+
+          </ListBox>
+
+          <!-- Perfil -->
+          <Border Grid.Row="2"
+                  BorderThickness="0,1,0,0"
+                  Padding="0,12,0,0">
+            <Border.BorderBrush>
+              <LinearGradientBrush StartPoint="0%,0%" EndPoint="100%,0%">
+                <GradientStop Offset="0"   Color="Transparent"/>
+                <GradientStop Offset="0.5" Color="#20FFFFFF"/>
+                <GradientStop Offset="1"   Color="Transparent"/>
+              </LinearGradientBrush>
+            </Border.BorderBrush>
+            <StackPanel Orientation="Horizontal" Spacing="10">
+              <!-- Avatar glass -->
+              <Border Width="36" Height="36" CornerRadius="18"
+                      BorderThickness="1"
+                      BorderBrush="#402196F3"
+                      BoxShadow="0 2 10 0 #402196F3"
+                      HorizontalAlignment="Center">
+                <Border.Background>
+                  <LinearGradientBrush StartPoint="0%,0%" EndPoint="100%,100%">
+                    <GradientStop Offset="0" Color="#201976D2"/>
+                    <GradientStop Offset="1" Color="#302196F3"/>
+                  </LinearGradientBrush>
+                </Border.Background>
+                <TextBlock Text="AB"
+                           VerticalAlignment="Center"
+                           HorizontalAlignment="Center"
+                           FontWeight="Bold"
+                           FontSize="13"
+                           Foreground="#90C4FF"/>
+              </Border>
+              <StackPanel Classes="user-info" VerticalAlignment="Center">
+                <TextBlock Text="{Binding UsuarioNome}"
+                           FontSize="13" FontWeight="SemiBold"
+                           Foreground="#E8F0FF"/>
+                <TextBlock Text="Administrador"
+                           FontSize="11" Foreground="#55FFFFFF"/>
+              </StackPanel>
+            </StackPanel>
+          </Border>
+
+        </Grid>
+      </Border>
+
+    </Grid>
+  </Panel>
 </Window>

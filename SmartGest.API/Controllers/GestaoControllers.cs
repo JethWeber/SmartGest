@@ -106,10 +106,24 @@ public class DashboardController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> Obter()
     {
-        var anoAtual = DateTime.Today.Year;
+        var hoje      = DateTime.Today;
+        var inicioAno = new DateTime(hoje.Year, 1, 1);
+        var anoPass   = hoje.Year - 1;
 
+        // FIX #2: filtro por intervalo de datas — aproveita o índice IX_Lancamento_Data
+        // e é imune ao bug de UTC (sem .Year == anoAtual que força EXTRACT no PostgreSQL)
         var lancamentos = await _db.Lancamentos
-            .Where(l => l.Data.Year == anoAtual)
+            .Where(l => !l.Anulado && l.Data >= inicioAno && l.Data <= hoje)
+            .ToListAsync();
+
+        // FIX #2.3: ano anterior com intervalo equivalente — sem lógica frágil de dias
+        var inicioAnoPass = new DateTime(anoPass, 1, 1);
+        var fimAnoPass    = new DateTime(
+            anoPass, hoje.Month,
+            Math.Min(hoje.Day, DateTime.DaysInMonth(anoPass, hoje.Month)));
+
+        var lancamentosAnoPassado = await _db.Lancamentos
+            .Where(l => !l.Anulado && l.Data >= inicioAnoPass && l.Data <= fimAnoPass)
             .ToListAsync();
 
         var meses = Enumerable.Range(1, 12).Select(m =>
@@ -124,8 +138,12 @@ public class DashboardController : ControllerBase
         var totalRec  = lancamentos.Where(l => l.Tipo == "Entrada").Sum(l => l.Valor);
         var totalDesp = lancamentos.Where(l => l.Tipo == "Saída").Sum(l => l.Valor);
 
+        var recAnoPass  = lancamentosAnoPassado.Where(l => l.Tipo == "Entrada").Sum(l => l.Valor);
+        var despAnoPass = lancamentosAnoPassado.Where(l => l.Tipo == "Saída").Sum(l => l.Valor);
+
         var ultimas = await _db.Lancamentos
             .Include(l => l.ContaBancaria)
+            .Where(l => !l.Anulado)
             .OrderByDescending(l => l.Data)
             .Take(10)
             .Select(l => new LancamentoResponse(
@@ -135,7 +153,10 @@ public class DashboardController : ControllerBase
                 l.ContaBancariaId, l.ContaBancaria != null ? l.ContaBancaria.Banco : null))
             .ToListAsync();
 
-        return Ok(new DashboardResponse(totalRec, totalDesp, totalRec - totalDesp, meses, ultimas));
+        return Ok(new DashboardResponse(
+            totalRec, totalDesp, totalRec - totalDesp,
+            recAnoPass, despAnoPass, recAnoPass - despAnoPass,
+            meses, ultimas));
     }
 }
 

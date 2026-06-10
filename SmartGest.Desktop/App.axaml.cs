@@ -86,10 +86,15 @@ public partial class App : Application
         services.AddTransient<ContasBancariasService>();
         services.AddTransient<ContabilidadeService>();
         services.AddTransient<CategoriaService>();
+        services.AddTransient<DashboardService>();
 
         // ── ViewModels simples ────────────────────────────────────────────────
         services.AddTransient<LoginViewModel>();
         services.AddTransient<CaixaViewModel>();
+        services.AddSingleton<DashboardViewModel>();
+        services.AddSingleton<BalanceteViewModel>();
+        services.AddSingleton<BalancoViewModel>();
+        services.AddSingleton<DreViewModel>();
 
         // SINGLETON: estado preservado entre navegações; construído uma única
         // vez após o login, quando o TokenStore já tem o JWT preenchido.

@@ -202,7 +202,19 @@ public class ContabilidadeService
         if (existentes.Count > 0)
             _db.LancamentoDetalhes.RemoveRange(existentes);
 
-        var par          = MapeamentoContabil.Resolver(lancamento.Categoria, lancamento.Tipo);
+        ParContabil par;
+        if (lancamento.CategoriaContabilId.HasValue)
+        {
+            var cat = await _db.Set<CategoriaContabil>().FindAsync(lancamento.CategoriaContabilId.Value);
+            if (cat is null)
+                throw new InvalidOperationException("Categoria contabilística não encontrada.");
+            par = new ParContabil(cat.ContaDebito, cat.ContaCredito);
+        }
+        else
+        {
+            par = MapeamentoContabil.Resolver(lancamento.Categoria, lancamento.Tipo);
+        }
+
         var contaDebito  = await ObterContaOuFalharAsync(par.CodigoDebito);
         var contaCredito = await ObterContaOuFalharAsync(par.CodigoCredito);
         var valor        = lancamento.Valor;

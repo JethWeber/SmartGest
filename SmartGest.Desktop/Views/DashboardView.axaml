@@ -3,238 +3,262 @@
              xmlns:vm="using:SmartGest.Desktop.ViewModels"
              xmlns:lvc="using:LiveChartsCore.SkiaSharpView.Avalonia"
              xmlns:mi="using:Material.Icons.Avalonia"
+             xmlns:sys="clr-namespace:System;assembly=System.Runtime"
+             xmlns:measure="using:LiveChartsCore.Measure"
              x:Class="SmartGest.Desktop.Views.DashboardView"
              x:DataType="vm:DashboardViewModel">
 
   <UserControl.Styles>
 
-    <!-- Card base -->
-    <Style Selector="Border.sg-card">
-      <Setter Property="Background"    Value="White"/>
-      <Setter Property="CornerRadius"  Value="10"/>
-      <Setter Property="Padding"       Value="20,16"/>
-      <Setter Property="BoxShadow"     Value="0 2 12 0 #0A000000"/>
-    </Style>
-
-    <!-- Cabeçalho da secção -->
+    <!-- Título de secção -->
     <Style Selector="TextBlock.section-title">
-      <Setter Property="FontSize"     Value="13"/>
-      <Setter Property="FontWeight"   Value="SemiBold"/>
-      <Setter Property="Foreground"   Value="#1A2E5A"/>
-      <Setter Property="Margin"       Value="0,0,0,12"/>
+      <Setter Property="FontSize"      Value="13"/>
+      <Setter Property="FontWeight"    Value="SemiBold"/>
+      <Setter Property="Foreground"    Value="#C8DCFF"/>
+      <Setter Property="Margin"        Value="0,0,0,14"/>
+      <Setter Property="LetterSpacing" Value="0.3"/>
     </Style>
 
-    <!-- Etiqueta dos cards de métrica -->
+    <!-- Label das métricas -->
     <Style Selector="TextBlock.metric-label">
-      <Setter Property="FontSize"   Value="11"/>
-      <Setter Property="Foreground" Value="#9AA0AB"/>
+      <Setter Property="FontSize"   Value="10.5"/>
+      <Setter Property="Foreground" Value="#60FFFFFF"/>
       <Setter Property="FontWeight" Value="Medium"/>
+      <Setter Property="LetterSpacing" Value="0.8"/>
     </Style>
 
-    <!-- Valor principal dos cards -->
+    <!-- Valor principal das métricas -->
     <Style Selector="TextBlock.metric-value">
-      <Setter Property="FontSize"   Value="19"/>
+      <Setter Property="FontSize"   Value="22"/>
       <Setter Property="FontWeight" Value="Bold"/>
-      <Setter Property="Margin"     Value="0,4,0,0"/>
+      <Setter Property="Margin"     Value="0,5,0,0"/>
     </Style>
 
     <!-- Linhas alternadas na tabela -->
     <Style Selector="DataGridRow:nth-child(odd)">
-      <Setter Property="Background" Value="#F9FAFC"/>
+      <Setter Property="Background" Value="#08FFFFFF"/>
     </Style>
 
   </UserControl.Styles>
 
-  <ScrollViewer Background="#F4F6FA">
+  <ScrollViewer Background="Transparent">
     <Border Padding="28,24">
       <StackPanel Spacing="20">
 
-        <!-- ══════════════════════════════════════════════════════
-     BANNER EDUCAEMPREENDE
-     ══════════════════════════════════════════════════════ -->
-        <Border CornerRadius="12"
+        <!-- ══════════════════════════════════════════════════
+             BANNER EDUCAEMPREENDE (glass)
+             ══════════════════════════════════════════════════ -->
+        <Border CornerRadius="14"
                 ClipToBounds="True"
-                Height="90">
+                Height="90"
+                BorderThickness="1"
+                BoxShadow="0 4 24 0 #28000000">
+          <Border.BorderBrush>
+            <LinearGradientBrush StartPoint="0%,0%" EndPoint="100%,100%">
+              <GradientStop Offset="0"   Color="#35FFFFFF"/>
+              <GradientStop Offset="1"   Color="#08FFFFFF"/>
+            </LinearGradientBrush>
+          </Border.BorderBrush>
           <Border.Background>
             <LinearGradientBrush StartPoint="0%,0%" EndPoint="100%,100%">
-              <GradientStop Color="#0D1B4B" Offset="0"/>
-              <GradientStop Color="#0A1535" Offset="0.5"/>
-              <GradientStop Color="#111C45" Offset="1"/>
+              <GradientStop Offset="0" Color="#20FFFFFF"/>
+              <GradientStop Offset="1" Color="#0AFFFFFF"/>
             </LinearGradientBrush>
           </Border.Background>
 
-          <!-- Linha decorativa magenta no topo -->
           <Panel>
-            <Border VerticalAlignment="Top"
-                    Height="3"
-                    CornerRadius="12,12,0,0">
+            <!-- Faixa decorativa topo -->
+            <Border VerticalAlignment="Top" Height="3" CornerRadius="14,14,0,0">
               <Border.Background>
                 <LinearGradientBrush StartPoint="0%,0%" EndPoint="100%,0%">
                   <GradientStop Color="#FF2D78" Offset="0"/>
                   <GradientStop Color="#FF6BB0" Offset="0.5"/>
-                  <GradientStop Color="#3BB5E8" Offset="1"/>
+                  <GradientStop Color="#2196F3" Offset="1"/>
                 </LinearGradientBrush>
               </Border.Background>
             </Border>
 
-            <!-- Conteúdo do banner -->
-            <Grid ColumnDefinitions="Auto, *, Auto"
-                  Margin="20,0">
+            <Grid ColumnDefinitions="Auto,*,Auto" Margin="20,0">
 
-              <!-- Logo (texto substituto enquanto não há imagem carregada) -->
+              <!-- Logo EducaEmpreende -->
               <StackPanel Grid.Column="0"
                           Orientation="Horizontal"
                           VerticalAlignment="Center"
-                          Spacing="8">
-                <!-- Ícone "e" circular com gradiente -->
-                <Border Width="38" Height="38"
-                        CornerRadius="19">
+                          Spacing="10">
+                <Border Width="38" Height="38" CornerRadius="19"
+                        BoxShadow="0 2 10 0 #40FF2D78">
                   <Border.Background>
                     <LinearGradientBrush StartPoint="0%,0%" EndPoint="100%,100%">
                       <GradientStop Color="#FF2D78" Offset="0"/>
                       <GradientStop Color="#3BB5E8" Offset="1"/>
                     </LinearGradientBrush>
                   </Border.Background>
-                  <TextBlock Text="e"
-                            FontSize="20"
-                            FontWeight="Bold"
-                            Foreground="White"
-                            HorizontalAlignment="Center"
-                            VerticalAlignment="Center"/>
+                  <TextBlock Text="e" FontSize="20" FontWeight="Bold"
+                             Foreground="White"
+                             HorizontalAlignment="Center"
+                             VerticalAlignment="Center"/>
                 </Border>
-
-                <!-- Nome da marca -->
                 <StackPanel VerticalAlignment="Center" Spacing="0">
                   <StackPanel Orientation="Horizontal" Spacing="0">
-                    <TextBlock Text="educa"
-                              FontSize="15"
-                              FontWeight="Bold"
-                              Foreground="#FF2D78"/>
-                    <TextBlock Text="Empreende"
-                              FontSize="15"
-                              FontWeight="Light"
-                              Foreground="White"/>
+                    <TextBlock Text="educa"   FontSize="15" FontWeight="Bold"  Foreground="#FF6BA8"/>
+                    <TextBlock Text="Empreende" FontSize="15" FontWeight="Light" Foreground="#E8F0FF"/>
                   </StackPanel>
                   <TextBlock Text="Gestão para MPMEs"
-                            FontSize="10"
-                            Foreground="#7A8BB5"
-                            LetterSpacing="1"/>
+                             FontSize="10" Foreground="#60FFFFFF" LetterSpacing="1"/>
                 </StackPanel>
               </StackPanel>
 
               <!-- Slogan central -->
               <TextBlock Grid.Column="1"
-                        Text="Transformando negócios através da gestão"
-                        FontSize="12"
-                        Foreground="#9BAACE"
-                        HorizontalAlignment="Center"
-                        VerticalAlignment="Center"
-                        FontStyle="Italic"/>
+                         Text="Transformando negócios através da gestão"
+                         FontSize="12" Foreground="#70FFFFFF"
+                         HorizontalAlignment="Center"
+                         VerticalAlignment="Center"
+                         FontStyle="Italic"/>
 
-              <!-- Tagline/badge direito -->
+              <!-- Badge direito -->
               <Border Grid.Column="2"
                       VerticalAlignment="Center"
-                      CornerRadius="20"
-                      Padding="12,5">
-                <Border.Background>
-                  <SolidColorBrush Color="#FF2D78" Opacity="0.15"/>
-                </Border.Background>
-                <Border.BorderBrush>
-                  <SolidColorBrush Color="#FF2D78" Opacity="0.4"/>
-                </Border.BorderBrush>
-                <Border.BorderThickness>
-                  <Thickness>1</Thickness>
-                </Border.BorderThickness>
+                      CornerRadius="20" Padding="12,5"
+                      BorderThickness="1"
+                      BorderBrush="#40FF2D78"
+                      Background="#18FF2D78">
                 <TextBlock Text="@educa_e_empreende"
-                          FontSize="11"
-                          Foreground="#FF2D78"/>
+                           FontSize="11" Foreground="#FF8AB8"/>
               </Border>
 
             </Grid>
           </Panel>
         </Border>
 
-        <!-- ══════════════════════════════════════════════════════
+        <!-- ══════════════════════════════════════════════════
              CABEÇALHO
-             ══════════════════════════════════════════════════════ -->
-        <Grid ColumnDefinitions="*, Auto">
-          <TextBlock Grid.Column="0"
-                     Text="DashBoard Principal"
-                     FontSize="20"
-                     FontWeight="Bold"
-                     Foreground="#1A2E5A"
-                     VerticalAlignment="Center"/>
-
-          <!-- Ícone de notificações (sino) -->
+             ══════════════════════════════════════════════════ -->
+        <Grid ColumnDefinitions="*,Auto">
+          <StackPanel Grid.Column="0">
+            <TextBlock Text="Dashboard"
+                       FontSize="26" FontWeight="Bold"
+                       Foreground="#F0F6FF"/>
+            <TextBlock Text="Visão geral do desempenho financeiro"
+                       FontSize="12" Foreground="#55FFFFFF" Margin="0,4,0,0"/>
+          </StackPanel>
           <Border Grid.Column="1"
-                  Width="36" Height="36"
-                  CornerRadius="18"
-                  Background="White"
-                  BoxShadow="0 2 8 0 #0A000000"
-                  VerticalAlignment="Center">
-            <TextBlock Text="🔔"
-                       FontSize="16"
-                       HorizontalAlignment="Center"
-                       VerticalAlignment="Center"/>
+                  CornerRadius="20" Padding="14,8"
+                  VerticalAlignment="Center"
+                  BorderThickness="1"
+                  BorderBrush="#252196F3"
+                  Background="#142196F3">
+            <TextBlock Text="{Binding Source={x:Static sys:DateTime.Now}, StringFormat='{}{0:dddd, dd MMMM yyyy}'}"
+                       FontSize="11" FontWeight="Medium" Foreground="#7EB8F7"/>
           </Border>
         </Grid>
 
-        <!-- ══════════════════════════════════════════════════════
+        <!-- Erro -->
+        <Border CornerRadius="10" Padding="14,10"
+                BorderThickness="1" BorderBrush="#40E53935"
+                Background="#18E53935"
+                IsVisible="{Binding TemErro}">
+          <TextBlock Text="{Binding ErroMensagem}" Foreground="#FF8A80" FontSize="12"/>
+        </Border>
+
+        <!-- ══════════════════════════════════════════════════
              CARDS DE MÉTRICAS
-             ══════════════════════════════════════════════════════ -->
-        <Grid ColumnDefinitions="*, 12, *, 12, *">
+             ══════════════════════════════════════════════════ -->
+        <Grid ColumnDefinitions="*,14,*,14,*">
 
           <!-- Receita Total -->
           <Border Grid.Column="0" Classes="sg-card">
-            <Grid ColumnDefinitions="*, 100">
-              <StackPanel Grid.Column="0" VerticalAlignment="Center" Spacing="2">
-                <TextBlock Classes="metric-label" Text="Receita Total"/>
-                <TextBlock Classes="metric-value" Text="{Binding TotalReceita}" Foreground="#2196F3"/>
-              </StackPanel>
-              <lvc:CartesianChart Grid.Column="1"
-                                  Height="50"
-                                  Series="{Binding SparklineReceita}"
-                                  TooltipPosition="Hidden"
-                                  Background="Transparent"/>
-            </Grid>
+            <Border CornerRadius="10" Padding="16,14"
+                    BorderThickness="1" BorderBrush="#282196F3"
+                    Background="#142196F3">
+              <Grid ColumnDefinitions="*,80">
+                <StackPanel Grid.Column="0" VerticalAlignment="Center" Spacing="6">
+                  <StackPanel Orientation="Horizontal" Spacing="8">
+                    <Ellipse Width="8" Height="8" Fill="#42A5F5"/>
+                    <TextBlock Classes="metric-label" Text="RECEITA TOTAL"/>
+                  </StackPanel>
+                  <TextBlock Classes="metric-value"
+                             Text="{Binding TotalReceita}"
+                             Foreground="#64B5F6"/>
+                  <Border CornerRadius="6" Padding="8,4"
+                          Background="{Binding FundoReceitaVar}">
+                    <TextBlock Text="{Binding ReceitaVariacao}"
+                               FontSize="10" FontWeight="SemiBold"
+                               Foreground="{Binding CorReceitaVar}"/>
+                  </Border>
+                </StackPanel>
+                <lvc:CartesianChart Grid.Column="1" Height="52"
+                                    Series="{Binding SparklineReceita}"
+                                    TooltipPosition="Hidden"
+                                    Background="Transparent"/>
+              </Grid>
+            </Border>
           </Border>
 
           <!-- Despesas -->
           <Border Grid.Column="2" Classes="sg-card">
-            <Grid ColumnDefinitions="*, 100">
-              <StackPanel Grid.Column="0" VerticalAlignment="Center" Spacing="2">
-                <TextBlock Classes="metric-label" Text="Despesas"/>
-                <TextBlock Classes="metric-value" Text="{Binding TotalDespesa}" Foreground="#E53935"/>
-              </StackPanel>
-              <lvc:CartesianChart Grid.Column="1"
-                                  Height="50"
-                                  Series="{Binding SparklineDespesa}"
-                                  TooltipPosition="Hidden"
-                                  Background="Transparent"/>
-            </Grid>
+            <Border CornerRadius="10" Padding="16,14"
+                    BorderThickness="1" BorderBrush="#28E53935"
+                    Background="#14E53935">
+              <Grid ColumnDefinitions="*,80">
+                <StackPanel Grid.Column="0" VerticalAlignment="Center" Spacing="6">
+                  <StackPanel Orientation="Horizontal" Spacing="8">
+                    <Ellipse Width="8" Height="8" Fill="#EF9A9A"/>
+                    <TextBlock Classes="metric-label" Text="DESPESAS"/>
+                  </StackPanel>
+                  <TextBlock Classes="metric-value"
+                             Text="{Binding TotalDespesa}"
+                             Foreground="#EF9A9A"/>
+                  <Border CornerRadius="6" Padding="8,4"
+                          Background="{Binding FundoDespesaVar}">
+                    <TextBlock Text="{Binding DespesaVariacao}"
+                               FontSize="10" FontWeight="SemiBold"
+                               Foreground="{Binding CorDespesaVar}"/>
+                  </Border>
+                </StackPanel>
+                <lvc:CartesianChart Grid.Column="1" Height="52"
+                                    Series="{Binding SparklineDespesa}"
+                                    TooltipPosition="Hidden"
+                                    Background="Transparent"/>
+              </Grid>
+            </Border>
           </Border>
 
           <!-- Lucro Líquido -->
           <Border Grid.Column="4" Classes="sg-card">
-            <Grid ColumnDefinitions="*, 100">
-              <StackPanel Grid.Column="0" VerticalAlignment="Center" Spacing="2">
-                <TextBlock Classes="metric-label" Text="Lucro Líquido"/>
-                <TextBlock Classes="metric-value" Text="{Binding LucroLiquido}" Foreground="#43A047"/>
-              </StackPanel>
-              <lvc:CartesianChart Grid.Column="1"
-                                  Height="50"
-                                  Series="{Binding SparklineLucro}"
-                                  TooltipPosition="Hidden"
-                                  Background="Transparent"/>
-            </Grid>
+            <Border CornerRadius="10" Padding="16,14"
+                    BorderThickness="1" BorderBrush="#2843A047"
+                    Background="#1443A047">
+              <Grid ColumnDefinitions="*,80">
+                <StackPanel Grid.Column="0" VerticalAlignment="Center" Spacing="6">
+                  <StackPanel Orientation="Horizontal" Spacing="8">
+                    <Ellipse Width="8" Height="8" Fill="#81C784"/>
+                    <TextBlock Classes="metric-label" Text="LUCRO LÍQUIDO"/>
+                  </StackPanel>
+                  <TextBlock Classes="metric-value"
+                             Text="{Binding LucroLiquido}"
+                             Foreground="#81C784"/>
+                  <Border CornerRadius="6" Padding="8,4"
+                          Background="{Binding FundoLucroVar}">
+                    <TextBlock Text="{Binding LucroVariacao}"
+                               FontSize="10" FontWeight="SemiBold"
+                               Foreground="{Binding CorLucroVar}"/>
+                  </Border>
+                </StackPanel>
+                <lvc:CartesianChart Grid.Column="1" Height="52"
+                                    Series="{Binding SparklineLucro}"
+                                    TooltipPosition="Hidden"
+                                    Background="Transparent"/>
+              </Grid>
+            </Border>
           </Border>
 
         </Grid>
 
-        <!-- ══════════════════════════════════════════════════════
+        <!-- ══════════════════════════════════════════════════
              GRÁFICOS PRINCIPAIS
-             ══════════════════════════════════════════════════════ -->
-        <Grid ColumnDefinitions="2*, 12, *">
+             ══════════════════════════════════════════════════ -->
+        <Grid ColumnDefinitions="2*,12,*">
 
           <!-- Fluxo Financeiro -->
           <Border Grid.Column="0" Classes="sg-card">
@@ -242,11 +266,12 @@
               <TextBlock DockPanel.Dock="Top"
                          Classes="section-title"
                          Text="Fluxo Financeiro"/>
-              <lvc:CartesianChart Height="240"
+              <lvc:CartesianChart x:Name="FluxoChart" Height="280"
                                   Series="{Binding FluxoFinanceiroSeries}"
                                   XAxes="{Binding XAxes}"
                                   YAxes="{Binding YAxes}"
-                                  LegendPosition="Top"/>
+                                  TooltipPosition="Top"
+                                  Background="Transparent"/>
             </DockPanel>
           </Border>
 
@@ -258,22 +283,23 @@
                          Text="Distribuição Financeira"/>
               <lvc:PieChart Height="240"
                             Series="{Binding DistribuicaoSeries}"
-                            LegendPosition="Bottom"/>
+                            Background="Transparent"/>
             </DockPanel>
           </Border>
 
         </Grid>
 
-        <!-- ══════════════════════════════════════════════════════
+        <!-- ══════════════════════════════════════════════════
              TABELA DE MOVIMENTAÇÕES
-             ══════════════════════════════════════════════════════ -->
+             ══════════════════════════════════════════════════ -->
         <Border Classes="sg-card">
           <DockPanel>
             <TextBlock DockPanel.Dock="Top"
                        Classes="section-title"
                        Text="Últimas Movimentações"/>
 
-            <DataGrid ItemsSource="{Binding UltimasMovimentacoes}"
+            <DataGrid Classes="sg-grid"
+                      ItemsSource="{Binding UltimasMovimentacoes}"
                       AutoGenerateColumns="False"
                       IsReadOnly="True"
                       GridLinesVisibility="Horizontal"
@@ -288,7 +314,7 @@
                     <DataTemplate x:DataType="vm:MovimentacaoItem">
                       <TextBlock Text="{Binding Data}"
                                  VerticalAlignment="Center"
-                                 Foreground="#555555"
+                                 Foreground="#90AECF"
                                  Margin="10,0"/>
                     </DataTemplate>
                   </DataGridTemplateColumn.CellTemplate>
@@ -299,7 +325,7 @@
                     <DataTemplate x:DataType="vm:MovimentacaoItem">
                       <TextBlock Text="{Binding Tipo}"
                                  VerticalAlignment="Center"
-                                 Foreground="#555555"
+                                 Foreground="#90AECF"
                                  Margin="10,0"/>
                     </DataTemplate>
                   </DataGridTemplateColumn.CellTemplate>
@@ -310,7 +336,7 @@
                     <DataTemplate x:DataType="vm:MovimentacaoItem">
                       <TextBlock Text="{Binding Categoria}"
                                  VerticalAlignment="Center"
-                                 Foreground="#333333"
+                                 Foreground="#C8DCFF"
                                  Margin="10,0"/>
                     </DataTemplate>
                   </DataGridTemplateColumn.CellTemplate>
@@ -321,7 +347,7 @@
                     <DataTemplate x:DataType="vm:MovimentacaoItem">
                       <TextBlock Text="{Binding Conta}"
                                  VerticalAlignment="Center"
-                                 Foreground="#555555"
+                                 Foreground="#90AECF"
                                  Margin="10,0"/>
                     </DataTemplate>
                   </DataGridTemplateColumn.CellTemplate>
@@ -332,8 +358,8 @@
                     <DataTemplate x:DataType="vm:MovimentacaoItem">
                       <TextBlock Text="{Binding Valor}"
                                  VerticalAlignment="Center"
-                                 FontWeight="Medium"
-                                 Foreground="#1A2E5A"
+                                 FontWeight="SemiBold"
+                                 Foreground="{Binding CorValor}"
                                  Margin="10,0"/>
                     </DataTemplate>
                   </DataGridTemplateColumn.CellTemplate>

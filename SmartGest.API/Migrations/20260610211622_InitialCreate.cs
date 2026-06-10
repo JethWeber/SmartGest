@@ -9,11 +9,32 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace SmartGest.API.Migrations
 {
     /// <inheritdoc />
-    public partial class PGC_Angola_PostgreSQL : Migration
+    public partial class InitialCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.CreateTable(
+                name: "CategoriaContabeis",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Nome = table.Column<string>(type: "text", nullable: false),
+                    Tipo = table.Column<string>(type: "text", nullable: false),
+                    ContaDebito = table.Column<string>(type: "text", nullable: false),
+                    ContaCredito = table.Column<string>(type: "text", nullable: false),
+                    GrupoDre = table.Column<string>(type: "text", nullable: false),
+                    GrupoBalanco = table.Column<string>(type: "text", nullable: false),
+                    GrupoFluxoCaixa = table.Column<string>(type: "text", nullable: false),
+                    AplicaImpostoSelo = table.Column<bool>(type: "boolean", nullable: false),
+                    Ativo = table.Column<bool>(type: "boolean", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CategoriaContabeis", x => x.Id);
+                });
+
             migrationBuilder.CreateTable(
                 name: "Configuracoes",
                 columns: table => new
@@ -48,28 +69,6 @@ namespace SmartGest.API.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Configuracoes", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "ContasBancarias",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Banco = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
-                    NIB = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
-                    Tipo = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
-                    Moeda = table.Column<string>(type: "character varying(10)", maxLength: 10, nullable: false),
-                    SaldoAtual = table.Column<decimal>(type: "numeric(18,2)", nullable: false),
-                    SaldoOntem = table.Column<decimal>(type: "numeric(18,2)", nullable: false),
-                    Agencia = table.Column<string>(type: "character varying(150)", maxLength: 150, nullable: false),
-                    Titular = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false),
-                    CorAccent = table.Column<string>(type: "character varying(20)", maxLength: 20, nullable: false),
-                    Activa = table.Column<bool>(type: "boolean", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_ContasBancarias", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -125,7 +124,7 @@ namespace SmartGest.API.Migrations
                     Activo = table.Column<bool>(type: "boolean", nullable: false),
                     Iniciais = table.Column<string>(type: "text", nullable: false),
                     CorAvatar = table.Column<string>(type: "text", nullable: false),
-                    CriadoEm = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                    CriadoEm = table.Column<DateTime>(type: "timestamp without time zone", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -148,14 +147,67 @@ namespace SmartGest.API.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "ContasBancarias",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Banco = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    NIB = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
+                    Tipo = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
+                    Moeda = table.Column<string>(type: "character varying(10)", maxLength: 10, nullable: false),
+                    SaldoAtual = table.Column<decimal>(type: "numeric(18,2)", nullable: false),
+                    SaldoOntem = table.Column<decimal>(type: "numeric(18,2)", nullable: false),
+                    Agencia = table.Column<string>(type: "character varying(150)", maxLength: 150, nullable: false),
+                    Titular = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false),
+                    CorAccent = table.Column<string>(type: "character varying(20)", maxLength: 20, nullable: false),
+                    Activa = table.Column<bool>(type: "boolean", nullable: false),
+                    ContaContabilId = table.Column<int>(type: "integer", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ContasBancarias", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ContasBancarias_ContasContabeis_ContaContabilId",
+                        column: x => x.ContaContabilId,
+                        principalTable: "ContasContabeis",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.SetNull);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Sessoes",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    UtilizadorId = table.Column<int>(type: "integer", nullable: false),
+                    Dispositivo = table.Column<string>(type: "text", nullable: false),
+                    Localizacao = table.Column<string>(type: "text", nullable: false),
+                    UltimaActividade = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
+                    IsAtual = table.Column<bool>(type: "boolean", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Sessoes", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Sessoes_Utilizadores_UtilizadorId",
+                        column: x => x.UtilizadorId,
+                        principalTable: "Utilizadores",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Lancamentos",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Data = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    Data = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
                     Descricao = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: false),
                     Categoria = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
+                    CategoriaContabilId = table.Column<int>(type: "integer", nullable: true),
                     Tipo = table.Column<string>(type: "character varying(30)", maxLength: 30, nullable: false),
                     Valor = table.Column<decimal>(type: "numeric(18,2)", nullable: false),
                     Beneficiario = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
@@ -165,9 +217,9 @@ namespace SmartGest.API.Migrations
                     CentroCusto = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
                     ReferenciaInterna = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
                     ImpostoSelo = table.Column<decimal>(type: "numeric(18,2)", nullable: false),
-                    CriadoEm = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    CriadoEm = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
                     Anulado = table.Column<bool>(type: "boolean", nullable: false, defaultValue: false),
-                    AanuladoEm = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    AanuladoEm = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
                     AanuladoPor = table.Column<string>(type: "character varying(150)", maxLength: 150, nullable: true),
                     MotivoAnulacao = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: true),
                     ContaBancariaId = table.Column<int>(type: "integer", nullable: true)
@@ -175,6 +227,12 @@ namespace SmartGest.API.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Lancamentos", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Lancamentos_CategoriaContabeis_CategoriaContabilId",
+                        column: x => x.CategoriaContabilId,
+                        principalTable: "CategoriaContabeis",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.SetNull);
                     table.ForeignKey(
                         name: "FK_Lancamentos_ContasBancarias_ContaBancariaId",
                         column: x => x.ContaBancariaId,
@@ -190,7 +248,7 @@ namespace SmartGest.API.Migrations
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     ContaBancariaId = table.Column<int>(type: "integer", nullable: false),
-                    Data = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    Data = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
                     Descricao = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: false),
                     Referencia = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
                     Tipo = table.Column<string>(type: "character varying(20)", maxLength: 20, nullable: false),
@@ -203,29 +261,6 @@ namespace SmartGest.API.Migrations
                         name: "FK_MovimentosBancarios_ContasBancarias_ContaBancariaId",
                         column: x => x.ContaBancariaId,
                         principalTable: "ContasBancarias",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Sessoes",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    UtilizadorId = table.Column<int>(type: "integer", nullable: false),
-                    Dispositivo = table.Column<string>(type: "text", nullable: false),
-                    Localizacao = table.Column<string>(type: "text", nullable: false),
-                    UltimaActividade = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    IsAtual = table.Column<bool>(type: "boolean", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Sessoes", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Sessoes_Utilizadores_UtilizadorId",
-                        column: x => x.UtilizadorId,
-                        principalTable: "Utilizadores",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -259,57 +294,41 @@ namespace SmartGest.API.Migrations
                 });
 
             migrationBuilder.InsertData(
+                table: "CategoriaContabeis",
+                columns: new[] { "Id", "AplicaImpostoSelo", "Ativo", "ContaCredito", "ContaDebito", "GrupoBalanco", "GrupoDre", "GrupoFluxoCaixa", "Nome", "Tipo" },
+                values: new object[,]
+                {
+                    { 1, false, true, "71", "45", "", "Proveitos e Ganhos", "Operacional", "Venda de Mercadoria", "Entrada" },
+                    { 2, false, true, "72", "45", "", "Proveitos e Ganhos", "Operacional", "Prestação de Serviço", "Entrada" },
+                    { 3, false, true, "31", "45", "", "", "Operacional", "Recebimento de Cliente", "Entrada" },
+                    { 4, false, true, "73", "45", "", "Proveitos e Ganhos", "Operacional", "Outros Rendimentos", "Entrada" },
+                    { 5, false, true, "51", "45", "", "", "Financiamento", "Capital Inicial", "Entrada" },
+                    { 6, false, true, "33", "45", "", "", "Financiamento", "Empréstimo Bancário", "Entrada" },
+                    { 7, false, true, "78", "45", "", "Proveitos e Ganhos", "Financiamento", "Juros Recebidos", "Entrada" },
+                    { 8, false, true, "79", "45", "", "Proveitos e Ganhos", "Investimento", "Venda de Ativo", "Entrada" },
+                    { 9, false, true, "72", "45", "", "Proveitos e Ganhos", "Operacional", "Comissão Recebida", "Entrada" },
+                    { 10, false, true, "73", "45", "", "Proveitos e Ganhos", "Operacional", "Outras Entradas", "Entrada" },
+                    { 11, false, true, "45", "61", "", "Custos e Perdas", "Operacional", "Compra de Mercadoria", "Saída" },
+                    { 12, false, true, "45", "32", "", "", "Operacional", "Pagamento a Fornecedor", "Saída" },
+                    { 13, false, true, "45", "63", "", "Custos e Perdas", "Operacional", "Salários", "Saída" },
+                    { 14, false, true, "36", "63", "", "Custos e Perdas", "Operacional", "INSS", "Saída" },
+                    { 15, false, true, "34", "65", "", "Custos e Perdas", "Operacional", "IRT", "Saída" },
+                    { 16, false, true, "34", "65", "", "Custos e Perdas", "Operacional", "IVA", "Saída" },
+                    { 17, false, true, "34", "65", "", "Custos e Perdas", "Operacional", "Impostos e Taxas", "Saída" },
+                    { 18, false, true, "45", "62", "", "Custos e Perdas", "Operacional", "Despesa Administrativa", "Saída" },
+                    { 19, false, true, "45", "62", "", "Custos e Perdas", "Operacional", "Energia / Água / Internet", "Saída" },
+                    { 20, false, true, "45", "62", "", "Custos e Perdas", "Operacional", "Aluguer", "Saída" },
+                    { 21, false, true, "45", "62", "", "Custos e Perdas", "Operacional", "Combustível / Transportes", "Saída" },
+                    { 22, false, true, "45", "11", "", "", "Investimento", "Compra de Equipamento", "Saída" },
+                    { 23, false, true, "45", "68", "", "Custos e Perdas", "Financiamento", "Juros Bancários", "Saída" },
+                    { 24, false, true, "45", "33", "", "", "Financiamento", "Amortização de Empréstimo", "Saída" },
+                    { 25, false, true, "45", "66", "", "Custos e Perdas", "Operacional", "Outras Despesas", "Saída" }
+                });
+
+            migrationBuilder.InsertData(
                 table: "Configuracoes",
                 columns: new[] { "Id", "AnimacoesAtivadas", "ApiBaseUrl", "ApiKey", "DataFormatoIndex", "DoisFatoresAtivo", "EmailNotificacoes", "IdiomaIndex", "LimiarSaldoBaixo", "MoedaIndex", "MostrarSaldosOcultos", "MostrarSparklines", "NotifApp", "NotifBackup", "NotifEmail", "NotifErrosSistema", "NotifLancamentos", "NotifRelatorios", "NotifSaldoBaixo", "RegistarAuditoria", "RetryAtivado", "SessaoTimeoutMins", "TemaIndex", "TimeoutIndex", "TlsAtivado" },
                 values: new object[] { 1, true, "", "", 0, false, "", 0, 500000m, 0, false, true, true, true, true, true, true, false, true, true, true, 30, 0, 1, true });
-
-            migrationBuilder.InsertData(
-                table: "ContasBancarias",
-                columns: new[] { "Id", "Activa", "Agencia", "Banco", "CorAccent", "Moeda", "NIB", "SaldoAtual", "SaldoOntem", "Tipo", "Titular" },
-                values: new object[,]
-                {
-                    { 1, true, "Luanda — Maianga", "Banco BIC", "#1A2E5A", "AOA", "AO06.0055.0000.1234.5678.9012.3", 4820000m, 4600000m, "Conta à Ordem", "SmartGest, Lda." },
-                    { 2, true, "Luanda — Ingombota", "Banco BAI", "#0D47A1", "AOA", "AO06.0040.0000.9876.5432.1098.7", 3150000m, 3200000m, "Conta à Ordem", "SmartGest, Lda." },
-                    { 3, true, "Luanda — Samba", "Banco BPC", "#1B5E20", "AOA", "AO06.0038.0000.1111.2222.3333.4", 2980000m, 2980000m, "Depósito a Prazo", "SmartGest, Lda." },
-                    { 4, true, "Luanda — Talatona", "Banco ATL", "#E65100", "USD", "AO06.0006.0000.4444.5555.6666.7", 1530000m, 1490000m, "Conta à Ordem", "SmartGest, Lda." }
-                });
-
-            migrationBuilder.InsertData(
-                table: "ContasContabeis",
-                columns: new[] { "Id", "Activa", "Codigo", "Grupo", "IsDevedora", "Nome" },
-                values: new object[,]
-                {
-                    { 1, true, "11", "Ativo", true, "Activos Fixos Tangíveis" },
-                    { 2, true, "12", "Ativo", true, "Activos Intangíveis" },
-                    { 3, true, "13", "Ativo", true, "Investimentos Financeiros" },
-                    { 4, true, "18", "Ativo", false, "Amortizações Acumuladas" },
-                    { 5, true, "22", "Ativo", true, "Mercadorias" },
-                    { 6, true, "26", "Ativo", true, "Matérias-Primas e Subsidiárias" },
-                    { 7, true, "31", "Ativo", true, "Clientes" },
-                    { 8, true, "32", "Passivo", false, "Fornecedores" },
-                    { 9, true, "33", "Passivo", false, "Empréstimos Obtidos" },
-                    { 10, true, "34", "Passivo", false, "Estado e Outros Entes Públicos" },
-                    { 11, true, "36", "Passivo", false, "Pessoal" },
-                    { 12, true, "43", "Ativo", true, "Caixa" },
-                    { 13, true, "45", "Ativo", true, "Depósitos Bancários" },
-                    { 14, true, "51", "Capital", false, "Capital Social" },
-                    { 15, true, "55", "Capital", false, "Reservas Legais" },
-                    { 16, true, "59", "Capital", false, "Resultados Transitados" },
-                    { 17, true, "61", "Despesa", true, "Custo das Mercadorias Vendidas e Matérias Consumidas" },
-                    { 18, true, "62", "Despesa", true, "Fornecimentos e Serviços de Terceiros" },
-                    { 19, true, "63", "Despesa", true, "Gastos com Pessoal" },
-                    { 20, true, "64", "Despesa", true, "Amortizações e Depreciações do Exercício" },
-                    { 21, true, "65", "Despesa", true, "Impostos e Taxas" },
-                    { 22, true, "66", "Despesa", true, "Outros Custos e Perdas Operacionais" },
-                    { 23, true, "68", "Despesa", true, "Custos e Perdas Financeiras" },
-                    { 24, true, "69", "Despesa", true, "Custos e Perdas Extraordinárias" },
-                    { 25, true, "71", "Receita", false, "Vendas de Mercadorias e Produtos Acabados" },
-                    { 26, true, "72", "Receita", false, "Prestações de Serviços" },
-                    { 27, true, "73", "Receita", false, "Outros Proveitos e Ganhos Operacionais" },
-                    { 28, true, "78", "Receita", false, "Proveitos e Ganhos Financeiros" },
-                    { 29, true, "79", "Receita", false, "Proveitos e Ganhos Extraordinários" },
-                    { 30, true, "88", "Capital", false, "Resultado Líquido do Exercício" }
-                });
 
             migrationBuilder.InsertData(
                 table: "Empresas",
@@ -319,7 +338,12 @@ namespace SmartGest.API.Migrations
             migrationBuilder.InsertData(
                 table: "Utilizadores",
                 columns: new[] { "Id", "Activo", "CorAvatar", "CriadoEm", "Email", "Iniciais", "Nome", "PasswordHash", "Perfil", "Telefone" },
-                values: new object[] { 1, true, "#1A2E5A", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "augusto@smartgest.ao", "AB", "Augusto Barbosa", "$2a$11$W6k9CR/erDeuqTYNChrLiutX.MZ2kdzXydirBWQ82ihKjeJlSIw32", "Administrador", "900000000" });
+                values: new object[] { 1, true, "#1A2E5A", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "weber@smartgest.ao", "JW", "Jeth Weber", "$2b$11$a.TPqwNMTgPENS9Up.20f.CzgkVrSgpLt0KGfl3vWEWKeq/hEK7Rq", "Administrador", "900000000" });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ContasBancarias_ContaContabilId",
+                table: "ContasBancarias",
+                column: "ContaContabilId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ContasBancarias_NIB",
@@ -352,6 +376,11 @@ namespace SmartGest.API.Migrations
                 name: "IX_Lancamento_Data",
                 table: "Lancamentos",
                 column: "Data");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Lancamentos_CategoriaContabilId",
+                table: "Lancamentos",
+                column: "CategoriaContabilId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Lancamentos_ContaBancariaId",
@@ -403,16 +432,19 @@ namespace SmartGest.API.Migrations
                 name: "Webhooks");
 
             migrationBuilder.DropTable(
-                name: "ContasContabeis");
-
-            migrationBuilder.DropTable(
                 name: "Lancamentos");
 
             migrationBuilder.DropTable(
                 name: "Utilizadores");
 
             migrationBuilder.DropTable(
+                name: "CategoriaContabeis");
+
+            migrationBuilder.DropTable(
                 name: "ContasBancarias");
+
+            migrationBuilder.DropTable(
+                name: "ContasContabeis");
         }
     }
 }

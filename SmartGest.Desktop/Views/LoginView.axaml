@@ -1,225 +1,381 @@
 <Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:vm="using:SmartGest.Desktop.ViewModels"
+        xmlns:mi="using:Material.Icons.Avalonia"
         x:Class="SmartGest.Desktop.Views.LoginView"
         x:DataType="vm:LoginViewModel"
         Title="SmartGest"
-        Width="960" Height="600"
-        MinWidth="800" MinHeight="520"
+        Width="920" Height="580"
         WindowStartupLocation="CenterScreen"
-        Background="#1A2E5A"
-        CanResize="False">
+        SystemDecorations="None"
+        Background="Transparent"
+        CanResize="False"
+        TransparencyLevelHint="AcrylicBlur,Transparent">
 
   <Window.Styles>
 
-    <!-- Input field estilo mockup: borda suave, fundo branco/cinza claro -->
+    <!-- Input Glassmorphism -->
     <Style Selector="TextBox.sg-input">
-      <Setter Property="Height" Value="44"/>
+      <Setter Property="Height" Value="46"/>
       <Setter Property="FontSize" Value="13"/>
-      <Setter Property="Foreground" Value="#333333"/>
-      <Setter Property="Background" Value="#FFFFFF"/>
-      <Setter Property="BorderBrush" Value="#DDDDDD"/>
+      <Setter Property="Foreground" Value="#E8F0FF"/>
+      <Setter Property="Background" Value="#12FFFFFF"/>
+      <Setter Property="BorderBrush" Value="#25FFFFFF"/>
       <Setter Property="BorderThickness" Value="1"/>
-      <Setter Property="CornerRadius" Value="6"/>
+      <Setter Property="CornerRadius" Value="10"/>
       <Setter Property="Padding" Value="14,0"/>
       <Setter Property="HorizontalAlignment" Value="Stretch"/>
+      <Setter Property="CaretBrush" Value="#2196F3"/>
     </Style>
     <Style Selector="TextBox.sg-input:focus">
-      <Setter Property="BorderBrush" Value="#4A90D9"/>
-    </Style>
-    <Style Selector="TextBox.sg-input /template/ TextBlock#PART_PlaceholderText">
-      <Setter Property="Foreground" Value="#AAAAAA"/>
-      <Setter Property="VerticalAlignment" Value="Center"/>
-    </Style>
-    <Style Selector="TextBox.sg-input /template/ ScrollViewer">
-      <Setter Property="VerticalAlignment" Value="Center"/>
+      <Setter Property="BorderBrush" Value="#602196F3"/>
+      <Setter Property="Background" Value="#1E2196F3"/>
     </Style>
 
-    <!-- Botão principal: azul sólido como no mockup -->
+    <!-- Botão primário glass -->
     <Style Selector="Button.sg-btn-primary">
-      <Setter Property="Height" Value="44"/>
+      <Setter Property="Height" Value="46"/>
       <Setter Property="FontSize" Value="14"/>
       <Setter Property="FontWeight" Value="SemiBold"/>
       <Setter Property="Foreground" Value="White"/>
-      <Setter Property="Background" Value="#2196F3"/>
-      <Setter Property="CornerRadius" Value="6"/>
+      <Setter Property="CornerRadius" Value="10"/>
       <Setter Property="HorizontalContentAlignment" Value="Center"/>
       <Setter Property="HorizontalAlignment" Value="Stretch"/>
       <Setter Property="Cursor" Value="Hand"/>
-      <Setter Property="BorderThickness" Value="0"/>
+      <Setter Property="BorderThickness" Value="1"/>
+      <Setter Property="BorderBrush" Value="#402196F3"/>
+      <Setter Property="Background">
+        <LinearGradientBrush StartPoint="0%,0%" EndPoint="100%,100%">
+          <GradientStop Offset="0" Color="#CC1976D2"/>
+          <GradientStop Offset="1" Color="#CC2196F3"/>
+        </LinearGradientBrush>
+      </Setter>
     </Style>
     <Style Selector="Button.sg-btn-primary:pointerover /template/ ContentPresenter">
-      <Setter Property="Background" Value="#1976D2"/>
-    </Style>
-    <Style Selector="Button.sg-btn-primary:pressed /template/ ContentPresenter">
-      <Setter Property="Background" Value="#1565C0"/>
+      <Setter Property="Background">
+        <LinearGradientBrush StartPoint="0%,0%" EndPoint="100%,100%">
+          <GradientStop Offset="0" Color="#EE1565C0"/>
+          <GradientStop Offset="1" Color="#EE1976D2"/>
+        </LinearGradientBrush>
+      </Setter>
     </Style>
 
-    <!-- Link -->
+    <!-- Link button -->
     <Style Selector="Button.sg-link">
       <Setter Property="Background" Value="Transparent"/>
       <Setter Property="BorderThickness" Value="0"/>
-      <Setter Property="Foreground" Value="#2196F3"/>
+      <Setter Property="Foreground" Value="#7EB8F7"/>
       <Setter Property="FontSize" Value="12.5"/>
       <Setter Property="Cursor" Value="Hand"/>
       <Setter Property="Padding" Value="0"/>
     </Style>
-    <Style Selector="Button.sg-link:pointerover">
-      <Setter Property="Opacity" Value="0.75"/>
+    <Style Selector="Button.sg-link:pointerover /template/ ContentPresenter">
+      <Setter Property="Background" Value="Transparent"/>
+      <Setter Property="Foreground" Value="#42A5F5"/>
     </Style>
 
   </Window.Styles>
 
-  <Grid ColumnDefinitions="*,400">
+  <!-- Camada raiz: fundo escuro + painel completo -->
+  <Panel>
 
-    <!-- ========================================
-         LADO ESQUERDO — hero escuro com gráfico
-         ======================================== -->
-    <Border Grid.Column="0" ClipToBounds="True">
+    <!-- === FUNDO GRADIENTE GLOBAL === -->
+    <Border CornerRadius="16" ClipToBounds="True">
       <Border.Background>
-        <LinearGradientBrush StartPoint="0%,0%" EndPoint="60%,100%">
-          <GradientStop Color="#0D1B3E" Offset="0"/>
-          <GradientStop Color="#1A2E5A" Offset="1"/>
+        <LinearGradientBrush StartPoint="0%,0%" EndPoint="100%,100%">
+          <GradientStop Offset="0"    Color="#080E1E"/>
+          <GradientStop Offset="0.45" Color="#0A1628"/>
+          <GradientStop Offset="1"    Color="#060D1A"/>
         </LinearGradientBrush>
       </Border.Background>
+    </Border>
 
-      <Grid>
+    <!-- Orbe azul topo-direito -->
+    <Ellipse Width="500" Height="500"
+             HorizontalAlignment="Right" VerticalAlignment="Top"
+             Margin="0,-180,-120,0" Opacity="0.20">
+      <Ellipse.Fill>
+        <RadialGradientBrush>
+          <GradientStop Offset="0" Color="#2196F3"/>
+          <GradientStop Offset="1" Color="Transparent"/>
+        </RadialGradientBrush>
+      </Ellipse.Fill>
+    </Ellipse>
 
-        <!-- Gráfico de barras decorativo (fiel ao mockup: barras azuis e salmão) -->
-        <Canvas HorizontalAlignment="Center"
-                VerticalAlignment="Center"
-                Width="360" Height="320"
-                Margin="0,40,0,0">
+    <!-- Orbe azul escuro fundo-esquerdo -->
+    <Ellipse Width="380" Height="380"
+             HorizontalAlignment="Left" VerticalAlignment="Bottom"
+             Margin="-80,0,0,-100" Opacity="0.14">
+      <Ellipse.Fill>
+        <RadialGradientBrush>
+          <GradientStop Offset="0" Color="#1565C0"/>
+          <GradientStop Offset="1" Color="Transparent"/>
+        </RadialGradientBrush>
+      </Ellipse.Fill>
+    </Ellipse>
 
-          <!-- Eixo Y: linhas horizontais de referência -->
-          <Line StartPoint="0,60"  EndPoint="360,60"  Stroke="#22FFFFFF" StrokeThickness="1"/>
-          <Line StartPoint="0,120" EndPoint="360,120" Stroke="#22FFFFFF" StrokeThickness="1"/>
-          <Line StartPoint="0,180" EndPoint="360,180" Stroke="#22FFFFFF" StrokeThickness="1"/>
-          <Line StartPoint="0,240" EndPoint="360,240" Stroke="#22FFFFFF" StrokeThickness="1"/>
+    <!-- Orbe acento centro -->
+    <Ellipse Width="260" Height="260"
+             HorizontalAlignment="Center" VerticalAlignment="Center"
+             Margin="0,60,0,0" Opacity="0.07">
+      <Ellipse.Fill>
+        <RadialGradientBrush>
+          <GradientStop Offset="0" Color="#42A5F5"/>
+          <GradientStop Offset="1" Color="Transparent"/>
+        </RadialGradientBrush>
+      </Ellipse.Fill>
+    </Ellipse>
 
-          <!-- Barras — pares (azul claro = receita, salmão = despesa), 6 grupos -->
-          <!-- Grupo 1 -->
-          <Rectangle Canvas.Left="10"  Canvas.Top="100" Width="26" Height="200" Fill="#558EC6" RadiusX="3" RadiusY="3" Opacity="0.85"/>
-          <Rectangle Canvas.Left="38"  Canvas.Top="160" Width="26" Height="140" Fill="#E07070" RadiusX="3" RadiusY="3" Opacity="0.75"/>
-          <!-- Grupo 2 -->
-          <Rectangle Canvas.Left="78"  Canvas.Top="60"  Width="26" Height="240" Fill="#558EC6" RadiusX="3" RadiusY="3" Opacity="0.85"/>
-          <Rectangle Canvas.Left="106" Canvas.Top="130" Width="26" Height="170" Fill="#E07070" RadiusX="3" RadiusY="3" Opacity="0.75"/>
-          <!-- Grupo 3 -->
-          <Rectangle Canvas.Left="146" Canvas.Top="80"  Width="26" Height="220" Fill="#558EC6" RadiusX="3" RadiusY="3" Opacity="0.85"/>
-          <Rectangle Canvas.Left="174" Canvas.Top="150" Width="26" Height="150" Fill="#E07070" RadiusX="3" RadiusY="3" Opacity="0.75"/>
-          <!-- Grupo 4 -->
-          <Rectangle Canvas.Left="214" Canvas.Top="20"  Width="26" Height="280" Fill="#558EC6" RadiusX="3" RadiusY="3" Opacity="0.85"/>
-          <Rectangle Canvas.Left="242" Canvas.Top="110" Width="26" Height="190" Fill="#E07070" RadiusX="3" RadiusY="3" Opacity="0.75"/>
-          <!-- Grupo 5 -->
-          <Rectangle Canvas.Left="282" Canvas.Top="50"  Width="26" Height="250" Fill="#558EC6" RadiusX="3" RadiusY="3" Opacity="0.85"/>
-          <Rectangle Canvas.Left="310" Canvas.Top="140" Width="26" Height="160" Fill="#E07070" RadiusX="3" RadiusY="3" Opacity="0.75"/>
+    <!-- === CONTEÚDO PRINCIPAL === -->
+    <Border CornerRadius="16" ClipToBounds="True"
+            BorderThickness="1" Margin="1"
+            BoxShadow="0 16 64 0 #60000000">
+      <Border.BorderBrush>
+        <LinearGradientBrush StartPoint="0%,0%" EndPoint="100%,100%">
+          <GradientStop Offset="0"   Color="#35FFFFFF"/>
+          <GradientStop Offset="0.5" Color="#10FFFFFF"/>
+          <GradientStop Offset="1"   Color="#05FFFFFF"/>
+        </LinearGradientBrush>
+      </Border.BorderBrush>
+      <Border.Background>
+        <SolidColorBrush Color="Transparent"/>
+      </Border.Background>
 
-        </Canvas>
+      <Grid ColumnDefinitions="*,370">
 
-        <!-- Textos hero por cima do gráfico -->
-        <StackPanel VerticalAlignment="Top"
-                    HorizontalAlignment="Left"
-                    Margin="48,56,40,0"
-                    Spacing="8">
-          <TextBlock FontSize="32"
-                     FontWeight="Bold"
-                     Foreground="White"
-                     TextWrapping="Wrap"
-                     LineHeight="40"
-                     Text="Automatize números.&#x0a;Multiplique resultados."/>
-          <TextBlock FontSize="15"
-                     Foreground="#88C3F0"
-                     Text="Contabilidade moderna sem complicações"/>
-        </StackPanel>
+        <!-- ===== HERO ESQUERDO ===== -->
+        <Border Grid.Column="0" ClipToBounds="True"
+                Name="DragRegion" Cursor="Arrow">
+
+          <!-- Faixa de cor no topo -->
+          <Panel>
+            <Border VerticalAlignment="Top" Height="3" ZIndex="10">
+              <Border.Background>
+                <LinearGradientBrush StartPoint="0%,0%" EndPoint="100%,0%">
+                  <GradientStop Color="#2196F3" Offset="0"/>
+                  <GradientStop Color="#42A5F5" Offset="0.5"/>
+                  <GradientStop Color="#1565C0" Offset="1"/>
+                </LinearGradientBrush>
+              </Border.Background>
+            </Border>
+
+            <Grid Margin="44,52,32,40">
+
+              <!-- Topo: badge + headline -->
+              <StackPanel VerticalAlignment="Top" Spacing="12">
+                <Border Background="#18FFFFFF" CornerRadius="20"
+                        Padding="12,6" HorizontalAlignment="Left"
+                        BorderThickness="1" BorderBrush="#20FFFFFF">
+                  <TextBlock Text="SmartGest · ERP Financeiro"
+                             FontSize="11" Foreground="#90C4E8"
+                             LetterSpacing="1"/>
+                </Border>
+
+                <TextBlock FontSize="32" FontWeight="Bold"
+                           Foreground="White"
+                           TextWrapping="Wrap" LineHeight="40"
+                           Text="Automatize números.&#x0a;Multiplique resultados."/>
+
+                <TextBlock FontSize="13.5" Foreground="#70AEDE"
+                           Text="Contabilidade moderna para MPMEs angolanas"/>
+              </StackPanel>
+
+              <!-- Gráfico decorativo glass -->
+              <Border VerticalAlignment="Bottom"
+                      HorizontalAlignment="Center"
+                      Padding="20,18" CornerRadius="14"
+                      BorderThickness="1"
+                      BorderBrush="#18FFFFFF"
+                      BoxShadow="0 4 24 0 #28000000"
+                      Margin="0,0,0,8">
+                <Border.Background>
+                  <LinearGradientBrush StartPoint="0%,0%" EndPoint="100%,100%">
+                    <GradientStop Offset="0" Color="#14FFFFFF"/>
+                    <GradientStop Offset="1" Color="#08FFFFFF"/>
+                  </LinearGradientBrush>
+                </Border.Background>
+
+                <StackPanel Spacing="10">
+                  <!-- Label do gráfico -->
+                  <TextBlock Text="RECEITAS vs DESPESAS · 2025"
+                             FontSize="9.5" Foreground="#50FFFFFF"
+                             LetterSpacing="1.5" HorizontalAlignment="Center"/>
+
+                  <Canvas Width="330" Height="180" Opacity="0.95">
+                    <!-- Linhas de grid -->
+                    <Line StartPoint="0,35"  EndPoint="330,35"  Stroke="#18FFFFFF" StrokeThickness="1"/>
+                    <Line StartPoint="0,80"  EndPoint="330,80"  Stroke="#18FFFFFF" StrokeThickness="1"/>
+                    <Line StartPoint="0,125" EndPoint="330,125" Stroke="#18FFFFFF" StrokeThickness="1"/>
+                    <Line StartPoint="0,170" EndPoint="330,170" Stroke="#28FFFFFF" StrokeThickness="1"/>
+
+                    <!-- Barras Receitas (azul) -->
+                    <Rectangle Canvas.Left="16"  Canvas.Top="50"  Width="26" Height="120" RadiusX="5" RadiusY="5">
+                      <Rectangle.Fill><LinearGradientBrush StartPoint="0%,0%" EndPoint="0%,100%"><GradientStop Offset="0" Color="#CC42A5F5"/><GradientStop Offset="1" Color="#882196F3"/></LinearGradientBrush></Rectangle.Fill>
+                    </Rectangle>
+                    <Rectangle Canvas.Left="90"  Canvas.Top="30"  Width="26" Height="140" RadiusX="5" RadiusY="5">
+                      <Rectangle.Fill><LinearGradientBrush StartPoint="0%,0%" EndPoint="0%,100%"><GradientStop Offset="0" Color="#CC42A5F5"/><GradientStop Offset="1" Color="#882196F3"/></LinearGradientBrush></Rectangle.Fill>
+                    </Rectangle>
+                    <Rectangle Canvas.Left="164" Canvas.Top="45"  Width="26" Height="125" RadiusX="5" RadiusY="5">
+                      <Rectangle.Fill><LinearGradientBrush StartPoint="0%,0%" EndPoint="0%,100%"><GradientStop Offset="0" Color="#CC42A5F5"/><GradientStop Offset="1" Color="#882196F3"/></LinearGradientBrush></Rectangle.Fill>
+                    </Rectangle>
+                    <Rectangle Canvas.Left="238" Canvas.Top="18"  Width="26" Height="152" RadiusX="5" RadiusY="5">
+                      <Rectangle.Fill><LinearGradientBrush StartPoint="0%,0%" EndPoint="0%,100%"><GradientStop Offset="0" Color="#CC42A5F5"/><GradientStop Offset="1" Color="#882196F3"/></LinearGradientBrush></Rectangle.Fill>
+                    </Rectangle>
+
+                    <!-- Barras Despesas (vermelho suave) -->
+                    <Rectangle Canvas.Left="46"  Canvas.Top="90"  Width="26" Height="80"  RadiusX="5" RadiusY="5">
+                      <Rectangle.Fill><LinearGradientBrush StartPoint="0%,0%" EndPoint="0%,100%"><GradientStop Offset="0" Color="#CCEF9A9A"/><GradientStop Offset="1" Color="#88E53935"/></LinearGradientBrush></Rectangle.Fill>
+                    </Rectangle>
+                    <Rectangle Canvas.Left="120" Canvas.Top="75"  Width="26" Height="95"  RadiusX="5" RadiusY="5">
+                      <Rectangle.Fill><LinearGradientBrush StartPoint="0%,0%" EndPoint="0%,100%"><GradientStop Offset="0" Color="#CCEF9A9A"/><GradientStop Offset="1" Color="#88E53935"/></LinearGradientBrush></Rectangle.Fill>
+                    </Rectangle>
+                    <Rectangle Canvas.Left="194" Canvas.Top="85"  Width="26" Height="85"  RadiusX="5" RadiusY="5">
+                      <Rectangle.Fill><LinearGradientBrush StartPoint="0%,0%" EndPoint="0%,100%"><GradientStop Offset="0" Color="#CCEF9A9A"/><GradientStop Offset="1" Color="#88E53935"/></LinearGradientBrush></Rectangle.Fill>
+                    </Rectangle>
+                    <Rectangle Canvas.Left="268" Canvas.Top="60"  Width="26" Height="110" RadiusX="5" RadiusY="5">
+                      <Rectangle.Fill><LinearGradientBrush StartPoint="0%,0%" EndPoint="0%,100%"><GradientStop Offset="0" Color="#CCEF9A9A"/><GradientStop Offset="1" Color="#88E53935"/></LinearGradientBrush></Rectangle.Fill>
+                    </Rectangle>
+
+                    <!-- Labels meses -->
+                    <TextBlock Canvas.Left="20"  Canvas.Top="175" Text="Jan" FontSize="9" Foreground="#45FFFFFF"/>
+                    <TextBlock Canvas.Left="94"  Canvas.Top="175" Text="Abr" FontSize="9" Foreground="#45FFFFFF"/>
+                    <TextBlock Canvas.Left="168" Canvas.Top="175" Text="Jul" FontSize="9" Foreground="#45FFFFFF"/>
+                    <TextBlock Canvas.Left="242" Canvas.Top="175" Text="Out" FontSize="9" Foreground="#45FFFFFF"/>
+                  </Canvas>
+
+                  <!-- Legenda -->
+                  <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Spacing="20">
+                    <StackPanel Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
+                      <Border Width="10" Height="10" CornerRadius="2" Background="#2196F3"/>
+                      <TextBlock Text="Receitas" FontSize="9.5" Foreground="#60FFFFFF"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
+                      <Border Width="10" Height="10" CornerRadius="2" Background="#EF9A9A"/>
+                      <TextBlock Text="Despesas" FontSize="9.5" Foreground="#60FFFFFF"/>
+                    </StackPanel>
+                  </StackPanel>
+                </StackPanel>
+              </Border>
+
+            </Grid>
+          </Panel>
+        </Border>
+
+        <!-- Divisor vertical glass -->
+        <Border Grid.Column="0"
+                HorizontalAlignment="Right"
+                Width="1" Margin="0,24,0,24">
+          <Border.Background>
+            <LinearGradientBrush StartPoint="0%,0%" EndPoint="0%,100%">
+              <GradientStop Offset="0"   Color="Transparent"/>
+              <GradientStop Offset="0.3" Color="#25FFFFFF"/>
+              <GradientStop Offset="0.7" Color="#25FFFFFF"/>
+              <GradientStop Offset="1"   Color="Transparent"/>
+            </LinearGradientBrush>
+          </Border.Background>
+        </Border>
+
+        <!-- ===== PAINEL DE LOGIN GLASS ===== -->
+        <Border Grid.Column="1" ClipToBounds="True"
+                Padding="36,0">
+          <Border.Background>
+            <LinearGradientBrush StartPoint="0%,0%" EndPoint="100%,100%">
+              <GradientStop Offset="0" Color="#16FFFFFF"/>
+              <GradientStop Offset="1" Color="#0AFFFFFF"/>
+            </LinearGradientBrush>
+          </Border.Background>
+
+          <StackPanel VerticalAlignment="Center" Spacing="0">
+
+            <!-- Logo branco -->
+            <Image Source="/Assets/smartgest_logo_white.png"
+                   Width="210" HorizontalAlignment="Center"
+                   Stretch="Uniform" Margin="0,0,0,28"/>
+
+            <!-- Divider glass -->
+            <Border Height="1" Margin="16,0,16,24">
+              <Border.Background>
+                <LinearGradientBrush StartPoint="0%,0%" EndPoint="100%,0%">
+                  <GradientStop Offset="0"   Color="Transparent"/>
+                  <GradientStop Offset="0.5" Color="#302196F3"/>
+                  <GradientStop Offset="1"   Color="Transparent"/>
+                </LinearGradientBrush>
+              </Border.Background>
+            </Border>
+
+            <TextBlock Text="Bem-vindo de volta"
+                       FontSize="20" FontWeight="Bold"
+                       Foreground="#F0F6FF"
+                       HorizontalAlignment="Center"/>
+            <TextBlock Text="Inicie sessão para continuar"
+                       FontSize="12" Foreground="#55FFFFFF"
+                       HorizontalAlignment="Center"
+                       LetterSpacing="0.5"
+                       Margin="0,6,0,24"/>
+
+            <StackPanel Spacing="14">
+              <!-- Telefone -->
+              <StackPanel Spacing="6">
+                <TextBlock Text="TELEFONE"
+                           FontSize="10" FontWeight="Medium"
+                           Foreground="#50FFFFFF" LetterSpacing="1.2"/>
+                <TextBox Classes="sg-input"
+                         Watermark="+244 9XX XXX XXX"
+                         Text="{Binding Phone}"/>
+              </StackPanel>
+              <!-- Senha -->
+              <StackPanel Spacing="6">
+                <TextBlock Text="SENHA"
+                           FontSize="10" FontWeight="Medium"
+                           Foreground="#50FFFFFF" LetterSpacing="1.2"/>
+                <TextBox Classes="sg-input"
+                         Watermark="••••••••"
+                         PasswordChar="●"
+                         Text="{Binding Password}"/>
+              </StackPanel>
+            </StackPanel>
+
+            <!-- Erro -->
+            <TextBlock Text="{Binding ErrorMessage}"
+                       Foreground="#FF8A80" FontSize="12"
+                       IsVisible="{Binding HasError}"
+                       TextWrapping="Wrap"
+                       Margin="0,12,0,0"
+                       HorizontalAlignment="Center"/>
+
+            <!-- Botão entrar -->
+            <Button Classes="sg-btn-primary"
+                    Content="Entrar"
+                    Command="{Binding LoginCommand}"
+                    IsEnabled="{Binding !IsLoading}"
+                    Margin="0,22,0,0"/>
+
+            <TextBlock Text="A autenticar…"
+                       FontSize="12" Foreground="#50FFFFFF"
+                       IsVisible="{Binding IsLoading}"
+                       HorizontalAlignment="Center"
+                       Margin="0,10,0,0"/>
+
+            <!-- Divisor -->
+            <Border Height="1" Margin="0,22,0,14">
+              <Border.Background>
+                <LinearGradientBrush StartPoint="0%,0%" EndPoint="100%,0%">
+                  <GradientStop Offset="0"   Color="Transparent"/>
+                  <GradientStop Offset="0.5" Color="#20FFFFFF"/>
+                  <GradientStop Offset="1"   Color="Transparent"/>
+                </LinearGradientBrush>
+              </Border.Background>
+            </Border>
+
+            <Button Classes="sg-link"
+                    Content="Criar conta GRÁTIS"
+                    HorizontalAlignment="Center"/>
+
+          </StackPanel>
+        </Border>
 
       </Grid>
     </Border>
 
-    <!-- ========================================
-         LADO DIREITO — card de login branco
-         ======================================== -->
-    <Border Grid.Column="1" Background="#F5F6FA">
-
-      <!-- Card branco centralizado — fiel ao mockup -->
-      <Border Background="White"
-              CornerRadius="10"
-              BoxShadow="0 2 20 0 #18000000"
-              Padding="40,36"
-              Width="320"
-              VerticalAlignment="Center"
-              HorizontalAlignment="Center">
-
-        <StackPanel Spacing="0">
-
-          <!-- Logo dentro do card -->
-          <StackPanel Orientation="Horizontal"
-                      HorizontalAlignment="Center"
-                      Spacing="10"
-                      Margin="0,0,0,4">
-
-            <!-- Ícone SVG simplificado -->
-            <Image Source="/Assets/smartgest_logo.png"
-               Width="260"
-               HorizontalAlignment="Center"
-               Stretch="Uniform"
-               Margin="0,0,0,36"/>
-          </StackPanel> 
-
-          <!-- Separador -->
-          <Border Height="1" Background="#F0F0F0" Margin="0,20,0,20"/>
-
-          <!-- Campos -->
-          <StackPanel Spacing="12">
-            <TextBox Classes="sg-input"
-                     Watermark="Número de telefone"
-                     Text="{Binding Phone}"
-                     KeyboardNavigation.TabIndex="0"/>
-
-            <TextBox Classes="sg-input"
-                     Watermark="Senha de acesso"
-                     PasswordChar="●"
-                     Text="{Binding Password}"
-                     KeyboardNavigation.TabIndex="1"/>
-          </StackPanel>
-
-          <!-- Erro -->
-          <TextBlock Text="{Binding ErrorMessage}"
-                     Foreground="#E53935"
-                     FontSize="12"
-                     IsVisible="{Binding HasError}"
-                     TextWrapping="Wrap"
-                     Margin="0,10,0,0"
-                     HorizontalAlignment="Center"/>
-
-          <!-- Botão Entrar -->
-          <Button Classes="sg-btn-primary"
-                  Content="Entrar"
-                  Command="{Binding LoginCommand}"
-                  IsEnabled="{Binding !IsLoading}"
-                  Margin="0,20,0,0"
-                  KeyboardNavigation.TabIndex="2"/>
-
-          <!-- Loading -->
-          <StackPanel IsVisible="{Binding IsLoading}"
-                      HorizontalAlignment="Center"
-                      Margin="0,10,0,0">
-            <TextBlock Text="A autenticar..."
-                       FontSize="12"
-                       Foreground="#888888"/>
-          </StackPanel>
-
-          <!-- Separador -->
-          <Border Height="1" Background="#F0F0F0" Margin="0,20,0,16"/>
-
-          <!-- Link criar conta -->
-          <Button Classes="sg-link"
-                  Content="Criar conta GRÁTIS"
-                  HorizontalAlignment="Center"
-                  KeyboardNavigation.TabIndex="3"/>
-
-        </StackPanel>
-      </Border>
-    </Border>
-
-  </Grid>
+  </Panel>
 </Window>

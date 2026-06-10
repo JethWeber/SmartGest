@@ -300,7 +300,7 @@ public partial class ContaseBancosViewModel : ViewModelBase
         }
         catch (HttpRequestException)
         {
-            ErroModal = $"Sem ligação à API ({ApiClient.BaseUrl}). Verifique se o servidor está activo.";
+            ErroModal = "Sem ligação à API. Verifique se o servidor está activo.";
         }
         catch (Exception ex)
         {
@@ -397,7 +397,7 @@ public partial class ContaseBancosViewModel : ViewModelBase
         }
         catch (HttpRequestException)
         {
-            ErroModal = $"Sem ligação à API ({ApiClient.BaseUrl}). Verifique se o servidor está activo.";
+            ErroModal = "Sem ligação à API. Verifique se o servidor está activo.";
         }
         catch (Exception ex)
         {

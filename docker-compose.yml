@@ -1,0 +1,53 @@
+services:
+
+  # ── Base de dados PostgreSQL ────────────────────────────────────────────────
+  postgres:
+    image: postgres:16-alpine
+    container_name: smartgest_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB:       smartgest
+      POSTGRES_USER:     postgres
+      POSTGRES_PASSWORD: PostegrePass@root2026
+    ports:
+      - "5432:5432"          # expõe para o Desktop na máquina host
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d smartgest"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+    networks:
+      - smartgest_net
+
+  # ── SmartGest API ──────────────────────────────────────────────────────────
+  api:
+    build:
+      context: .
+      dockerfile: SmartGest.API.Dockerfile
+    container_name: smartgest_api
+    restart: on-failure:5
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      ASPNETCORE_URLS: http://+:8080
+      ConnectionStrings__Default: "Host=postgres;Port=5432;Database=smartgest;Username=postgres;Password=PostegrePass@root2026"
+      Jwt__Key:      SmartGest@Angola#SecretKey2025!XyZ
+      Jwt__Issuer:   SmartGest.API
+      Jwt__Audience: SmartGest.Desktop
+    ports:
+      - "8080:8080"
+    networks:
+      - smartgest_net
+
+volumes:
+  postgres_data:
+    driver: local
+
+networks:
+  smartgest_net:
+    driver: bridge

@@ -10,10 +10,23 @@
 
     <!-- ── Card base ────────────────────────────────────────────────── -->
     <Style Selector="Border.sg-card">
-      <Setter Property="Background"   Value="White"/>
-      <Setter Property="CornerRadius" Value="10"/>
-      <Setter Property="Padding"      Value="20,16"/>
-      <Setter Property="BoxShadow"    Value="0 2 12 0 #0A000000"/>
+      <Setter Property="CornerRadius"    Value="14"/>
+      <Setter Property="BorderThickness" Value="1"/>
+      <Setter Property="Padding"         Value="20"/>
+      <Setter Property="BoxShadow"       Value="0 4 24 0 #28000000"/>
+      <Setter Property="BorderBrush">
+        <LinearGradientBrush StartPoint="0%,0%" EndPoint="100%,100%">
+          <GradientStop Offset="0"   Color="#30FFFFFF"/>
+          <GradientStop Offset="0.5" Color="#10FFFFFF"/>
+          <GradientStop Offset="1"   Color="#05FFFFFF"/>
+        </LinearGradientBrush>
+      </Setter>
+      <Setter Property="Background">
+        <LinearGradientBrush StartPoint="0%,0%" EndPoint="100%,100%">
+          <GradientStop Offset="0" Color="#16FFFFFF"/>
+          <GradientStop Offset="1" Color="#0AFFFFFF"/>
+        </LinearGradientBrush>
+      </Setter>
     </Style>
 
     <!-- ── Títulos de secção ─────────────────────────────────────────── -->
@@ -81,8 +94,9 @@
     <!-- ── Linhas alternadas ──────────────────────────────────────────── -->
     <Style Selector="DataGridRow:nth-child(odd)">
       <Setter Property="Background" Value="#F9FAFC"/>
+    </Style>    <Style Selector="DataGridRow:pointerover">
+      <Setter Property="Background" Value="#E8F0FA"/>
     </Style>
-
   </UserControl.Styles>
 
   <!-- ══════════════════════════════════════════════════════════════════════
@@ -104,13 +118,13 @@
                  ZIndex="10"/>
 
     <!-- ── FAIXA DE ERRO ──────────────────────────────────────────────── -->
-    <Border Grid.Row="1"
-            IsVisible="{Binding TemErro}"
-            Background="#FFEBEE"
-            CornerRadius="0"
-            Padding="28,10"
-            BorderBrush="#FFCDD2"
-            BorderThickness="0,0,0,1">
+        <Border Grid.Row="1"
+          IsVisible="{Binding TemErro}"
+          Background="#18E53935"
+          CornerRadius="0"
+          Padding="28,10"
+          BorderBrush="#40E53935"
+          BorderThickness="0,0,0,1">
       <Grid ColumnDefinitions="Auto, *, Auto">
         <mi:MaterialIcon Grid.Column="0"
                          Kind="AlertCircleOutline"
@@ -138,7 +152,7 @@
     </Border>
 
     <!-- ── CONTEÚDO PRINCIPAL ─────────────────────────────────────────── -->
-    <ScrollViewer Grid.Row="2" Background="#F4F6FA">
+    <ScrollViewer Grid.Row="2" Background="Transparent">
       <Border Padding="28,24">
         <StackPanel Spacing="20">
 
@@ -448,6 +462,19 @@
                     <DataGridTemplateColumn.CellTemplate>
                       <DataTemplate x:DataType="vm:BalanceteItem">
                         <TextBlock Text="{Binding SaldoFinCreFmt}"
+                                   VerticalAlignment="Center"
+                                   TextAlignment="Right"
+                                   FontWeight="SemiBold"
+                                   Foreground="#1A2E5A"
+                                   Margin="10,0"/>
+                      </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                  </DataGridTemplateColumn>
+
+                  <DataGridTemplateColumn Header="Diferença (Kzs)" Width="*">
+                    <DataGridTemplateColumn.CellTemplate>
+                      <DataTemplate x:DataType="vm:BalanceteItem">
+                        <TextBlock Text="{Binding DiferencaFmt}"
                                    VerticalAlignment="Center"
                                    TextAlignment="Right"
                                    FontWeight="SemiBold"

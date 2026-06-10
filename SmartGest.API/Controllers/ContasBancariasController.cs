@@ -49,11 +49,12 @@ public class ContasBancariasController : ControllerBase
 
         var conta = new ContaBancaria
         {
-            Banco      = req.Banco,   NIB      = req.NIB,
-            Tipo       = req.Tipo,    Moeda    = req.Moeda,
-            SaldoAtual = req.SaldoAtual, SaldoOntem = req.SaldoAtual,
-            Agencia    = req.Agencia, Titular  = req.Titular,
-            CorAccent  = req.CorAccent
+            Banco           = req.Banco,   NIB      = req.NIB,
+            Tipo            = req.Tipo,    Moeda    = req.Moeda,
+            SaldoAtual      = req.SaldoAtual, SaldoOntem = req.SaldoAtual,
+            Agencia         = req.Agencia, Titular  = req.Titular,
+            CorAccent       = req.CorAccent,
+            ContaContabilId = req.ContaContabilId
         };
 
         _db.ContasBancarias.Add(conta);
@@ -68,11 +69,12 @@ public class ContasBancariasController : ControllerBase
         var conta = await _db.ContasBancarias.FindAsync(id);
         if (conta is null) return NotFound();
 
-        conta.Banco      = req.Banco;   conta.NIB       = req.NIB;
-        conta.Tipo       = req.Tipo;    conta.Moeda     = req.Moeda;
-        conta.SaldoAtual = req.SaldoAtual;
-        conta.Agencia    = req.Agencia; conta.Titular   = req.Titular;
-        conta.CorAccent  = req.CorAccent;
+        conta.Banco           = req.Banco;   conta.NIB       = req.NIB;
+        conta.Tipo            = req.Tipo;    conta.Moeda     = req.Moeda;
+        conta.SaldoAtual      = req.SaldoAtual;
+        conta.Agencia         = req.Agencia; conta.Titular   = req.Titular;
+        conta.CorAccent       = req.CorAccent;
+        conta.ContaContabilId = req.ContaContabilId;
 
         await _db.SaveChangesAsync();
         return Ok(Map(conta));

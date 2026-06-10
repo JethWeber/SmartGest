@@ -5,23 +5,27 @@
         x:Class="SmartGest.Desktop.Views.NovoLancamentoView"
         x:DataType="vm:NovoLancamentoViewModel"
         Title="Novo Lançamento"
-        Width="860" Height="660"
-        MinWidth="760" MinHeight="560"
+        Width="860" Height="680"
+        MinWidth="760" MinHeight="580"
+        MaxHeight="820"
         WindowStartupLocation="CenterOwner"
         CanResize="True"
         ShowInTaskbar="False"
-        Background="#F0F2F7">
+        SystemDecorations="None"
+        Background="Transparent"
+        TransparencyLevelHint="AcrylicBlur,Transparent">
 
   <Window.Styles>
 
     <!-- ── Card de secção ───────────────────────────────────────────── -->
-    <Style Selector="Border.secao">
-      <Setter Property="Background"   Value="White"/>
-      <Setter Property="CornerRadius" Value="12"/>
-      <Setter Property="Padding"      Value="24,20"/>
-      <Setter Property="BoxShadow"    Value="0 1 6 0 #08000000"/>
-      <Setter Property="Margin"       Value="0,0,0,12"/>
-    </Style>
+    
+      <Style Selector="Border.secao">
+        <Setter Property="Background"   Value="#16FFFFFF"/>
+        <Setter Property="CornerRadius" Value="12"/>
+        <Setter Property="Padding"      Value="24,20"/>
+        <Setter Property="BoxShadow"    Value="0 4 16 0 #20000000"/>
+        <Setter Property="Margin"       Value="0,0,0,12"/>
+      </Style>
 
     <!-- Cabeçalho de secção -->
     <Style Selector="TextBlock.secao-titulo">
@@ -44,71 +48,76 @@
     </Style>
 
     <!-- ── Inputs ───────────────────────────────────────────────────── -->
-    <Style Selector="TextBox.sg-in">
-      <Setter Property="Background"      Value="#F7F8FB"/>
-      <Setter Property="BorderBrush"     Value="#DDE3EE"/>
-      <Setter Property="BorderThickness" Value="1.5"/>
-      <Setter Property="CornerRadius"    Value="8"/>
-      <Setter Property="Padding"         Value="11,9"/>
-      <Setter Property="FontSize"        Value="12"/>
-      <Setter Property="Height"          Value="40"/>
-      <Setter Property="Foreground"      Value="#222B3A"/>
-    </Style>
+    
+      <Style Selector="TextBox.sg-in">
+        <Setter Property="Background"      Value="#12FFFFFF"/>
+        <Setter Property="BorderBrush"     Value="#25FFFFFF"/>
+        <Setter Property="BorderThickness" Value="1.5"/>
+        <Setter Property="CornerRadius"    Value="8"/>
+        <Setter Property="Padding"         Value="11,9"/>
+        <Setter Property="FontSize"        Value="12"/>
+        <Setter Property="Height"          Value="40"/>
+        <Setter Property="Foreground"      Value="#0F1724"/>
+      </Style>
     <Style Selector="TextBox.sg-in:focus">
       <Setter Property="BorderBrush" Value="#2196F3"/>
       <Setter Property="Background"  Value="White"/>
     </Style>
-    <Style Selector="ComboBox.sg-in">
-      <Setter Property="Background"      Value="#F7F8FB"/>
-      <Setter Property="BorderBrush"     Value="#DDE3EE"/>
-      <Setter Property="BorderThickness" Value="1.5"/>
-      <Setter Property="CornerRadius"    Value="8"/>
-      <Setter Property="Padding"         Value="11,9"/>
-      <Setter Property="FontSize"        Value="12"/>
-      <Setter Property="Height"          Value="40"/>
-      <Setter Property="Foreground"      Value="#222B3A"/>
-    </Style>
-    <Style Selector="TextBox.sg-area">
-      <Setter Property="Background"      Value="#F7F8FB"/>
-      <Setter Property="BorderBrush"     Value="#DDE3EE"/>
-      <Setter Property="BorderThickness" Value="1.5"/>
-      <Setter Property="CornerRadius"    Value="8"/>
-      <Setter Property="Padding"         Value="11,9"/>
-      <Setter Property="FontSize"        Value="12"/>
-      <Setter Property="AcceptsReturn"   Value="True"/>
-      <Setter Property="TextWrapping"    Value="Wrap"/>
-      <Setter Property="MaxLength"       Value="500"/>
-      <Setter Property="Foreground"      Value="#222B3A"/>
-    </Style>
+    
+      <Style Selector="ComboBox.sg-in">
+        <Setter Property="Background"      Value="#12FFFFFF"/>
+        <Setter Property="BorderBrush"     Value="#25FFFFFF"/>
+        <Setter Property="BorderThickness" Value="1.5"/>
+        <Setter Property="CornerRadius"    Value="8"/>
+        <Setter Property="Padding"         Value="11,9"/>
+        <Setter Property="FontSize"        Value="12"/>
+        <Setter Property="Height"          Value="40"/>
+        <Setter Property="Foreground"      Value="#0F1724"/>
+      </Style>
+    
+      <Style Selector="TextBox.sg-area">
+        <Setter Property="Background"      Value="#12FFFFFF"/>
+        <Setter Property="BorderBrush"     Value="#25FFFFFF"/>
+        <Setter Property="BorderThickness" Value="1.5"/>
+        <Setter Property="CornerRadius"    Value="8"/>
+        <Setter Property="Padding"         Value="11,9"/>
+        <Setter Property="FontSize"        Value="12"/>
+        <Setter Property="AcceptsReturn"   Value="True"/>
+        <Setter Property="TextWrapping"    Value="Wrap"/>
+        <Setter Property="MaxLength"       Value="500"/>
+        <Setter Property="Foreground"      Value="#0F1724"/>
+      </Style>
 
     <!-- ── Botões de tipo ───────────────────────────────────────────── -->
-    <Style Selector="Button.tipo-btn">
-      <Setter Property="Background"      Value="#F7F8FB"/>
-      <Setter Property="BorderBrush"     Value="#DDE3EE"/>
-      <Setter Property="BorderThickness" Value="2"/>
-      <Setter Property="CornerRadius"    Value="12"/>
-      <Setter Property="Padding"         Value="0"/>
-      <Setter Property="Cursor"          Value="Hand"/>
-      <Setter Property="Height"          Value="80"/>
-      <Setter Property="HorizontalContentAlignment" Value="Center"/>
-      <Setter Property="VerticalContentAlignment"   Value="Center"/>
-      <Setter Property="Transitions">
-        <Transitions>
-          <BrushTransition Property="Background" Duration="0:0:0.15"/>
-        </Transitions>
-      </Setter>
-    </Style>
-    <Style Selector="Button.tipo-btn:pointerover /template/ ContentPresenter">
-      <Setter Property="Background" Value="#EEF2F7"/>
-    </Style>
-    <Style Selector="Button.activo-entrada">
-      <Setter Property="Background"  Value="#F0FBF1"/>
-      <Setter Property="BorderBrush" Value="#43A047"/>
-    </Style>
-    <Style Selector="Button.activo-saida">
-      <Setter Property="Background"  Value="#FFF5F5"/>
-      <Setter Property="BorderBrush" Value="#E53935"/>
-    </Style>
+    
+      <Style Selector="Button.tipo-btn">
+        <Setter Property="Background"      Value="Transparent"/>
+        <Setter Property="BorderBrush"     Value="#20FFFFFF"/>
+        <Setter Property="BorderThickness" Value="2"/>
+        <Setter Property="CornerRadius"    Value="12"/>
+        <Setter Property="Padding"         Value="0"/>
+        <Setter Property="Cursor"          Value="Hand"/>
+        <Setter Property="Height"          Value="80"/>
+        <Setter Property="HorizontalContentAlignment" Value="Center"/>
+        <Setter Property="VerticalContentAlignment"   Value="Center"/>
+        <Setter Property="Transitions">
+          <Transitions>
+            <BrushTransition Property="Background" Duration="0:0:0.15"/>
+          </Transitions>
+        </Setter>
+      </Style>
+      <Style Selector="Button.tipo-btn:pointerover /template/ ContentPresenter">
+        <Setter Property="Background" Value="#12FFFFFF"/>
+      </Style>
+      <Style Selector="Button.activo-entrada">
+        <Setter Property="Background"  Value="#201976D2"/>
+        <Setter Property="BorderBrush" Value="#402196F3"/>
+      </Style>
+      <Style Selector="Button.activo-saida">
+        <Setter Property="Background"  Value="#20E53935"/>
+        <Setter Property="BorderBrush" Value="#40E53935"/>
+      </Style>
+    
 
     <!-- ── Botão primário ───────────────────────────────────────────── -->
     <Style Selector="Button.btn-ok">
@@ -156,26 +165,31 @@
       <Setter Property="Width"        Value="26"/>
       <Setter Property="Height"       Value="26"/>
       <Setter Property="CornerRadius" Value="13"/>
-      <Setter Property="Background"   Value="#EBF2FF"/>
+      <Setter Property="Background"   Value="#14FFFFFF"/>
     </Style>
 
   </Window.Styles>
 
-  <!-- ════════════════════════════════════════════════════════════════
-       ESTRUTURA: Cabeçalho | Scroll | Rodapé
-       ════════════════════════════════════════════════════════════════ -->
+    <Border CornerRadius="14"
+      Background="#28FFFFFF"
+      BorderBrush="#33FFFFFF"
+      BorderThickness="1"
+      ClipToBounds="True"
+      BoxShadow="0 12 40 0 #28000000">
+
+  <!-- ESTRUTURA: Cabeçalho | Scroll | Rodapé -->
   <Grid RowDefinitions="Auto, *, Auto">
 
     <!-- ════ CABEÇALHO ════════════════════════════════════════════════ -->
-    <Border Grid.Row="0" Background="White"
-            BorderBrush="#E8ECF4" BorderThickness="0,0,0,1"
+        <Border Grid.Row="0" Background="#22FFFFFF"
+          BorderBrush="#2DFFFFFF" BorderThickness="0,0,0,1"
             Padding="28,22,20,22">
       <Grid ColumnDefinitions="Auto, *, Auto">
 
         <!-- Ícone decorativo -->
         <Border Grid.Column="0"
-                Width="42" Height="42" CornerRadius="10"
-                Background="#EBF2FF" Margin="0,0,14,0">
+          Width="42" Height="42" CornerRadius="10"
+          Background="#14FFFFFF" Margin="0,0,14,0">
           <mi:MaterialIcon Kind="CashPlus"
                            Width="22" Height="22"
                            Foreground="#1A73E8"
@@ -206,7 +220,8 @@
     </Border>
 
     <!-- ════ ÁREA DE SCROLL ═══════════════════════════════════════════ -->
-    <ScrollViewer Grid.Row="1" Padding="28,22,28,6">
+    <ScrollViewer Grid.Row="1" Padding="28,20,28,16"
+                  VerticalScrollBarVisibility="Auto">
       <StackPanel Spacing="0">
 
         <!-- Erro global -->
@@ -574,7 +589,7 @@
     <Border Grid.Row="2"
             Background="White"
             BorderBrush="#E8ECF4" BorderThickness="0,1,0,0"
-            Padding="28,14">
+            Padding="28,16,28,18">
       <Grid ColumnDefinitions="Auto, *, Auto">
 
         <!-- Indicador de campos obrigatórios -->
@@ -618,4 +633,5 @@
     </Border>
 
   </Grid>
+  </Border>
 </Window>

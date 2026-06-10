@@ -12,8 +12,8 @@ using SmartGest.API.Data;
 namespace SmartGest.API.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260603010214_PGC_Angola_v2")]
-    partial class PGC_Angola_v2
+    [Migration("20260610211622_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -24,6 +24,380 @@ namespace SmartGest.API.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
+
+            modelBuilder.Entity("SmartGest.API.Models.CategoriaContabil", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<bool>("AplicaImpostoSelo")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("Ativo")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("ContaCredito")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("ContaDebito")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("GrupoBalanco")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("GrupoDre")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("GrupoFluxoCaixa")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Nome")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Tipo")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("CategoriaContabeis");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            AplicaImpostoSelo = false,
+                            Ativo = true,
+                            ContaCredito = "71",
+                            ContaDebito = "45",
+                            GrupoBalanco = "",
+                            GrupoDre = "Proveitos e Ganhos",
+                            GrupoFluxoCaixa = "Operacional",
+                            Nome = "Venda de Mercadoria",
+                            Tipo = "Entrada"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            AplicaImpostoSelo = false,
+                            Ativo = true,
+                            ContaCredito = "72",
+                            ContaDebito = "45",
+                            GrupoBalanco = "",
+                            GrupoDre = "Proveitos e Ganhos",
+                            GrupoFluxoCaixa = "Operacional",
+                            Nome = "Prestação de Serviço",
+                            Tipo = "Entrada"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            AplicaImpostoSelo = false,
+                            Ativo = true,
+                            ContaCredito = "31",
+                            ContaDebito = "45",
+                            GrupoBalanco = "",
+                            GrupoDre = "",
+                            GrupoFluxoCaixa = "Operacional",
+                            Nome = "Recebimento de Cliente",
+                            Tipo = "Entrada"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            AplicaImpostoSelo = false,
+                            Ativo = true,
+                            ContaCredito = "73",
+                            ContaDebito = "45",
+                            GrupoBalanco = "",
+                            GrupoDre = "Proveitos e Ganhos",
+                            GrupoFluxoCaixa = "Operacional",
+                            Nome = "Outros Rendimentos",
+                            Tipo = "Entrada"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            AplicaImpostoSelo = false,
+                            Ativo = true,
+                            ContaCredito = "51",
+                            ContaDebito = "45",
+                            GrupoBalanco = "",
+                            GrupoDre = "",
+                            GrupoFluxoCaixa = "Financiamento",
+                            Nome = "Capital Inicial",
+                            Tipo = "Entrada"
+                        },
+                        new
+                        {
+                            Id = 6,
+                            AplicaImpostoSelo = false,
+                            Ativo = true,
+                            ContaCredito = "33",
+                            ContaDebito = "45",
+                            GrupoBalanco = "",
+                            GrupoDre = "",
+                            GrupoFluxoCaixa = "Financiamento",
+                            Nome = "Empréstimo Bancário",
+                            Tipo = "Entrada"
+                        },
+                        new
+                        {
+                            Id = 7,
+                            AplicaImpostoSelo = false,
+                            Ativo = true,
+                            ContaCredito = "78",
+                            ContaDebito = "45",
+                            GrupoBalanco = "",
+                            GrupoDre = "Proveitos e Ganhos",
+                            GrupoFluxoCaixa = "Financiamento",
+                            Nome = "Juros Recebidos",
+                            Tipo = "Entrada"
+                        },
+                        new
+                        {
+                            Id = 8,
+                            AplicaImpostoSelo = false,
+                            Ativo = true,
+                            ContaCredito = "79",
+                            ContaDebito = "45",
+                            GrupoBalanco = "",
+                            GrupoDre = "Proveitos e Ganhos",
+                            GrupoFluxoCaixa = "Investimento",
+                            Nome = "Venda de Ativo",
+                            Tipo = "Entrada"
+                        },
+                        new
+                        {
+                            Id = 9,
+                            AplicaImpostoSelo = false,
+                            Ativo = true,
+                            ContaCredito = "72",
+                            ContaDebito = "45",
+                            GrupoBalanco = "",
+                            GrupoDre = "Proveitos e Ganhos",
+                            GrupoFluxoCaixa = "Operacional",
+                            Nome = "Comissão Recebida",
+                            Tipo = "Entrada"
+                        },
+                        new
+                        {
+                            Id = 10,
+                            AplicaImpostoSelo = false,
+                            Ativo = true,
+                            ContaCredito = "73",
+                            ContaDebito = "45",
+                            GrupoBalanco = "",
+                            GrupoDre = "Proveitos e Ganhos",
+                            GrupoFluxoCaixa = "Operacional",
+                            Nome = "Outras Entradas",
+                            Tipo = "Entrada"
+                        },
+                        new
+                        {
+                            Id = 11,
+                            AplicaImpostoSelo = false,
+                            Ativo = true,
+                            ContaCredito = "45",
+                            ContaDebito = "61",
+                            GrupoBalanco = "",
+                            GrupoDre = "Custos e Perdas",
+                            GrupoFluxoCaixa = "Operacional",
+                            Nome = "Compra de Mercadoria",
+                            Tipo = "Saída"
+                        },
+                        new
+                        {
+                            Id = 12,
+                            AplicaImpostoSelo = false,
+                            Ativo = true,
+                            ContaCredito = "45",
+                            ContaDebito = "32",
+                            GrupoBalanco = "",
+                            GrupoDre = "",
+                            GrupoFluxoCaixa = "Operacional",
+                            Nome = "Pagamento a Fornecedor",
+                            Tipo = "Saída"
+                        },
+                        new
+                        {
+                            Id = 13,
+                            AplicaImpostoSelo = false,
+                            Ativo = true,
+                            ContaCredito = "45",
+                            ContaDebito = "63",
+                            GrupoBalanco = "",
+                            GrupoDre = "Custos e Perdas",
+                            GrupoFluxoCaixa = "Operacional",
+                            Nome = "Salários",
+                            Tipo = "Saída"
+                        },
+                        new
+                        {
+                            Id = 14,
+                            AplicaImpostoSelo = false,
+                            Ativo = true,
+                            ContaCredito = "36",
+                            ContaDebito = "63",
+                            GrupoBalanco = "",
+                            GrupoDre = "Custos e Perdas",
+                            GrupoFluxoCaixa = "Operacional",
+                            Nome = "INSS",
+                            Tipo = "Saída"
+                        },
+                        new
+                        {
+                            Id = 15,
+                            AplicaImpostoSelo = false,
+                            Ativo = true,
+                            ContaCredito = "34",
+                            ContaDebito = "65",
+                            GrupoBalanco = "",
+                            GrupoDre = "Custos e Perdas",
+                            GrupoFluxoCaixa = "Operacional",
+                            Nome = "IRT",
+                            Tipo = "Saída"
+                        },
+                        new
+                        {
+                            Id = 16,
+                            AplicaImpostoSelo = false,
+                            Ativo = true,
+                            ContaCredito = "34",
+                            ContaDebito = "65",
+                            GrupoBalanco = "",
+                            GrupoDre = "Custos e Perdas",
+                            GrupoFluxoCaixa = "Operacional",
+                            Nome = "IVA",
+                            Tipo = "Saída"
+                        },
+                        new
+                        {
+                            Id = 17,
+                            AplicaImpostoSelo = false,
+                            Ativo = true,
+                            ContaCredito = "34",
+                            ContaDebito = "65",
+                            GrupoBalanco = "",
+                            GrupoDre = "Custos e Perdas",
+                            GrupoFluxoCaixa = "Operacional",
+                            Nome = "Impostos e Taxas",
+                            Tipo = "Saída"
+                        },
+                        new
+                        {
+                            Id = 18,
+                            AplicaImpostoSelo = false,
+                            Ativo = true,
+                            ContaCredito = "45",
+                            ContaDebito = "62",
+                            GrupoBalanco = "",
+                            GrupoDre = "Custos e Perdas",
+                            GrupoFluxoCaixa = "Operacional",
+                            Nome = "Despesa Administrativa",
+                            Tipo = "Saída"
+                        },
+                        new
+                        {
+                            Id = 19,
+                            AplicaImpostoSelo = false,
+                            Ativo = true,
+                            ContaCredito = "45",
+                            ContaDebito = "62",
+                            GrupoBalanco = "",
+                            GrupoDre = "Custos e Perdas",
+                            GrupoFluxoCaixa = "Operacional",
+                            Nome = "Energia / Água / Internet",
+                            Tipo = "Saída"
+                        },
+                        new
+                        {
+                            Id = 20,
+                            AplicaImpostoSelo = false,
+                            Ativo = true,
+                            ContaCredito = "45",
+                            ContaDebito = "62",
+                            GrupoBalanco = "",
+                            GrupoDre = "Custos e Perdas",
+                            GrupoFluxoCaixa = "Operacional",
+                            Nome = "Aluguer",
+                            Tipo = "Saída"
+                        },
+                        new
+                        {
+                            Id = 21,
+                            AplicaImpostoSelo = false,
+                            Ativo = true,
+                            ContaCredito = "45",
+                            ContaDebito = "62",
+                            GrupoBalanco = "",
+                            GrupoDre = "Custos e Perdas",
+                            GrupoFluxoCaixa = "Operacional",
+                            Nome = "Combustível / Transportes",
+                            Tipo = "Saída"
+                        },
+                        new
+                        {
+                            Id = 22,
+                            AplicaImpostoSelo = false,
+                            Ativo = true,
+                            ContaCredito = "45",
+                            ContaDebito = "11",
+                            GrupoBalanco = "",
+                            GrupoDre = "",
+                            GrupoFluxoCaixa = "Investimento",
+                            Nome = "Compra de Equipamento",
+                            Tipo = "Saída"
+                        },
+                        new
+                        {
+                            Id = 23,
+                            AplicaImpostoSelo = false,
+                            Ativo = true,
+                            ContaCredito = "45",
+                            ContaDebito = "68",
+                            GrupoBalanco = "",
+                            GrupoDre = "Custos e Perdas",
+                            GrupoFluxoCaixa = "Financiamento",
+                            Nome = "Juros Bancários",
+                            Tipo = "Saída"
+                        },
+                        new
+                        {
+                            Id = 24,
+                            AplicaImpostoSelo = false,
+                            Ativo = true,
+                            ContaCredito = "45",
+                            ContaDebito = "33",
+                            GrupoBalanco = "",
+                            GrupoDre = "",
+                            GrupoFluxoCaixa = "Financiamento",
+                            Nome = "Amortização de Empréstimo",
+                            Tipo = "Saída"
+                        },
+                        new
+                        {
+                            Id = 25,
+                            AplicaImpostoSelo = false,
+                            Ativo = true,
+                            ContaCredito = "45",
+                            ContaDebito = "66",
+                            GrupoBalanco = "",
+                            GrupoDre = "Custos e Perdas",
+                            GrupoFluxoCaixa = "Operacional",
+                            Nome = "Outras Despesas",
+                            Tipo = "Saída"
+                        });
+                });
 
             modelBuilder.Entity("SmartGest.API.Models.Configuracao", b =>
                 {
@@ -164,6 +538,9 @@ namespace SmartGest.API.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("character varying(100)");
 
+                    b.Property<int?>("ContaContabilId")
+                        .HasColumnType("integer");
+
                     b.Property<string>("CorAccent")
                         .IsRequired()
                         .HasMaxLength(20)
@@ -197,68 +574,12 @@ namespace SmartGest.API.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("ContaContabilId");
+
                     b.HasIndex("NIB")
                         .IsUnique();
 
                     b.ToTable("ContasBancarias");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Activa = true,
-                            Agencia = "Luanda — Maianga",
-                            Banco = "Banco BIC",
-                            CorAccent = "#1A2E5A",
-                            Moeda = "AOA",
-                            NIB = "AO06.0055.0000.1234.5678.9012.3",
-                            SaldoAtual = 4820000m,
-                            SaldoOntem = 4600000m,
-                            Tipo = "Conta à Ordem",
-                            Titular = "SmartGest, Lda."
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Activa = true,
-                            Agencia = "Luanda — Ingombota",
-                            Banco = "Banco BAI",
-                            CorAccent = "#0D47A1",
-                            Moeda = "AOA",
-                            NIB = "AO06.0040.0000.9876.5432.1098.7",
-                            SaldoAtual = 3150000m,
-                            SaldoOntem = 3200000m,
-                            Tipo = "Conta à Ordem",
-                            Titular = "SmartGest, Lda."
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Activa = true,
-                            Agencia = "Luanda — Samba",
-                            Banco = "Banco BPC",
-                            CorAccent = "#1B5E20",
-                            Moeda = "AOA",
-                            NIB = "AO06.0038.0000.1111.2222.3333.4",
-                            SaldoAtual = 2980000m,
-                            SaldoOntem = 2980000m,
-                            Tipo = "Depósito a Prazo",
-                            Titular = "SmartGest, Lda."
-                        },
-                        new
-                        {
-                            Id = 4,
-                            Activa = true,
-                            Agencia = "Luanda — Talatona",
-                            Banco = "Banco ATL",
-                            CorAccent = "#E65100",
-                            Moeda = "USD",
-                            NIB = "AO06.0006.0000.4444.5555.6666.7",
-                            SaldoAtual = 1530000m,
-                            SaldoOntem = 1490000m,
-                            Tipo = "Conta à Ordem",
-                            Titular = "SmartGest, Lda."
-                        });
                 });
 
             modelBuilder.Entity("SmartGest.API.Models.ContaContabil", b =>
@@ -296,278 +617,6 @@ namespace SmartGest.API.Migrations
                         .IsUnique();
 
                     b.ToTable("ContasContabeis");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Activa = true,
-                            Codigo = "11",
-                            Grupo = "Ativo",
-                            IsDevedora = true,
-                            Nome = "Activos Fixos Tangíveis"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Activa = true,
-                            Codigo = "12",
-                            Grupo = "Ativo",
-                            IsDevedora = true,
-                            Nome = "Activos Intangíveis"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Activa = true,
-                            Codigo = "13",
-                            Grupo = "Ativo",
-                            IsDevedora = true,
-                            Nome = "Investimentos Financeiros"
-                        },
-                        new
-                        {
-                            Id = 4,
-                            Activa = true,
-                            Codigo = "18",
-                            Grupo = "Ativo",
-                            IsDevedora = false,
-                            Nome = "Amortizações Acumuladas"
-                        },
-                        new
-                        {
-                            Id = 5,
-                            Activa = true,
-                            Codigo = "22",
-                            Grupo = "Ativo",
-                            IsDevedora = true,
-                            Nome = "Mercadorias"
-                        },
-                        new
-                        {
-                            Id = 6,
-                            Activa = true,
-                            Codigo = "26",
-                            Grupo = "Ativo",
-                            IsDevedora = true,
-                            Nome = "Matérias-Primas e Subsidiárias"
-                        },
-                        new
-                        {
-                            Id = 7,
-                            Activa = true,
-                            Codigo = "31",
-                            Grupo = "Ativo",
-                            IsDevedora = true,
-                            Nome = "Clientes"
-                        },
-                        new
-                        {
-                            Id = 8,
-                            Activa = true,
-                            Codigo = "32",
-                            Grupo = "Passivo",
-                            IsDevedora = false,
-                            Nome = "Fornecedores"
-                        },
-                        new
-                        {
-                            Id = 9,
-                            Activa = true,
-                            Codigo = "33",
-                            Grupo = "Passivo",
-                            IsDevedora = false,
-                            Nome = "Empréstimos Obtidos"
-                        },
-                        new
-                        {
-                            Id = 10,
-                            Activa = true,
-                            Codigo = "34",
-                            Grupo = "Passivo",
-                            IsDevedora = false,
-                            Nome = "Estado e Outros Entes Públicos"
-                        },
-                        new
-                        {
-                            Id = 11,
-                            Activa = true,
-                            Codigo = "36",
-                            Grupo = "Passivo",
-                            IsDevedora = false,
-                            Nome = "Pessoal"
-                        },
-                        new
-                        {
-                            Id = 12,
-                            Activa = true,
-                            Codigo = "43",
-                            Grupo = "Ativo",
-                            IsDevedora = true,
-                            Nome = "Caixa"
-                        },
-                        new
-                        {
-                            Id = 13,
-                            Activa = true,
-                            Codigo = "45",
-                            Grupo = "Ativo",
-                            IsDevedora = true,
-                            Nome = "Depósitos Bancários"
-                        },
-                        new
-                        {
-                            Id = 14,
-                            Activa = true,
-                            Codigo = "51",
-                            Grupo = "Capital",
-                            IsDevedora = false,
-                            Nome = "Capital Social"
-                        },
-                        new
-                        {
-                            Id = 15,
-                            Activa = true,
-                            Codigo = "55",
-                            Grupo = "Capital",
-                            IsDevedora = false,
-                            Nome = "Reservas Legais"
-                        },
-                        new
-                        {
-                            Id = 16,
-                            Activa = true,
-                            Codigo = "59",
-                            Grupo = "Capital",
-                            IsDevedora = false,
-                            Nome = "Resultados Transitados"
-                        },
-                        new
-                        {
-                            Id = 17,
-                            Activa = true,
-                            Codigo = "61",
-                            Grupo = "Despesa",
-                            IsDevedora = true,
-                            Nome = "Custo das Mercadorias Vendidas e Matérias Consumidas"
-                        },
-                        new
-                        {
-                            Id = 18,
-                            Activa = true,
-                            Codigo = "62",
-                            Grupo = "Despesa",
-                            IsDevedora = true,
-                            Nome = "Fornecimentos e Serviços de Terceiros"
-                        },
-                        new
-                        {
-                            Id = 19,
-                            Activa = true,
-                            Codigo = "63",
-                            Grupo = "Despesa",
-                            IsDevedora = true,
-                            Nome = "Gastos com Pessoal"
-                        },
-                        new
-                        {
-                            Id = 20,
-                            Activa = true,
-                            Codigo = "64",
-                            Grupo = "Despesa",
-                            IsDevedora = true,
-                            Nome = "Amortizações e Depreciações do Exercício"
-                        },
-                        new
-                        {
-                            Id = 21,
-                            Activa = true,
-                            Codigo = "65",
-                            Grupo = "Despesa",
-                            IsDevedora = true,
-                            Nome = "Impostos e Taxas"
-                        },
-                        new
-                        {
-                            Id = 22,
-                            Activa = true,
-                            Codigo = "66",
-                            Grupo = "Despesa",
-                            IsDevedora = true,
-                            Nome = "Outros Custos e Perdas Operacionais"
-                        },
-                        new
-                        {
-                            Id = 23,
-                            Activa = true,
-                            Codigo = "68",
-                            Grupo = "Despesa",
-                            IsDevedora = true,
-                            Nome = "Custos e Perdas Financeiras"
-                        },
-                        new
-                        {
-                            Id = 24,
-                            Activa = true,
-                            Codigo = "69",
-                            Grupo = "Despesa",
-                            IsDevedora = true,
-                            Nome = "Custos e Perdas Extraordinárias"
-                        },
-                        new
-                        {
-                            Id = 25,
-                            Activa = true,
-                            Codigo = "71",
-                            Grupo = "Receita",
-                            IsDevedora = false,
-                            Nome = "Vendas de Mercadorias e Produtos Acabados"
-                        },
-                        new
-                        {
-                            Id = 26,
-                            Activa = true,
-                            Codigo = "72",
-                            Grupo = "Receita",
-                            IsDevedora = false,
-                            Nome = "Prestações de Serviços"
-                        },
-                        new
-                        {
-                            Id = 27,
-                            Activa = true,
-                            Codigo = "73",
-                            Grupo = "Receita",
-                            IsDevedora = false,
-                            Nome = "Outros Proveitos e Ganhos Operacionais"
-                        },
-                        new
-                        {
-                            Id = 28,
-                            Activa = true,
-                            Codigo = "78",
-                            Grupo = "Receita",
-                            IsDevedora = false,
-                            Nome = "Proveitos e Ganhos Financeiros"
-                        },
-                        new
-                        {
-                            Id = 29,
-                            Activa = true,
-                            Codigo = "79",
-                            Grupo = "Receita",
-                            IsDevedora = false,
-                            Nome = "Proveitos e Ganhos Extraordinários"
-                        },
-                        new
-                        {
-                            Id = 30,
-                            Activa = true,
-                            Codigo = "88",
-                            Grupo = "Capital",
-                            IsDevedora = false,
-                            Nome = "Resultado Líquido do Exercício"
-                        });
                 });
 
             modelBuilder.Entity("SmartGest.API.Models.Empresa", b =>
@@ -679,6 +728,9 @@ namespace SmartGest.API.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("character varying(50)");
 
+                    b.Property<int?>("CategoriaContabilId")
+                        .HasColumnType("integer");
+
                     b.Property<string>("CentroCusto")
                         .IsRequired()
                         .HasMaxLength(100)
@@ -732,6 +784,8 @@ namespace SmartGest.API.Migrations
 
                     b.HasIndex("Anulado")
                         .HasDatabaseName("IX_Lancamento_Anulado");
+
+                    b.HasIndex("CategoriaContabilId");
 
                     b.HasIndex("ContaBancariaId");
 
@@ -907,10 +961,10 @@ namespace SmartGest.API.Migrations
                             Activo = true,
                             CorAvatar = "#1A2E5A",
                             CriadoEm = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Email = "augusto@smartgest.ao",
-                            Iniciais = "AB",
-                            Nome = "Augusto Barbosa",
-                            PasswordHash = "$2a$11$W6k9CR/erDeuqTYNChrLiutX.MZ2kdzXydirBWQ82ihKjeJlSIw32",
+                            Email = "weber@smartgest.ao",
+                            Iniciais = "JW",
+                            Nome = "Jeth Weber",
+                            PasswordHash = "$2b$11$a.TPqwNMTgPENS9Up.20f.CzgkVrSgpLt0KGfl3vWEWKeq/hEK7Rq",
                             Perfil = "Administrador",
                             Telefone = "900000000"
                         });
@@ -942,12 +996,29 @@ namespace SmartGest.API.Migrations
                     b.ToTable("Webhooks");
                 });
 
+            modelBuilder.Entity("SmartGest.API.Models.ContaBancaria", b =>
+                {
+                    b.HasOne("SmartGest.API.Models.ContaContabil", "ContaContabil")
+                        .WithMany()
+                        .HasForeignKey("ContaContabilId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.Navigation("ContaContabil");
+                });
+
             modelBuilder.Entity("SmartGest.API.Models.Lancamento", b =>
                 {
+                    b.HasOne("SmartGest.API.Models.CategoriaContabil", "CategoriaContabil")
+                        .WithMany()
+                        .HasForeignKey("CategoriaContabilId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
                     b.HasOne("SmartGest.API.Models.ContaBancaria", "ContaBancaria")
                         .WithMany("Lancamentos")
                         .HasForeignKey("ContaBancariaId")
                         .OnDelete(DeleteBehavior.SetNull);
+
+                    b.Navigation("CategoriaContabil");
 
                     b.Navigation("ContaBancaria");
                 });

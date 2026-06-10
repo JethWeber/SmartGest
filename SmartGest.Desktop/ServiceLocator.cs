@@ -1,4 +1,5 @@
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Configuration;
 using SmartGest.Desktop.Services;
 using SmartGest.Desktop.ViewModels;
 
@@ -37,9 +38,20 @@ public static class ServiceLocator
 
     public static void Register(IServiceCollection services)
     {
+        // ── Configuração (appsettings.json + env) ─────────────────────────────
+        var config = new ConfigurationBuilder()
+            .SetBasePath(AppContext.BaseDirectory)
+            .AddJsonFile("appsettings.json", optional: true)
+            .AddEnvironmentVariables()
+            .Build();
+
+        var apiBase = config["Api:BaseUrl"] ?? "http://localhost:8080/";
+
         // ── Infraestrutura ────────────────────────────────────────────────────
         services.AddSingleton<TokenStore>();
-        services.AddSingleton<ApiClient>();
+
+        // Regista ApiClient via HttpClientFactory usando o BaseUrl da config
+        services.AddHttpClient<ApiClient>(client => client.BaseAddress = new Uri(apiBase));
 
         // ── Serviços de API ───────────────────────────────────────────────────
         services.AddTransient<AuthService>();
@@ -59,3 +71,4 @@ public static class ServiceLocator
         services.AddSingleton<MainWindowViewModel>();
     }
 }
+
