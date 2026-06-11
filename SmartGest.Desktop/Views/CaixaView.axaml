@@ -33,15 +33,17 @@
     <Style Selector="TextBlock.section-title">
       <Setter Property="FontSize"   Value="13"/>
       <Setter Property="FontWeight" Value="SemiBold"/>
-      <Setter Property="Foreground" Value="#1A2E5A"/>
+      <Setter Property="Foreground" Value="#C8DCFF"/>
       <Setter Property="Margin"     Value="0,0,0,12"/>
+      <Setter Property="LetterSpacing" Value="0.3"/>
     </Style>
 
     <!-- ── Labels e valores dos cards de métrica ────────────────────── -->
     <Style Selector="TextBlock.metric-label">
-      <Setter Property="FontSize"   Value="11"/>
-      <Setter Property="Foreground" Value="#9AA0AB"/>
+      <Setter Property="FontSize"   Value="10.5"/>
+      <Setter Property="Foreground" Value="#60FFFFFF"/>
       <Setter Property="FontWeight" Value="Medium"/>
+      <Setter Property="LetterSpacing" Value="0.8"/>
     </Style>
     <Style Selector="TextBlock.metric-value">
       <Setter Property="FontSize"   Value="19"/>
@@ -104,7 +106,7 @@
 
     <!-- ── Linhas alternadas na DataGrid ────────────────────────────── -->
     <Style Selector="DataGridRow:nth-child(odd)">
-      <Setter Property="Background" Value="#F9FAFC"/>
+      <Setter Property="Background" Value="#08FFFFFF"/>
     </Style>
 
     <!-- ── Pill de tipo de lançamento ───────────────────────────────── -->
@@ -131,14 +133,14 @@
         <Grid ColumnDefinitions="*, Auto">
           <StackPanel Grid.Column="0">
             <TextBlock Text="Caixa"
-                       FontSize="20" FontWeight="Bold"
-                       Foreground="#1A2E5A"/>
+                       FontSize="26" FontWeight="Bold"
+                       Foreground="#F0F6FF"/>
             <TextBlock Text="Gestão de entradas e saídas de caixa"
-                       FontSize="12" Foreground="#9AA0AB" Margin="0,2,0,0"/>
+                       FontSize="12" Foreground="#55FFFFFF" Margin="0,4,0,0"/>
           </StackPanel>
 
           <!-- Botão Nova Transação -->
-          <Button Grid.Column="1"
+          <Button x:Name="BtnNovaTransacao" Grid.Column="1"
                   Command="{Binding NovaTransacaoCommand}"
                   VerticalAlignment="Center"
                   Cursor="Hand"
@@ -169,7 +171,7 @@
             <Grid RowDefinitions="Auto, Auto, 6, Auto, 44">
               <TextBlock Grid.Row="0" Classes="metric-label" Text="Saldo em Caixa"/>
               <TextBlock Grid.Row="1" Classes="metric-value"
-                         Text="{Binding SaldoCaixa}" Foreground="#1A2E5A"/>
+                         Text="{Binding SaldoCaixa}" Foreground="#64B5F6"/>
               <Border Grid.Row="3" CornerRadius="4" Padding="6,2"
                       Background="{Binding FundoSaldoVar}" HorizontalAlignment="Left">
                 <TextBlock Text="{Binding SaldoVariacao}"
@@ -188,7 +190,7 @@
             <Grid RowDefinitions="Auto, Auto, 6, Auto, 44">
               <TextBlock Grid.Row="0" Classes="metric-label" Text="Entradas do Dia"/>
               <TextBlock Grid.Row="1" Classes="metric-value"
-                         Text="{Binding EntradasDia}" Foreground="#43A047"/>
+                         Text="{Binding EntradasDia}" Foreground="#81C784"/>
               <Border Grid.Row="3" CornerRadius="4" Padding="6,2"
                       Background="{Binding FundoEntradasVar}" HorizontalAlignment="Left">
                 <TextBlock Text="{Binding EntradasVariacao}"
@@ -207,7 +209,7 @@
             <Grid RowDefinitions="Auto, Auto, 6, Auto, 44">
               <TextBlock Grid.Row="0" Classes="metric-label" Text="Saídas do Dia"/>
               <TextBlock Grid.Row="1" Classes="metric-value"
-                         Text="{Binding SaidasDia}" Foreground="#E53935"/>
+                         Text="{Binding SaidasDia}" Foreground="#EF9A9A"/>
               <Border Grid.Row="3" CornerRadius="4" Padding="6,2"
                       Background="{Binding FundoSaidasVar}" HorizontalAlignment="Left">
                 <TextBlock Text="{Binding SaidasVariacao}"
@@ -306,7 +308,7 @@
                     <DataTemplate x:DataType="vm:LancamentoCaixaItem">
                       <TextBlock Text="{Binding Data}"
                                  VerticalAlignment="Center"
-                                 Foreground="#555555"
+                                 Foreground="#90AECF"
                                  Margin="10,0"/>
                     </DataTemplate>
                   </DataGridTemplateColumn.CellTemplate>
@@ -344,7 +346,7 @@
                     <DataTemplate x:DataType="vm:LancamentoCaixaItem">
                       <TextBlock Text="{Binding Descricao}"
                                  VerticalAlignment="Center"
-                                 Foreground="#333333"
+                                 Foreground="#C8DCFF"
                                  Margin="10,0"/>
                     </DataTemplate>
                   </DataGridTemplateColumn.CellTemplate>
@@ -356,7 +358,7 @@
                     <DataTemplate x:DataType="vm:LancamentoCaixaItem">
                       <TextBlock Text="{Binding Categoria}"
                                  VerticalAlignment="Center"
-                                 Foreground="#555555"
+                                 Foreground="#90AECF"
                                  Margin="10,0"/>
                     </DataTemplate>
                   </DataGridTemplateColumn.CellTemplate>
@@ -368,7 +370,7 @@
                     <DataTemplate x:DataType="vm:LancamentoCaixaItem">
                       <TextBlock Text="{Binding Conta}"
                                  VerticalAlignment="Center"
-                                 Foreground="#555555"
+                                 Foreground="#90AECF"
                                  Margin="10,0"/>
                     </DataTemplate>
                   </DataGridTemplateColumn.CellTemplate>

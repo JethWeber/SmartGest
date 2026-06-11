@@ -9,12 +9,21 @@ public partial class DreView : UserControl
     {
         InitializeComponent();
         DataContext ??= new DreViewModel();
+
+        DataContextChanged += (_, _) =>
+        {
+            if (DataContext is DreViewModel vm)
+                vm.OwnerWindow = TopLevel.GetTopLevel(this) as Window;
+        };
     }
 
     protected override async void OnLoaded(Avalonia.Interactivity.RoutedEventArgs e)
     {
         base.OnLoaded(e);
         if (DataContext is DreViewModel vm)
+        {
+            vm.OwnerWindow = TopLevel.GetTopLevel(this) as Window;
             await vm.InicializarAsync();
+        }
     }
 }

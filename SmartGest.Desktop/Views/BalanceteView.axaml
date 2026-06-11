@@ -33,15 +33,17 @@
     <Style Selector="TextBlock.section-title">
       <Setter Property="FontSize"   Value="13"/>
       <Setter Property="FontWeight" Value="SemiBold"/>
-      <Setter Property="Foreground" Value="#1A2E5A"/>
+      <Setter Property="Foreground" Value="#C8DCFF"/>
       <Setter Property="Margin"     Value="0,0,0,12"/>
+      <Setter Property="LetterSpacing" Value="0.3"/>
     </Style>
 
     <!-- ── Labels e valores dos cards ───────────────────────────────── -->
     <Style Selector="TextBlock.metric-label">
-      <Setter Property="FontSize"   Value="11"/>
-      <Setter Property="Foreground" Value="#9AA0AB"/>
+      <Setter Property="FontSize"   Value="10.5"/>
+      <Setter Property="Foreground" Value="#60FFFFFF"/>
       <Setter Property="FontWeight" Value="Medium"/>
+      <Setter Property="LetterSpacing" Value="0.8"/>
     </Style>
     <Style Selector="TextBlock.metric-value">
       <Setter Property="FontSize"   Value="19"/>
@@ -82,8 +84,8 @@
 
     <!-- ── Filtros ────────────────────────────────────────────────────── -->
     <Style Selector="ComboBox.sg-filter, TextBox.sg-filter">
-      <Setter Property="Background"      Value="White"/>
-      <Setter Property="BorderBrush"     Value="#E0E4EA"/>
+      <Setter Property="Background"      Value="#12FFFFFF"/>
+      <Setter Property="BorderBrush"     Value="#25FFFFFF"/>
       <Setter Property="BorderThickness" Value="1"/>
       <Setter Property="CornerRadius"    Value="7"/>
       <Setter Property="Padding"         Value="10,6"/>
@@ -93,9 +95,9 @@
 
     <!-- ── Linhas alternadas ──────────────────────────────────────────── -->
     <Style Selector="DataGridRow:nth-child(odd)">
-      <Setter Property="Background" Value="#F9FAFC"/>
+      <Setter Property="Background" Value="#08FFFFFF"/>
     </Style>    <Style Selector="DataGridRow:pointerover">
-      <Setter Property="Background" Value="#E8F0FA"/>
+      <Setter Property="Background" Value="#12FFFFFF"/>
     </Style>
   </UserControl.Styles>
 
@@ -162,10 +164,10 @@
           <Grid ColumnDefinitions="*, Auto">
             <StackPanel Grid.Column="0">
               <TextBlock Text="Balancete"
-                         FontSize="20" FontWeight="Bold"
-                         Foreground="#1A2E5A"/>
+                         FontSize="26" FontWeight="Bold"
+                         Foreground="#F0F6FF"/>
               <TextBlock Text="Saldos devedores e credores por conta contabilística"
-                         FontSize="12" Foreground="#9AA0AB" Margin="0,2,0,0"/>
+                         FontSize="12" Foreground="#55FFFFFF" Margin="0,4,0,0"/>
             </StackPanel>
 
             <StackPanel Grid.Column="1"
@@ -202,7 +204,7 @@
                   <TextBlock Classes="metric-label" Text="Total Débitos"/>
                   <TextBlock Classes="metric-value"
                              Text="{Binding TotalDebitos}"
-                             Foreground="#2196F3"/>
+                             Foreground="#64B5F6"/>
                 </StackPanel>
                 <lvc:CartesianChart Grid.Column="1"
                                     Height="50"
@@ -219,7 +221,7 @@
                   <TextBlock Classes="metric-label" Text="Total Créditos"/>
                   <TextBlock Classes="metric-value"
                              Text="{Binding TotalCreditos}"
-                             Foreground="#43A047"/>
+                             Foreground="#81C784"/>
                 </StackPanel>
                 <lvc:CartesianChart Grid.Column="1"
                                     Height="50"
@@ -358,7 +360,7 @@
                         <TextBlock Text="{Binding Codigo}"
                                    VerticalAlignment="Center"
                                    FontWeight="SemiBold"
-                                   Foreground="#1A2E5A"
+                                   Foreground="#C8DCFF"
                                    Margin="10,0"/>
                       </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
@@ -370,7 +372,7 @@
                       <DataTemplate x:DataType="vm:BalanceteItem">
                         <TextBlock Text="{Binding NomeConta}"
                                    VerticalAlignment="Center"
-                                   Foreground="#333333"
+                                   Foreground="#C8DCFF"
                                    Margin="10,0"/>
                       </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
@@ -399,7 +401,7 @@
                         <TextBlock Text="{Binding SaldoAntDebFmt}"
                                    VerticalAlignment="Center"
                                    TextAlignment="Right"
-                                   Foreground="#555555"
+                                   Foreground="#90AECF"
                                    Margin="10,0"/>
                       </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
@@ -411,7 +413,7 @@
                         <TextBlock Text="{Binding SaldoAntCreFmt}"
                                    VerticalAlignment="Center"
                                    TextAlignment="Right"
-                                   Foreground="#555555"
+                                   Foreground="#90AECF"
                                    Margin="10,0"/>
                       </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
@@ -452,7 +454,7 @@
                                    VerticalAlignment="Center"
                                    TextAlignment="Right"
                                    FontWeight="SemiBold"
-                                   Foreground="#1A2E5A"
+                                   Foreground="#C8DCFF"
                                    Margin="10,0"/>
                       </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
@@ -465,7 +467,7 @@
                                    VerticalAlignment="Center"
                                    TextAlignment="Right"
                                    FontWeight="SemiBold"
-                                   Foreground="#1A2E5A"
+                                   Foreground="#C8DCFF"
                                    Margin="10,0"/>
                       </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
@@ -478,7 +480,7 @@
                                    VerticalAlignment="Center"
                                    TextAlignment="Right"
                                    FontWeight="SemiBold"
-                                   Foreground="#1A2E5A"
+                                   Foreground="#C8DCFF"
                                    Margin="10,0"/>
                       </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
@@ -494,13 +496,13 @@
                RODAPÉ DE TOTAIS
                ══════════════════════════════════════════════════════════════ -->
           <Border Classes="sg-card" Padding="16,12"
-                  Background="#F0F4FF">
+                  Background="#08FFFFFF">
             <Grid ColumnDefinitions="2*, *, *, *, *, *, *, *">
 
               <TextBlock Grid.Column="0"
                          Text="TOTAIS GERAIS"
                          FontSize="12" FontWeight="Bold"
-                         Foreground="#1A2E5A"
+                         Foreground="#C8DCFF"
                          VerticalAlignment="Center"/>
 
               <TextBlock Grid.Column="3"

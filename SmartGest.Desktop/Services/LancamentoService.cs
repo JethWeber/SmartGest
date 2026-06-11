@@ -38,7 +38,7 @@ public class LancamentoService
         if (!string.IsNullOrWhiteSpace(texto)) qs += $"&texto={Uri.EscapeDataString(texto)}";
         if (dataInicio.HasValue) qs += $"&dataInicio={dataInicio.Value:yyyy-MM-dd}";
         if (dataFim.HasValue)    qs += $"&dataFim={dataFim.Value:yyyy-MM-dd}";
-        if (contaId.HasValue)    qs += $"&contaId={contaId.Value}";
+        if (contaId.HasValue)    qs += $"&contaBancariaId={contaId.Value}";
 
         var resp = await _api.GetAsync<LancamentosPageResponse>(qs);
         return resp ?? new LancamentosPageResponse(0, pagina, tamPagina, new());
@@ -49,17 +49,16 @@ public class LancamentoService
     public record LancamentoRequest(
         DateTime Data,
         string   Descricao,
-        string   Categoria,
         string   Tipo,
         decimal  Valor,
-        string   Beneficiario,
-        string   MetodoPagamento,
-        string   CaminhoDocumento,
-        string   Observacoes,
-        string   CentroCusto,
-        string   ReferenciaInterna,
-        int?     ContaBancariaId,
-        int?     CategoriaId);
+        int      CategoriaId,
+        string?  Beneficiario,
+        string?  MetodoPagamento,
+        string?  CaminhoDocumento,
+        string?  Observacoes,
+        string?  CentroCusto,
+        string?  ReferenciaInterna,
+        int?     ContaBancariaId);
 
     public record LancamentoResponse(
         int      Id,

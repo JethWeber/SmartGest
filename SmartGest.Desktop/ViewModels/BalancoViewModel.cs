@@ -3,12 +3,15 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
+using Avalonia.Controls;
+using Avalonia.Platform.Storage;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using LiveChartsCore;
 using LiveChartsCore.SkiaSharpView;
 using LiveChartsCore.SkiaSharpView.Painting;
 using SkiaSharp;
+using SmartGest.Desktop.Ferramentas;
 using SmartGest.Desktop.Services;
 
 namespace SmartGest.Desktop.ViewModels;
@@ -16,6 +19,9 @@ namespace SmartGest.Desktop.ViewModels;
 public partial class BalancoViewModel : ViewModelBase
 {
     private readonly ContabilidadeService _svc;
+    private BalancoApiResponse? _ultimoBalanco;
+
+    public Window? OwnerWindow { get; set; }
 
     // ── Estado de carregamento ────────────────────────────────────────────────
     [ObservableProperty] private bool   _carregando   = false;
@@ -103,13 +109,52 @@ public partial class BalancoViewModel : ViewModelBase
         => await CarregarAsync();
 
     [RelayCommand]
-    private void Exportar()
+    private async Task Exportar()
     {
-        // TODO: exportar para XLSX / PDF
+        if (_ultimoBalanco is null)
+        {
+            MostrarErro("Não há dados carregados para exportar.");
+            return;
+        }
+
+        if (OwnerWindow is null)
+            return;
+
+        var topLevel = TopLevel.GetTopLevel(OwnerWindow);
+        if (topLevel?.StorageProvider is null)
+            return;
+
+        var options = new FilePickerSaveOptions
+        {
+            Title = "Salvar Balanço como PDF",
+            SuggestedFileName = "Balanco.pdf",
+            FileTypeChoices = new[]
+            {
+                new FilePickerFileType("PDF")
+                {
+                    Patterns = new[] { "*.pdf" },
+                    MimeTypes = new[] { "application/pdf" }
+                }
+            }
+        };
+
+        var file = await topLevel.StorageProvider.SaveFilePickerAsync(options);
+        if (file is null)
+            return;
+
+        try
+        {
+            var meses = new[] { "Jan","Fev","Mar","Abr","Mai","Jun","Jul","Ago","Set","Out","Nov","Dez" };
+            var periodoTexto = $"{meses[MesIndex]} {Exercicio}";
+            BalancoPdfGenerator.Generate(_ultimoBalanco, periodoTexto, file.Path.LocalPath);
+        }
+        catch (Exception ex)
+        {
+            MostrarErro($"Erro ao gerar PDF: {ex.Message}");
+        }
     }
 
     // ── Lógica interna ────────────────────────────────────────────────────────
-
     private async Task CarregarAsync()
     {
         Carregando   = true;
@@ -125,6 +170,8 @@ public partial class BalancoViewModel : ViewModelBase
                 MostrarErro("Sem resposta do servidor.");
                 return;
             }
+
+            _ultimoBalanco = resp;
 
             Preencher(AtivoCorrentes,       resp.AtivoCorrentes);
             Preencher(AtivoNaoCorrentes,    resp.AtivoNaoCorrentes);

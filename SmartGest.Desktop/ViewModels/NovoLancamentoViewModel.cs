@@ -286,17 +286,16 @@ public partial class NovoLancamentoViewModel : ViewModelBase
             var req = new LancamentoService.LancamentoRequest(
                 Data:              DataMovimento?.DateTime ?? DateTime.Today,
                 Descricao:         Descricao.Trim(),
-                Categoria:         selectedCat?.Nome ?? string.Empty,
                 Tipo:              IsEntrada ? "Entrada" : "Saída",
                 Valor:             valorDecimal,
+                CategoriaId:       selectedCat?.Id ?? 0,
                 Beneficiario:      Beneficiario.Trim(),
                 MetodoPagamento:   MetodoPagamentoIndex >= 0 ? MetodosPagamento[MetodoPagamentoIndex] : string.Empty,
                 CaminhoDocumento:  CaminhoDocumento,
                 Observacoes:       Observacoes.Length > 500 ? Observacoes[..500] : Observacoes,
                 CentroCusto:       CentroCustoIndex >= 0 ? CentrosCusto[CentroCustoIndex] : string.Empty,
                 ReferenciaInterna: ReferenciaInterna.Trim(),
-                ContaBancariaId:   contaId,
-                CategoriaId:       selectedCat?.Id);
+                ContaBancariaId:   contaId);
                 
 
             var criado = await _lancamentoSvc.CriarAsync(req);

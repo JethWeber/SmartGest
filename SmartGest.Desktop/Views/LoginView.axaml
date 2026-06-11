@@ -25,6 +25,7 @@
       <Setter Property="CornerRadius" Value="10"/>
       <Setter Property="Padding" Value="14,0"/>
       <Setter Property="HorizontalAlignment" Value="Stretch"/>
+      <Setter Property="VerticalContentAlignment" Value="Center"/>
       <Setter Property="CaretBrush" Value="#2196F3"/>
     </Style>
     <Style Selector="TextBox.sg-input:focus">
@@ -40,6 +41,7 @@
       <Setter Property="Foreground" Value="White"/>
       <Setter Property="CornerRadius" Value="10"/>
       <Setter Property="HorizontalContentAlignment" Value="Center"/>
+      <Setter Property="VerticalContentAlignment" Value="Center"/>
       <Setter Property="HorizontalAlignment" Value="Stretch"/>
       <Setter Property="Cursor" Value="Hand"/>
       <Setter Property="BorderThickness" Value="1"/>
@@ -68,8 +70,28 @@
       <Setter Property="FontSize" Value="12.5"/>
       <Setter Property="Cursor" Value="Hand"/>
       <Setter Property="Padding" Value="0"/>
+      <Setter Property="HorizontalAlignment" Value="Center"/>
+      <Setter Property="HorizontalContentAlignment" Value="Center"/>
+      <Setter Property="VerticalContentAlignment" Value="Center"/>
     </Style>
     <Style Selector="Button.sg-link:pointerover /template/ ContentPresenter">
+      <Setter Property="Background" Value="Transparent"/>
+      <Setter Property="Foreground" Value="#42A5F5"/>
+    </Style>
+
+    <!-- Botão toggle senha (sem ícone, apenas texto) -->
+    <Style Selector="Button.sg-eye-btn">
+      <Setter Property="Background" Value="Transparent"/>
+      <Setter Property="BorderThickness" Value="0"/>
+      <Setter Property="Foreground" Value="#90C4E8"/>
+      <Setter Property="FontSize" Value="11"/>
+      <Setter Property="Cursor" Value="Hand"/>
+      <Setter Property="Padding" Value="8,0"/>
+      <Setter Property="HorizontalAlignment" Value="Right"/>
+      <Setter Property="VerticalAlignment" Value="Center"/>
+      <Setter Property="VerticalContentAlignment" Value="Center"/>
+    </Style>
+    <Style Selector="Button.sg-eye-btn:pointerover /template/ ContentPresenter">
       <Setter Property="Background" Value="Transparent"/>
       <Setter Property="Foreground" Value="#42A5F5"/>
     </Style>
@@ -147,8 +169,8 @@
         <Border Grid.Column="0" ClipToBounds="True"
                 Name="DragRegion" Cursor="Arrow">
 
-          <!-- Faixa de cor no topo -->
           <Panel>
+            <!-- Faixa de cor no topo -->
             <Border VerticalAlignment="Top" Height="3" ZIndex="10">
               <Border.Background>
                 <LinearGradientBrush StartPoint="0%,0%" EndPoint="100%,0%">
@@ -196,19 +218,16 @@
                 </Border.Background>
 
                 <StackPanel Spacing="10">
-                  <!-- Label do gráfico -->
                   <TextBlock Text="RECEITAS vs DESPESAS · 2025"
                              FontSize="9.5" Foreground="#50FFFFFF"
                              LetterSpacing="1.5" HorizontalAlignment="Center"/>
 
                   <Canvas Width="330" Height="180" Opacity="0.95">
-                    <!-- Linhas de grid -->
                     <Line StartPoint="0,35"  EndPoint="330,35"  Stroke="#18FFFFFF" StrokeThickness="1"/>
                     <Line StartPoint="0,80"  EndPoint="330,80"  Stroke="#18FFFFFF" StrokeThickness="1"/>
                     <Line StartPoint="0,125" EndPoint="330,125" Stroke="#18FFFFFF" StrokeThickness="1"/>
                     <Line StartPoint="0,170" EndPoint="330,170" Stroke="#28FFFFFF" StrokeThickness="1"/>
 
-                    <!-- Barras Receitas (azul) -->
                     <Rectangle Canvas.Left="16"  Canvas.Top="50"  Width="26" Height="120" RadiusX="5" RadiusY="5">
                       <Rectangle.Fill><LinearGradientBrush StartPoint="0%,0%" EndPoint="0%,100%"><GradientStop Offset="0" Color="#CC42A5F5"/><GradientStop Offset="1" Color="#882196F3"/></LinearGradientBrush></Rectangle.Fill>
                     </Rectangle>
@@ -222,7 +241,6 @@
                       <Rectangle.Fill><LinearGradientBrush StartPoint="0%,0%" EndPoint="0%,100%"><GradientStop Offset="0" Color="#CC42A5F5"/><GradientStop Offset="1" Color="#882196F3"/></LinearGradientBrush></Rectangle.Fill>
                     </Rectangle>
 
-                    <!-- Barras Despesas (vermelho suave) -->
                     <Rectangle Canvas.Left="46"  Canvas.Top="90"  Width="26" Height="80"  RadiusX="5" RadiusY="5">
                       <Rectangle.Fill><LinearGradientBrush StartPoint="0%,0%" EndPoint="0%,100%"><GradientStop Offset="0" Color="#CCEF9A9A"/><GradientStop Offset="1" Color="#88E53935"/></LinearGradientBrush></Rectangle.Fill>
                     </Rectangle>
@@ -236,14 +254,12 @@
                       <Rectangle.Fill><LinearGradientBrush StartPoint="0%,0%" EndPoint="0%,100%"><GradientStop Offset="0" Color="#CCEF9A9A"/><GradientStop Offset="1" Color="#88E53935"/></LinearGradientBrush></Rectangle.Fill>
                     </Rectangle>
 
-                    <!-- Labels meses -->
                     <TextBlock Canvas.Left="20"  Canvas.Top="175" Text="Jan" FontSize="9" Foreground="#45FFFFFF"/>
                     <TextBlock Canvas.Left="94"  Canvas.Top="175" Text="Abr" FontSize="9" Foreground="#45FFFFFF"/>
                     <TextBlock Canvas.Left="168" Canvas.Top="175" Text="Jul" FontSize="9" Foreground="#45FFFFFF"/>
                     <TextBlock Canvas.Left="242" Canvas.Top="175" Text="Out" FontSize="9" Foreground="#45FFFFFF"/>
                   </Canvas>
 
-                  <!-- Legenda -->
                   <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Spacing="20">
                     <StackPanel Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
                       <Border Width="10" Height="10" CornerRadius="2" Background="#2196F3"/>
@@ -275,7 +291,7 @@
           </Border.Background>
         </Border>
 
-        <!-- ===== PAINEL DE LOGIN GLASS ===== -->
+        <!-- ===== PAINEL DE LOGIN ===== -->
         <Border Grid.Column="1" ClipToBounds="True"
                 Padding="36,0">
           <Border.Background>
@@ -287,12 +303,12 @@
 
           <StackPanel VerticalAlignment="Center" Spacing="0">
 
-            <!-- Logo branco -->
+            <!-- Logo -->
             <Image Source="/Assets/smartgest_logo_white.png"
                    Width="210" HorizontalAlignment="Center"
                    Stretch="Uniform" Margin="0,0,0,28"/>
 
-            <!-- Divider glass -->
+            <!-- Divider -->
             <Border Height="1" Margin="16,0,16,24">
               <Border.Background>
                 <LinearGradientBrush StartPoint="0%,0%" EndPoint="100%,0%">
@@ -314,25 +330,35 @@
                        Margin="0,6,0,24"/>
 
             <StackPanel Spacing="14">
+
               <!-- Telefone -->
               <StackPanel Spacing="6">
                 <TextBlock Text="TELEFONE"
                            FontSize="10" FontWeight="Medium"
                            Foreground="#50FFFFFF" LetterSpacing="1.2"/>
                 <TextBox Classes="sg-input"
-                         Watermark="+244 9XX XXX XXX"
+                         Watermark="9XX XXX XXX"
                          Text="{Binding Phone}"/>
               </StackPanel>
+
               <!-- Senha -->
               <StackPanel Spacing="6">
                 <TextBlock Text="SENHA"
                            FontSize="10" FontWeight="Medium"
                            Foreground="#50FFFFFF" LetterSpacing="1.2"/>
-                <TextBox Classes="sg-input"
-                         Watermark="••••••••"
-                         PasswordChar="●"
-                         Text="{Binding Password}"/>
+                <Grid>
+                  <TextBox Classes="sg-input"
+                           Watermark="••••••••"
+                           PasswordChar="{Binding PasswordChar}"
+                           Text="{Binding Password}"
+                           Padding="14,0,52,0"/>
+                  <Button Classes="sg-eye-btn"
+                          Content="mostrar"
+                          Command="{Binding AlternarSenhaCommand}"
+                          Margin="0,0,8,0"/>
+                </Grid>
               </StackPanel>
+
             </StackPanel>
 
             <!-- Erro -->

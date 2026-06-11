@@ -2,12 +2,16 @@ using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
+using Avalonia.Controls;
+using Avalonia.Platform.Storage;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using LiveChartsCore;
 using LiveChartsCore.SkiaSharpView;
 using LiveChartsCore.SkiaSharpView.Painting;
+using QuestPDF.Infrastructure;
 using SkiaSharp;
+using SmartGest.Desktop.Ferramentas;
 using SmartGest.Desktop.Services;
 
 namespace SmartGest.Desktop.ViewModels;
@@ -15,6 +19,9 @@ namespace SmartGest.Desktop.ViewModels;
 public partial class BalanceteViewModel : ViewModelBase
 {
     private readonly ContabilidadeService _svc;
+    private BalanceteApiResponse? _ultimoBalancete;
+
+    public Window? OwnerWindow { get; set; }
 
     // ── Estado de carregamento ────────────────────────────────────────────────
     [ObservableProperty] private bool   _carregando   = false;
@@ -69,9 +76,47 @@ public partial class BalanceteViewModel : ViewModelBase
         => await CarregarAsync();
 
     [RelayCommand]
-    private void Exportar()
+    private async Task Exportar()
     {
-        // TODO: exportar para XLSX / PDF
+        if (_ultimoBalancete is null)
+        {
+            MostrarErro("Não há dados carregados para exportar.");
+            return;
+        }
+
+        if (OwnerWindow is null)
+            return;
+
+        var topLevel = TopLevel.GetTopLevel(OwnerWindow);
+        if (topLevel?.StorageProvider is null)
+            return;
+
+        var options = new FilePickerSaveOptions
+        {
+            Title = "Salvar Balancete como PDF",
+            SuggestedFileName = "Balancete.pdf",
+            FileTypeChoices = new[]
+            {
+                new FilePickerFileType("PDF")
+                {
+                    Patterns = new[] { "*.pdf" },
+                    MimeTypes = new[] { "application/pdf" }
+                }
+            }
+        };
+
+        var file = await topLevel.StorageProvider.SaveFilePickerAsync(options);
+        if (file is null)
+            return;
+
+        try
+        {
+            BalancetePdfGenerator.Generate(_ultimoBalancete, file.Path.LocalPath);
+        }
+        catch (Exception ex)
+        {
+            MostrarErro($"Erro ao gerar PDF: {ex.Message}");
+        }
     }
 
     // ── Lógica interna ────────────────────────────────────────────────────────
@@ -104,6 +149,8 @@ public partial class BalanceteViewModel : ViewModelBase
                 MostrarErro("Sem resposta do servidor.");
                 return;
             }
+
+            _ultimoBalancete = resp;
 
             // Actualizar métricas do topo
             var dif = resp.TotalDebitos - resp.TotalCreditos;

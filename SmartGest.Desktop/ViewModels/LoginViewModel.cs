@@ -17,9 +17,15 @@ public partial class LoginViewModel : ViewModelBase
     // ── Propriedades ──────────────────────────────────────────────────────────
     [ObservableProperty] private string _phone        = string.Empty;
     [ObservableProperty] private string _password     = string.Empty;
+    [ObservableProperty] private bool   _mostrarSenha = false;
     [ObservableProperty] private string _errorMessage = string.Empty;
     [ObservableProperty] private bool   _hasError     = false;
     [ObservableProperty] private bool   _isLoading    = false;
+
+    public char PasswordChar => MostrarSenha ? '\0' : '●';
+
+    [RelayCommand]
+    private void AlternarSenha() => MostrarSenha = !MostrarSenha;
 
     // ── Evento de navegação ───────────────────────────────────────────────────
     /// <summary>Disparado na UI thread quando a autenticação é bem-sucedida.</summary>

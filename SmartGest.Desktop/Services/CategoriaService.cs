@@ -5,7 +5,7 @@ namespace SmartGest.Desktop.Services;
 
 /// <summary>
 /// Obtém as categorias financeiras válidas da API.
-/// GET /api/lancamentos/categorias?tipo=Entrada|Saída
+/// GET /api/categorias?tipo=Entrada|Saída
 /// </summary>
 public class CategoriaService
 {
@@ -14,7 +14,7 @@ public class CategoriaService
 
     public async Task<List<CategoriaItem>> ListarAsync(string? tipo = null)
     {
-        var url = "api/lancamentos/categorias";
+        var url = "api/categorias";
         if (!string.IsNullOrEmpty(tipo))
             url += $"?tipo={System.Uri.EscapeDataString(tipo)}";
 

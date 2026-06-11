@@ -33,15 +33,17 @@
     <Style Selector="TextBlock.section-title">
       <Setter Property="FontSize"   Value="13"/>
       <Setter Property="FontWeight" Value="SemiBold"/>
-      <Setter Property="Foreground" Value="#1A2E5A"/>
+      <Setter Property="Foreground" Value="#E8F0FF"/>
       <Setter Property="Margin"     Value="0,0,0,12"/>
+      <Setter Property="LetterSpacing" Value="0.3"/>
     </Style>
 
     <!-- ── Labels e valores dos cards ───────────────────────────────── -->
     <Style Selector="TextBlock.metric-label">
-      <Setter Property="FontSize"   Value="11"/>
-      <Setter Property="Foreground" Value="#9AA0AB"/>
+      <Setter Property="FontSize"   Value="10.5"/>
+      <Setter Property="Foreground" Value="#A0B8D8"/>
       <Setter Property="FontWeight" Value="Medium"/>
+      <Setter Property="LetterSpacing" Value="0.8"/>
     </Style>
     <Style Selector="TextBlock.metric-value">
       <Setter Property="FontSize"   Value="19"/>
@@ -50,47 +52,49 @@
     </Style>
 
     <!-- ── Cabeçalho de sub-secção do balanço (Ativo Corrente, etc.) ── -->
+    <!-- Fundo sólido com boa opacidade para garantir contraste do texto -->
     <Style Selector="Border.sub-header">
-      <Setter Property="Background"   Value="#F0F4FF"/>
+      <Setter Property="Background"   Value="#2A3B5E"/>
       <Setter Property="CornerRadius" Value="6"/>
-      <Setter Property="Padding"      Value="12,7"/>
+      <Setter Property="Padding"      Value="12,8"/>
       <Setter Property="Margin"       Value="0,4,0,2"/>
     </Style>
 
     <!-- ── Linha de conta ───────────────────────────────────────────── -->
+    <!-- Fundo sólido escuro para criar contraste nítido com o texto claro -->
     <Style Selector="Border.conta-linha">
-      <Setter Property="Padding" Value="12,7"/>
-      <Setter Property="Background" Value="Transparent"/>
+      <Setter Property="Padding"    Value="12,8"/>
+      <Setter Property="Background" Value="#1C2D4A"/>
     </Style>
     <Style Selector="Border.conta-linha:nth-child(odd)">
-      <Setter Property="Background" Value="#F9FAFC"/>
+      <Setter Property="Background" Value="#223255"/>
     </Style>
     <Style Selector="Border.conta-linha:pointerover">
-      <Setter Property="Background" Value="#E8F0FA"/>
+      <Setter Property="Background" Value="#2E4068"/>
     </Style>
 
     <!-- ── Linha de subtotal ─────────────────────────────────────────── -->
     <Style Selector="Border.subtotal-linha">
-      <Setter Property="Background"      Value="#F4F6FA"/>
-      <Setter Property="BorderBrush"     Value="#DDE3EE"/>
+      <Setter Property="Background"      Value="#1A2840"/>
+      <Setter Property="BorderBrush"     Value="#3A4F70"/>
       <Setter Property="BorderThickness" Value="0,1,0,0"/>
-      <Setter Property="Padding"         Value="12,8"/>
+      <Setter Property="Padding"         Value="12,9"/>
       <Setter Property="Margin"          Value="0,4,0,0"/>
     </Style>
 
     <!-- ── Linha de total geral ──────────────────────────────────────── -->
     <Style Selector="Border.total-geral">
-      <Setter Property="Background"      Value="#1A2E5A"/>
+      <Setter Property="Background"      Value="#0F1D3A"/>
       <Setter Property="CornerRadius"    Value="7"/>
-      <Setter Property="Padding"         Value="14,10"/>
+      <Setter Property="Padding"         Value="14,11"/>
       <Setter Property="Margin"          Value="0,10,0,0"/>
     </Style>
 
     <!-- ── Separador ────────────────────────────────────────────────── -->
     <Style Selector="Border.separador">
-      <Setter Property="Height"      Value="1"/>
-      <Setter Property="Background"  Value="#EBEEF4"/>
-      <Setter Property="Margin"      Value="0,8,0,4"/>
+      <Setter Property="Height"     Value="1"/>
+      <Setter Property="Background" Value="#3A4F70"/>
+      <Setter Property="Margin"     Value="0,8,0,4"/>
     </Style>
 
     <!-- ── Botões ────────────────────────────────────────────────────── -->
@@ -125,13 +129,19 @@
 
     <!-- ── Filtros ───────────────────────────────────────────────────── -->
     <Style Selector="ComboBox.sg-filter">
-      <Setter Property="Background"      Value="White"/>
-      <Setter Property="BorderBrush"     Value="#E0E4EA"/>
+      <Setter Property="Background"      Value="#12FFFFFF"/>
+      <Setter Property="BorderBrush"     Value="#25FFFFFF"/>
       <Setter Property="BorderThickness" Value="1"/>
       <Setter Property="CornerRadius"    Value="7"/>
       <Setter Property="Padding"         Value="10,6"/>
       <Setter Property="FontSize"        Value="12"/>
       <Setter Property="Height"          Value="34"/>
+      <Setter Property="Foreground"      Value="#F0F6FF"/>
+    </Style>
+
+    <Style Selector="ComboBoxItem">
+      <Setter Property="Foreground" Value="#1A2E5A"/>
+      <Setter Property="Background" Value="White"/>
     </Style>
 
   </UserControl.Styles>
@@ -146,8 +156,8 @@
         <Grid ColumnDefinitions="*, Auto">
           <StackPanel Grid.Column="0">
             <TextBlock Text="Balanço Patrimonial"
-                       FontSize="20" FontWeight="Bold"
-                       Foreground="#1A2E5A"/>
+                       FontSize="26" FontWeight="Bold"
+                       Foreground="#F0F6FF"/>
             <TextBlock Text="Posição financeira da empresa num determinado momento"
                        FontSize="12" Foreground="#9AA0AB" Margin="0,2,0,0"/>
           </StackPanel>
@@ -179,7 +189,7 @@
 
             <TextBlock Grid.Column="0"
                        Text="Período de referência:"
-                       FontSize="12" Foreground="#5A6478"
+                       FontSize="12" Foreground="#90AECF"
                        VerticalAlignment="Center"/>
 
             <!-- Mês -->
@@ -232,7 +242,7 @@
                 <TextBlock Classes="metric-label" Text="Total do Ativo"/>
                 <TextBlock Classes="metric-value"
                            Text="{Binding TotalAtivoFmt}"
-                           Foreground="#2196F3"/>
+                           Foreground="#64B5F6"/>
               </StackPanel>
               <lvc:CartesianChart Grid.Column="1" Height="50"
                                   Series="{Binding SparklineAtivo}"
@@ -248,7 +258,7 @@
                 <TextBlock Classes="metric-label" Text="Total Passivo + Capital"/>
                 <TextBlock Classes="metric-value"
                            Text="{Binding TotalPassivoCapitalFmt}"
-                           Foreground="#1A2E5A"/>
+                           Foreground="#81C784"/>
               </StackPanel>
               <lvc:CartesianChart Grid.Column="1" Height="50"
                                   Series="{Binding SparklinePassivoCapital}"
@@ -287,21 +297,21 @@
             <StackPanel Spacing="0">
 
               <!-- Título da coluna -->
-              <Border Background="#14FFFFFF" CornerRadius="7" Padding="14,10" Margin="0,0,0,14">
+              <Border Background="#1A3A6B" CornerRadius="7" Padding="14,10" Margin="0,0,0,14">
                 <StackPanel Orientation="Horizontal" Spacing="10">
-                  <mi:MaterialIcon Kind="TrendingUp" Width="16" Height="16" Foreground="#1565C0"/>
+                  <mi:MaterialIcon Kind="TrendingUp" Width="16" Height="16" Foreground="#64B5F6"/>
                   <TextBlock Text="ATIVO"
                              FontSize="14" FontWeight="Bold"
-                             Foreground="#1565C0"
+                             Foreground="#FFFFFF"
                              VerticalAlignment="Center"/>
                 </StackPanel>
               </Border>
 
               <!-- ── ATIVO CORRENTE ──────────────────────────────────── -->
-              <Border Classes="sub-header" Background="#12FFFFFF">
+              <Border Classes="sub-header">
                 <TextBlock Text="Ativo Corrente"
                            FontSize="12" FontWeight="Bold"
-                           Foreground="#1A2E5A"/>
+                           Foreground="#E8F4FF"/>
               </Border>
 
               <ItemsControl ItemsSource="{Binding AtivoCorrentes}">
@@ -311,12 +321,12 @@
                       <Grid ColumnDefinitions="*, Auto">
                         <TextBlock Grid.Column="0"
                                    Text="{Binding Descricao}"
-                                   FontSize="12" Foreground="#444444"
+                                   FontSize="12" Foreground="#E0EEFF"
                                    VerticalAlignment="Center"
                                    TextWrapping="Wrap"/>
                         <TextBlock Grid.Column="1"
                                    Text="{Binding ValorFmt}"
-                                   FontSize="12" FontWeight="Medium"
+                                   FontSize="12" FontWeight="SemiBold"
                                    Foreground="{Binding CorValor}"
                                    VerticalAlignment="Center"
                                    TextAlignment="Right"
@@ -333,11 +343,11 @@
                   <TextBlock Grid.Column="0"
                              Text="Total Ativo Corrente"
                              FontSize="12" FontWeight="Bold"
-                             Foreground="#1A2E5A"/>
+                             Foreground="#E0EEFF"/>
                   <TextBlock Grid.Column="1"
                              Text="{Binding TotalAtivoCorrenteFmt}"
                              FontSize="12" FontWeight="Bold"
-                             Foreground="#1565C0"
+                             Foreground="#64B5F6"
                              TextAlignment="Right" MinWidth="140"/>
                 </Grid>
               </Border>
@@ -348,7 +358,7 @@
               <Border Classes="sub-header">
                 <TextBlock Text="Ativo Não Corrente"
                            FontSize="12" FontWeight="Bold"
-                           Foreground="#1A2E5A"/>
+                           Foreground="#E8F4FF"/>
               </Border>
 
               <ItemsControl ItemsSource="{Binding AtivoNaoCorrentes}">
@@ -358,12 +368,12 @@
                       <Grid ColumnDefinitions="*, Auto">
                         <TextBlock Grid.Column="0"
                                    Text="{Binding Descricao}"
-                                   FontSize="12" Foreground="#444444"
+                                   FontSize="12" Foreground="#E0EEFF"
                                    VerticalAlignment="Center"
                                    TextWrapping="Wrap"/>
                         <TextBlock Grid.Column="1"
                                    Text="{Binding ValorFmt}"
-                                   FontSize="12" FontWeight="Medium"
+                                   FontSize="12" FontWeight="SemiBold"
                                    Foreground="{Binding CorValor}"
                                    VerticalAlignment="Center"
                                    TextAlignment="Right"
@@ -380,11 +390,11 @@
                   <TextBlock Grid.Column="0"
                              Text="Total Ativo Não Corrente"
                              FontSize="12" FontWeight="Bold"
-                             Foreground="#1A2E5A"/>
+                             Foreground="#E0EEFF"/>
                   <TextBlock Grid.Column="1"
                              Text="{Binding TotalAtivoNaoCorrenteFmt}"
                              FontSize="12" FontWeight="Bold"
-                             Foreground="#1565C0"
+                             Foreground="#64B5F6"
                              TextAlignment="Right" MinWidth="140"/>
                 </Grid>
               </Border>
@@ -395,11 +405,11 @@
                   <TextBlock Grid.Column="0"
                              Text="TOTAL DO ATIVO"
                              FontSize="13" FontWeight="Bold"
-                             Foreground="White"/>
+                             Foreground="#FFFFFF"/>
                   <TextBlock Grid.Column="1"
                              Text="{Binding TotalAtivoFmt}"
                              FontSize="13" FontWeight="Bold"
-                             Foreground="White"
+                             Foreground="#90CAF9"
                              TextAlignment="Right" MinWidth="140"/>
                 </Grid>
               </Border>
@@ -414,21 +424,21 @@
             <StackPanel Spacing="0">
 
               <!-- Título da coluna -->
-              <Border Background="#F3E5F5" CornerRadius="7" Padding="14,10" Margin="0,0,0,14">
+              <Border Background="#2D1B4E" CornerRadius="7" Padding="14,10" Margin="0,0,0,14">
                 <StackPanel Orientation="Horizontal" Spacing="10">
-                  <mi:MaterialIcon Kind="ScaleBalance" Width="16" Height="16" Foreground="#6A1B9A"/>
+                  <mi:MaterialIcon Kind="ScaleBalance" Width="16" Height="16" Foreground="#CE93D8"/>
                   <TextBlock Text="PASSIVO + CAPITAL PRÓPRIO"
                              FontSize="14" FontWeight="Bold"
-                             Foreground="#6A1B9A"
+                             Foreground="#FFFFFF"
                              VerticalAlignment="Center"/>
                 </StackPanel>
               </Border>
 
               <!-- ── PASSIVO CORRENTE ────────────────────────────────── -->
-              <Border Classes="sub-header" Background="#14FFFFFF">
+              <Border Classes="sub-header">
                 <TextBlock Text="Passivo Corrente"
                            FontSize="12" FontWeight="Bold"
-                           Foreground="#E65100"/>
+                           Foreground="#FFD0B0"/>
               </Border>
 
               <ItemsControl ItemsSource="{Binding PassivosCorrentes}">
@@ -438,13 +448,13 @@
                       <Grid ColumnDefinitions="*, Auto">
                         <TextBlock Grid.Column="0"
                                    Text="{Binding Descricao}"
-                                   FontSize="12" Foreground="#444444"
+                                   FontSize="12" Foreground="#E0EEFF"
                                    VerticalAlignment="Center"
                                    TextWrapping="Wrap"/>
                         <TextBlock Grid.Column="1"
                                    Text="{Binding ValorFmt}"
-                                   FontSize="12" FontWeight="Medium"
-                                   Foreground="#444444"
+                                   FontSize="12" FontWeight="SemiBold"
+                                   Foreground="#FFAB76"
                                    VerticalAlignment="Center"
                                    TextAlignment="Right"
                                    MinWidth="140"/>
@@ -460,11 +470,11 @@
                   <TextBlock Grid.Column="0"
                              Text="Total Passivo Corrente"
                              FontSize="12" FontWeight="Bold"
-                             Foreground="#1A2E5A"/>
+                             Foreground="#E0EEFF"/>
                   <TextBlock Grid.Column="1"
                              Text="{Binding TotalPassivoCorrenteFmt}"
                              FontSize="12" FontWeight="Bold"
-                             Foreground="#E65100"
+                             Foreground="#FF8A50"
                              TextAlignment="Right" MinWidth="140"/>
                 </Grid>
               </Border>
@@ -472,10 +482,10 @@
               <Border Classes="separador"/>
 
               <!-- ── PASSIVO NÃO CORRENTE ────────────────────────────── -->
-              <Border Classes="sub-header" Background="#14FFFFFF">
+              <Border Classes="sub-header">
                 <TextBlock Text="Passivo Não Corrente"
                            FontSize="12" FontWeight="Bold"
-                           Foreground="#E65100"/>
+                           Foreground="#FFD0B0"/>
               </Border>
 
               <ItemsControl ItemsSource="{Binding PassivosNaoCorrentes}">
@@ -485,13 +495,13 @@
                       <Grid ColumnDefinitions="*, Auto">
                         <TextBlock Grid.Column="0"
                                    Text="{Binding Descricao}"
-                                   FontSize="12" Foreground="#444444"
+                                   FontSize="12" Foreground="#E0EEFF"
                                    VerticalAlignment="Center"
                                    TextWrapping="Wrap"/>
                         <TextBlock Grid.Column="1"
                                    Text="{Binding ValorFmt}"
-                                   FontSize="12" FontWeight="Medium"
-                                   Foreground="#444444"
+                                   FontSize="12" FontWeight="SemiBold"
+                                   Foreground="#FFAB76"
                                    VerticalAlignment="Center"
                                    TextAlignment="Right"
                                    MinWidth="140"/>
@@ -507,11 +517,11 @@
                   <TextBlock Grid.Column="0"
                              Text="Total Passivo Não Corrente"
                              FontSize="12" FontWeight="Bold"
-                             Foreground="#1A2E5A"/>
+                             Foreground="#E0EEFF"/>
                   <TextBlock Grid.Column="1"
                              Text="{Binding TotalPassivoNaoCorrenteFmt}"
                              FontSize="12" FontWeight="Bold"
-                             Foreground="#E65100"
+                             Foreground="#FF8A50"
                              TextAlignment="Right" MinWidth="140"/>
                 </Grid>
               </Border>
@@ -519,10 +529,10 @@
               <Border Classes="separador"/>
 
               <!-- ── CAPITAL PRÓPRIO ──────────────────────────────────── -->
-              <Border Classes="sub-header" Background="#14FFFFFF">
+              <Border Classes="sub-header">
                 <TextBlock Text="Capital Próprio"
                            FontSize="12" FontWeight="Bold"
-                           Foreground="#2E7D32"/>
+                           Foreground="#B9F0C0"/>
               </Border>
 
               <ItemsControl ItemsSource="{Binding CapitalProprio}">
@@ -532,12 +542,12 @@
                       <Grid ColumnDefinitions="*, Auto">
                         <TextBlock Grid.Column="0"
                                    Text="{Binding Descricao}"
-                                   FontSize="12" Foreground="#444444"
+                                   FontSize="12" Foreground="#E0EEFF"
                                    VerticalAlignment="Center"
                                    TextWrapping="Wrap"/>
                         <TextBlock Grid.Column="1"
                                    Text="{Binding ValorFmt}"
-                                   FontSize="12" FontWeight="Medium"
+                                   FontSize="12" FontWeight="SemiBold"
                                    Foreground="{Binding CorValor}"
                                    VerticalAlignment="Center"
                                    TextAlignment="Right"
@@ -554,11 +564,11 @@
                   <TextBlock Grid.Column="0"
                              Text="Total Capital Próprio"
                              FontSize="12" FontWeight="Bold"
-                             Foreground="#1A2E5A"/>
+                             Foreground="#E0EEFF"/>
                   <TextBlock Grid.Column="1"
                              Text="{Binding TotalCapitalProprioFmt}"
                              FontSize="12" FontWeight="Bold"
-                             Foreground="#2E7D32"
+                             Foreground="#66BB6A"
                              TextAlignment="Right" MinWidth="140"/>
                 </Grid>
               </Border>
@@ -569,11 +579,11 @@
                   <TextBlock Grid.Column="0"
                              Text="TOTAL PASSIVO + CAPITAL"
                              FontSize="13" FontWeight="Bold"
-                             Foreground="White"/>
+                             Foreground="#FFFFFF"/>
                   <TextBlock Grid.Column="1"
                              Text="{Binding TotalPassivoCapitalFmt}"
                              FontSize="13" FontWeight="Bold"
-                             Foreground="White"
+                             Foreground="#A5D6A7"
                              TextAlignment="Right" MinWidth="140"/>
                 </Grid>
               </Border>
@@ -602,7 +612,7 @@
             <TextBlock Grid.Column="2"
                        Text="{Binding PeriodoTexto}"
                        FontSize="11" FontWeight="SemiBold"
-                       Foreground="#1A2E5A"
+                       Foreground="#C8DCFF"
                        VerticalAlignment="Center"
                        Margin="16,0,0,0"/>
           </Grid>

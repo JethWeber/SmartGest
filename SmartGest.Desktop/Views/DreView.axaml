@@ -33,15 +33,17 @@
     <Style Selector="TextBlock.section-title">
       <Setter Property="FontSize"   Value="13"/>
       <Setter Property="FontWeight" Value="SemiBold"/>
-      <Setter Property="Foreground" Value="#1A2E5A"/>
+      <Setter Property="Foreground" Value="#C8DCFF"/>
       <Setter Property="Margin"     Value="0,0,0,12"/>
+      <Setter Property="LetterSpacing" Value="0.3"/>
     </Style>
 
     <!-- ── Labels e valores dos cards ───────────────────────────────── -->
     <Style Selector="TextBlock.metric-label">
-      <Setter Property="FontSize"   Value="11"/>
-      <Setter Property="Foreground" Value="#9AA0AB"/>
+      <Setter Property="FontSize"   Value="10.5"/>
+      <Setter Property="Foreground" Value="#60FFFFFF"/>
       <Setter Property="FontWeight" Value="Medium"/>
+      <Setter Property="LetterSpacing" Value="0.8"/>
     </Style>
     <Style Selector="TextBlock.metric-value">
       <Setter Property="FontSize"   Value="19"/>
@@ -82,8 +84,8 @@
 
     <!-- ── Filtros ──────────────────────────────────────────────────── -->
     <Style Selector="ComboBox.sg-filter, TextBox.sg-filter">
-      <Setter Property="Background"      Value="White"/>
-      <Setter Property="BorderBrush"     Value="#E0E4EA"/>
+      <Setter Property="Background"      Value="#12FFFFFF"/>
+      <Setter Property="BorderBrush"     Value="#25FFFFFF"/>
       <Setter Property="BorderThickness" Value="1"/>
       <Setter Property="CornerRadius"    Value="7"/>
       <Setter Property="Padding"         Value="10,6"/>
@@ -93,9 +95,9 @@
 
     <!-- ── Linhas alternadas ─────────────────────────────────────────── -->
     <Style Selector="DataGridRow:nth-child(odd)">
-      <Setter Property="Background" Value="#F9FAFC"/>
+      <Setter Property="Background" Value="#08FFFFFF"/>
     </Style>    <Style Selector="DataGridRow:pointerover">
-      <Setter Property="Background" Value="#E8F0FA"/>
+      <Setter Property="Background" Value="#12FFFFFF"/>
     </Style>
   </UserControl.Styles>
 
@@ -109,10 +111,10 @@
         <Grid ColumnDefinitions="*, Auto">
           <StackPanel Grid.Column="0">
             <TextBlock Text="Demonstração de Resultados"
-                       FontSize="20" FontWeight="Bold"
-                       Foreground="#1A2E5A"/>
+                       FontSize="26" FontWeight="Bold"
+                       Foreground="#F0F6FF"/>
             <TextBlock Text="Resultados por natureza — receitas, custos e resultado líquido do exercício"
-                       FontSize="12" Foreground="#9AA0AB" Margin="0,2,0,0"/>
+                       FontSize="12" Foreground="#55FFFFFF" Margin="0,4,0,0"/>
           </StackPanel>
 
           <!-- Botão de exportação -->
@@ -139,11 +141,12 @@
                 <StackPanel Orientation="Horizontal" Spacing="8" Margin="0,4,0,0">
                   <TextBlock Classes="metric-value"
                              Text="{Binding TotalReceitas}"
-                             Foreground="#43A047"/>
+                             Foreground="#81C784"/>
                   <Border Background="#14FFFFFF" CornerRadius="4" Padding="6,2" VerticalAlignment="Center">
-                    <TextBlock Text="{Binding ReceitasVariacao}"
-                               FontSize="10" FontWeight="SemiBold"
-                               Foreground="#43A047"/>
+                  <TextBlock Classes="metric-value"
+                             Text="{Binding ReceitasVariacao}"
+                             FontSize="10" FontWeight="SemiBold"
+                             Foreground="#81C784"/>
                   </Border>
                 </StackPanel>
               </StackPanel>
@@ -162,11 +165,11 @@
                 <StackPanel Orientation="Horizontal" Spacing="8" Margin="0,4,0,0">
                   <TextBlock Classes="metric-value"
                              Text="{Binding TotalCustos}"
-                             Foreground="#E53935"/>
+                             Foreground="#EF9A9A"/>
                   <Border Background="#14FFFFFF" CornerRadius="4" Padding="6,2" VerticalAlignment="Center">
                     <TextBlock Text="{Binding CustosVariacao}"
                                FontSize="10" FontWeight="SemiBold"
-                               Foreground="#E53935"/>
+                               Foreground="#EF9A9A"/>
                   </Border>
                 </StackPanel>
               </StackPanel>
@@ -302,7 +305,7 @@
                       <TextBlock Text="{Binding Codigo}"
                                  VerticalAlignment="Center"
                                  FontWeight="SemiBold"
-                                 Foreground="#1A2E5A"
+                                 Foreground="#C8DCFF"
                                  Margin="10,0"/>
                     </DataTemplate>
                   </DataGridTemplateColumn.CellTemplate>
@@ -314,7 +317,7 @@
                     <DataTemplate x:DataType="vm:DreLinhaItem">
                       <TextBlock Text="{Binding Descricao}"
                                  VerticalAlignment="Center"
-                                 Foreground="#333333"
+                                 Foreground="#C8DCFF"
                                  Margin="10,0"/>
                     </DataTemplate>
                   </DataGridTemplateColumn.CellTemplate>
@@ -343,7 +346,7 @@
                       <TextBlock Text="{Binding ValorOrcadoFmt}"
                                  VerticalAlignment="Center"
                                  TextAlignment="Right"
-                                 Foreground="#555555"
+                                 Foreground="#90AECF"
                                  Margin="10,0"/>
                     </DataTemplate>
                   </DataGridTemplateColumn.CellTemplate>
@@ -384,7 +387,7 @@
                       <TextBlock Text="{Binding ExecucaoFmt}"
                                  VerticalAlignment="Center"
                                  TextAlignment="Right"
-                                 Foreground="#555555"
+                                 Foreground="#90AECF"
                                  Margin="10,0"/>
                     </DataTemplate>
                   </DataGridTemplateColumn.CellTemplate>

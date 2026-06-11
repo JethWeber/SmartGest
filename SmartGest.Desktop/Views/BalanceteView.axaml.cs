@@ -11,12 +11,22 @@ public partial class BalanceteView : UserControl
 
         // Se o DataContext já vier injectado pelo MainWindow não recriamos.
         DataContext ??= new BalanceteViewModel();
+
+        DataContextChanged += (_, _) =>
+        {
+            if (DataContext is BalanceteViewModel vm)
+                vm.OwnerWindow = TopLevel.GetTopLevel(this) as Window;
+        };
     }
 
     protected override async void OnLoaded(Avalonia.Interactivity.RoutedEventArgs e)
     {
         base.OnLoaded(e);
+
         if (DataContext is BalanceteViewModel vm)
+        {
+            vm.OwnerWindow = TopLevel.GetTopLevel(this) as Window;
             await vm.InicializarAsync();
+        }
     }
 }

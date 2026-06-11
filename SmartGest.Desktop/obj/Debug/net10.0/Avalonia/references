@@ -54,6 +54,7 @@
 /home/weber/.dotnet/packs/Microsoft.NETCore.App.Ref/10.0.7/ref/net10.0/Microsoft.Win32.Registry.dll
 /home/weber/.dotnet/packs/Microsoft.NETCore.App.Ref/10.0.7/ref/net10.0/mscorlib.dll
 /home/weber/.dotnet/packs/Microsoft.NETCore.App.Ref/10.0.7/ref/net10.0/netstandard.dll
+/home/weber/.nuget/packages/questpdf/2024.10.0/lib/net8.0/QuestPDF.dll
 /home/weber/.nuget/packages/skiasharp/2.88.9/lib/net6.0/SkiaSharp.dll
 /home/weber/.nuget/packages/skiasharp.harfbuzz/2.88.8/lib/net6.0/SkiaSharp.HarfBuzz.dll
 /home/weber/projects/SmartGest/SmartGest.Core/obj/Debug/net10.0/ref/SmartGest.Core.dll

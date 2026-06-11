@@ -1,4 +1,6 @@
 ﻿using Avalonia;
+using QuestPDF;
+using QuestPDF.Infrastructure;
 using System;
 
 namespace SmartGest.Desktop;
@@ -14,8 +16,12 @@ sealed class Program
 
     // Avalonia configuration, don't remove; also used by visual designer.
     public static AppBuilder BuildAvaloniaApp()
-    => AppBuilder.Configure<App>()
-        .UsePlatformDetect()
-        .WithInterFont()
-        .LogToTrace();
+    {
+        Settings.License = LicenseType.Community;
+
+        return AppBuilder.Configure<App>()
+            .UsePlatformDetect()
+            .WithInterFont()
+            .LogToTrace();
+    }
 }

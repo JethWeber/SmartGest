@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "W1AsaVjEOy4=",
+  "dgSpecHash": "i8FHT1pARbU=",
   "success": true,
   "projectFilePath": "/home/weber/projects/SmartGest/SmartGest.Desktop/SmartGest.Desktop.csproj",
   "expectedPackageFiles": [
@@ -48,6 +48,7 @@
     "/home/weber/.nuget/packages/microsoft.extensions.options/10.0.0/microsoft.extensions.options.10.0.0.nupkg.sha512",
     "/home/weber/.nuget/packages/microsoft.extensions.options.configurationextensions/10.0.0/microsoft.extensions.options.configurationextensions.10.0.0.nupkg.sha512",
     "/home/weber/.nuget/packages/microsoft.extensions.primitives/10.0.0/microsoft.extensions.primitives.10.0.0.nupkg.sha512",
+    "/home/weber/.nuget/packages/questpdf/2024.10.0/questpdf.2024.10.0.nupkg.sha512",
     "/home/weber/.nuget/packages/skiasharp/2.88.9/skiasharp.2.88.9.nupkg.sha512",
     "/home/weber/.nuget/packages/skiasharp.harfbuzz/2.88.8/skiasharp.harfbuzz.2.88.8.nupkg.sha512",
     "/home/weber/.nuget/packages/skiasharp.nativeassets.linux/2.88.9/skiasharp.nativeassets.linux.2.88.9.nupkg.sha512",
