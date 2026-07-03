@@ -16,7 +16,6 @@ builder.Services.AddDbContext<AppDbContext>(opt =>
 
 // ── Serviços de Negócio ───────────────────────────────────────────────────────
 builder.Services.AddScoped<IMotorContabil, MotorContabil>();
-builder.Services.AddScoped<ContabilidadeService>();
 builder.Services.AddScoped<RelatoriosService>();
 
 // ── JWT Auth ──────────────────────────────────────────────────────────────────
