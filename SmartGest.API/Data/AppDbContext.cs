@@ -231,6 +231,6 @@ public class AppDbContext : DbContext
             Activo       = true,
             Iniciais     = "JW",
             CorAvatar    = "#1A2E5A"
-        });
+        }); // senha.: smartgest2026
     }
 }
