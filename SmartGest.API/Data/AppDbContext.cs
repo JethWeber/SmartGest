@@ -173,52 +173,56 @@ public class AppDbContext : DbContext
             new ContaContabil { Id = 14, Codigo = "51", Nome = "Capital Social",                                      Grupo = "Capital", IsDevedora = false, Activa = true },
             new ContaContabil { Id = 15, Codigo = "55", Nome = "Reservas Legais",                                     Grupo = "Capital", IsDevedora = false, Activa = true },
             new ContaContabil { Id = 16, Codigo = "59", Nome = "Resultados Transitados",                              Grupo = "Capital", IsDevedora = false, Activa = true },
-            new ContaContabil { Id = 17, Codigo = "61", Nome = "Custo das Mercadorias Vendidas",                      Grupo = "Despesa", IsDevedora = true,  Activa = true },
-            new ContaContabil { Id = 18, Codigo = "62", Nome = "Fornecimentos e Serviços de Terceiros",               Grupo = "Despesa", IsDevedora = true,  Activa = true },
-            new ContaContabil { Id = 19, Codigo = "63", Nome = "Gastos com Pessoal",                                  Grupo = "Despesa", IsDevedora = true,  Activa = true },
-            new ContaContabil { Id = 20, Codigo = "64", Nome = "Amortizações e Depreciações do Exercício",            Grupo = "Despesa", IsDevedora = true,  Activa = true },
-            new ContaContabil { Id = 21, Codigo = "65", Nome = "Impostos e Taxas",                                    Grupo = "Despesa", IsDevedora = true,  Activa = true },
-            new ContaContabil { Id = 22, Codigo = "66", Nome = "Outros Custos e Perdas Operacionais",                 Grupo = "Despesa", IsDevedora = true,  Activa = true },
-            new ContaContabil { Id = 23, Codigo = "68", Nome = "Custos e Perdas Financeiras",                         Grupo = "Despesa", IsDevedora = true,  Activa = true },
-            new ContaContabil { Id = 24, Codigo = "69", Nome = "Custos e Perdas Extraordinárias",                     Grupo = "Despesa", IsDevedora = true,  Activa = true },
-            new ContaContabil { Id = 25, Codigo = "71", Nome = "Vendas de Mercadorias e Produtos Acabados",           Grupo = "Receita", IsDevedora = false, Activa = true },
-            new ContaContabil { Id = 26, Codigo = "72", Nome = "Prestações de Serviços",                              Grupo = "Receita", IsDevedora = false, Activa = true },
-            new ContaContabil { Id = 27, Codigo = "73", Nome = "Outros Proveitos e Ganhos Operacionais",              Grupo = "Receita", IsDevedora = false, Activa = true },
-            new ContaContabil { Id = 28, Codigo = "78", Nome = "Proveitos e Ganhos Financeiros",                      Grupo = "Receita", IsDevedora = false, Activa = true },
-            new ContaContabil { Id = 29, Codigo = "79", Nome = "Proveitos e Ganhos Extraordinários",                  Grupo = "Receita", IsDevedora = false, Activa = true },
+
+            // ── Classe 7 = Custos e Perdas (PGC Angola, Decreto 82/01) ──────────────
+            new ContaContabil { Id = 17, Codigo = "71", Nome = "Custo das Mercadorias Vendidas",                      Grupo = "Despesa", IsDevedora = true,  Activa = true },
+            new ContaContabil { Id = 18, Codigo = "72", Nome = "Fornecimentos e Serviços de Terceiros",               Grupo = "Despesa", IsDevedora = true,  Activa = true },
+            new ContaContabil { Id = 19, Codigo = "73", Nome = "Gastos com Pessoal",                                  Grupo = "Despesa", IsDevedora = true,  Activa = true },
+            new ContaContabil { Id = 20, Codigo = "74", Nome = "Amortizações e Depreciações do Exercício",            Grupo = "Despesa", IsDevedora = true,  Activa = true },
+            new ContaContabil { Id = 21, Codigo = "75", Nome = "Impostos e Taxas",                                    Grupo = "Despesa", IsDevedora = true,  Activa = true },
+            new ContaContabil { Id = 22, Codigo = "76", Nome = "Outros Custos e Perdas Operacionais",                 Grupo = "Despesa", IsDevedora = true,  Activa = true },
+            new ContaContabil { Id = 23, Codigo = "78", Nome = "Custos e Perdas Financeiras",                         Grupo = "Despesa", IsDevedora = true,  Activa = true },
+            new ContaContabil { Id = 24, Codigo = "79", Nome = "Custos e Perdas Extraordinárias",                     Grupo = "Despesa", IsDevedora = true,  Activa = true },
+
+            // ── Classe 6 = Proveitos e Ganhos (PGC Angola, Decreto 82/01) ───────────
+            new ContaContabil { Id = 25, Codigo = "61", Nome = "Vendas de Mercadorias e Produtos Acabados",           Grupo = "Receita", IsDevedora = false, Activa = true },
+            new ContaContabil { Id = 26, Codigo = "62", Nome = "Prestações de Serviços",                              Grupo = "Receita", IsDevedora = false, Activa = true },
+            new ContaContabil { Id = 27, Codigo = "63", Nome = "Outros Proveitos e Ganhos Operacionais",              Grupo = "Receita", IsDevedora = false, Activa = true },
+            new ContaContabil { Id = 28, Codigo = "68", Nome = "Proveitos e Ganhos Financeiros",                      Grupo = "Receita", IsDevedora = false, Activa = true },
+            new ContaContabil { Id = 29, Codigo = "69", Nome = "Proveitos e Ganhos Extraordinários",                  Grupo = "Receita", IsDevedora = false, Activa = true },
+
             new ContaContabil { Id = 30, Codigo = "88", Nome = "Resultado Líquido do Exercício",                      Grupo = "Capital", IsDevedora = false, Activa = true }
         );
-        
+
         mb.Entity<CategoriaContabil>().HasData(
             // ENTRADAS
-            new CategoriaContabil { Id = 1,  Nome = "Venda de Mercadoria",      Tipo = "Entrada", ContaDebito = "45", ContaCredito = "71", GrupoDre = "Proveitos e Ganhos", GrupoFluxoCaixa = "Operacional",   Ativo = true },
-            new CategoriaContabil { Id = 2,  Nome = "Prestação de Serviço",     Tipo = "Entrada", ContaDebito = "45", ContaCredito = "72", GrupoDre = "Proveitos e Ganhos", GrupoFluxoCaixa = "Operacional",   Ativo = true },
+            new CategoriaContabil { Id = 1,  Nome = "Venda de Mercadoria",      Tipo = "Entrada", ContaDebito = "45", ContaCredito = "61", GrupoDre = "Proveitos e Ganhos", GrupoFluxoCaixa = "Operacional",   Ativo = true },
+            new CategoriaContabil { Id = 2,  Nome = "Prestação de Serviço",     Tipo = "Entrada", ContaDebito = "45", ContaCredito = "62", GrupoDre = "Proveitos e Ganhos", GrupoFluxoCaixa = "Operacional",   Ativo = true },
             new CategoriaContabil { Id = 3,  Nome = "Recebimento de Cliente",   Tipo = "Entrada", ContaDebito = "45", ContaCredito = "31", GrupoDre = "",                   GrupoFluxoCaixa = "Operacional",   Ativo = true },
-            new CategoriaContabil { Id = 4,  Nome = "Outros Rendimentos",       Tipo = "Entrada", ContaDebito = "45", ContaCredito = "73", GrupoDre = "Proveitos e Ganhos", GrupoFluxoCaixa = "Operacional",   Ativo = true },
+            new CategoriaContabil { Id = 4,  Nome = "Outros Rendimentos",       Tipo = "Entrada", ContaDebito = "45", ContaCredito = "63", GrupoDre = "Proveitos e Ganhos", GrupoFluxoCaixa = "Operacional",   Ativo = true },
             new CategoriaContabil { Id = 5,  Nome = "Capital Inicial",          Tipo = "Entrada", ContaDebito = "45", ContaCredito = "51", GrupoDre = "",                   GrupoFluxoCaixa = "Financiamento", Ativo = true },
             new CategoriaContabil { Id = 6,  Nome = "Empréstimo Bancário",      Tipo = "Entrada", ContaDebito = "45", ContaCredito = "33", GrupoDre = "",                   GrupoFluxoCaixa = "Financiamento", Ativo = true },
-            new CategoriaContabil { Id = 7,  Nome = "Juros Recebidos",          Tipo = "Entrada", ContaDebito = "45", ContaCredito = "78", GrupoDre = "Proveitos e Ganhos", GrupoFluxoCaixa = "Financiamento", Ativo = true },
-            new CategoriaContabil { Id = 8,  Nome = "Venda de Ativo",           Tipo = "Entrada", ContaDebito = "45", ContaCredito = "79", GrupoDre = "Proveitos e Ganhos", GrupoFluxoCaixa = "Investimento",  Ativo = true },
-            new CategoriaContabil { Id = 9,  Nome = "Comissão Recebida",        Tipo = "Entrada", ContaDebito = "45", ContaCredito = "72", GrupoDre = "Proveitos e Ganhos", GrupoFluxoCaixa = "Operacional",   Ativo = true },
-            new CategoriaContabil { Id = 10, Nome = "Outras Entradas",          Tipo = "Entrada", ContaDebito = "45", ContaCredito = "73", GrupoDre = "Proveitos e Ganhos", GrupoFluxoCaixa = "Operacional",   Ativo = true },
+            new CategoriaContabil { Id = 7,  Nome = "Juros Recebidos",          Tipo = "Entrada", ContaDebito = "45", ContaCredito = "68", GrupoDre = "Proveitos e Ganhos", GrupoFluxoCaixa = "Financiamento", Ativo = true },
+            new CategoriaContabil { Id = 8,  Nome = "Venda de Ativo",           Tipo = "Entrada", ContaDebito = "45", ContaCredito = "69", GrupoDre = "Proveitos e Ganhos", GrupoFluxoCaixa = "Investimento",  Ativo = true },
+            new CategoriaContabil { Id = 9,  Nome = "Comissão Recebida",        Tipo = "Entrada", ContaDebito = "45", ContaCredito = "62", GrupoDre = "Proveitos e Ganhos", GrupoFluxoCaixa = "Operacional",   Ativo = true },
+            new CategoriaContabil { Id = 10, Nome = "Outras Entradas",          Tipo = "Entrada", ContaDebito = "45", ContaCredito = "63", GrupoDre = "Proveitos e Ganhos", GrupoFluxoCaixa = "Operacional",   Ativo = true },
             // SAÍDAS
-            new CategoriaContabil { Id = 11, Nome = "Compra de Mercadoria",        Tipo = "Saída", ContaDebito = "61", ContaCredito = "45", GrupoDre = "Custos e Perdas", GrupoFluxoCaixa = "Operacional",    Ativo = true },
+            new CategoriaContabil { Id = 11, Nome = "Compra de Mercadoria",        Tipo = "Saída", ContaDebito = "71", ContaCredito = "45", GrupoDre = "Custos e Perdas", GrupoFluxoCaixa = "Operacional",    Ativo = true },
             new CategoriaContabil { Id = 12, Nome = "Pagamento a Fornecedor",      Tipo = "Saída", ContaDebito = "32", ContaCredito = "45", GrupoDre = "",                GrupoFluxoCaixa = "Operacional",    Ativo = true },
-            new CategoriaContabil { Id = 13, Nome = "Salários",                    Tipo = "Saída", ContaDebito = "63", ContaCredito = "45", GrupoDre = "Custos e Perdas", GrupoFluxoCaixa = "Operacional",    Ativo = true },
-            new CategoriaContabil { Id = 14, Nome = "INSS",                        Tipo = "Saída", ContaDebito = "63", ContaCredito = "36", GrupoDre = "Custos e Perdas", GrupoFluxoCaixa = "Operacional",    Ativo = true },
-            new CategoriaContabil { Id = 15, Nome = "IRT",                         Tipo = "Saída", ContaDebito = "65", ContaCredito = "34", GrupoDre = "Custos e Perdas", GrupoFluxoCaixa = "Operacional",    Ativo = true },
-            new CategoriaContabil { Id = 16, Nome = "IVA",                         Tipo = "Saída", ContaDebito = "65", ContaCredito = "34", GrupoDre = "Custos e Perdas", GrupoFluxoCaixa = "Operacional",    Ativo = true },
-            new CategoriaContabil { Id = 17, Nome = "Impostos e Taxas",            Tipo = "Saída", ContaDebito = "65", ContaCredito = "34", GrupoDre = "Custos e Perdas", GrupoFluxoCaixa = "Operacional",    Ativo = true },
-            new CategoriaContabil { Id = 18, Nome = "Despesa Administrativa",      Tipo = "Saída", ContaDebito = "62", ContaCredito = "45", GrupoDre = "Custos e Perdas", GrupoFluxoCaixa = "Operacional",    Ativo = true },
-            new CategoriaContabil { Id = 19, Nome = "Energia / Água / Internet",   Tipo = "Saída", ContaDebito = "62", ContaCredito = "45", GrupoDre = "Custos e Perdas", GrupoFluxoCaixa = "Operacional",    Ativo = true },
-            new CategoriaContabil { Id = 20, Nome = "Aluguer",                     Tipo = "Saída", ContaDebito = "62", ContaCredito = "45", GrupoDre = "Custos e Perdas", GrupoFluxoCaixa = "Operacional",    Ativo = true },
-            new CategoriaContabil { Id = 21, Nome = "Combustível / Transportes",   Tipo = "Saída", ContaDebito = "62", ContaCredito = "45", GrupoDre = "Custos e Perdas", GrupoFluxoCaixa = "Operacional",    Ativo = true },
+            new CategoriaContabil { Id = 13, Nome = "Salários",                    Tipo = "Saída", ContaDebito = "73", ContaCredito = "45", GrupoDre = "Custos e Perdas", GrupoFluxoCaixa = "Operacional",    Ativo = true },
+            new CategoriaContabil { Id = 14, Nome = "INSS",                        Tipo = "Saída", ContaDebito = "73", ContaCredito = "36", GrupoDre = "Custos e Perdas", GrupoFluxoCaixa = "Operacional",    Ativo = true },
+            new CategoriaContabil { Id = 15, Nome = "IRT",                         Tipo = "Saída", ContaDebito = "75", ContaCredito = "34", GrupoDre = "Custos e Perdas", GrupoFluxoCaixa = "Operacional",    Ativo = true },
+            new CategoriaContabil { Id = 16, Nome = "IVA",                         Tipo = "Saída", ContaDebito = "75", ContaCredito = "34", GrupoDre = "Custos e Perdas", GrupoFluxoCaixa = "Operacional",    Ativo = true },
+            new CategoriaContabil { Id = 17, Nome = "Impostos e Taxas",            Tipo = "Saída", ContaDebito = "75", ContaCredito = "34", GrupoDre = "Custos e Perdas", GrupoFluxoCaixa = "Operacional",    Ativo = true },
+            new CategoriaContabil { Id = 18, Nome = "Despesa Administrativa",      Tipo = "Saída", ContaDebito = "72", ContaCredito = "45", GrupoDre = "Custos e Perdas", GrupoFluxoCaixa = "Operacional",    Ativo = true },
+            new CategoriaContabil { Id = 19, Nome = "Energia / Água / Internet",   Tipo = "Saída", ContaDebito = "72", ContaCredito = "45", GrupoDre = "Custos e Perdas", GrupoFluxoCaixa = "Operacional",    Ativo = true },
+            new CategoriaContabil { Id = 20, Nome = "Aluguer",                     Tipo = "Saída", ContaDebito = "72", ContaCredito = "45", GrupoDre = "Custos e Perdas", GrupoFluxoCaixa = "Operacional",    Ativo = true },
+            new CategoriaContabil { Id = 21, Nome = "Combustível / Transportes",   Tipo = "Saída", ContaDebito = "72", ContaCredito = "45", GrupoDre = "Custos e Perdas", GrupoFluxoCaixa = "Operacional",    Ativo = true },
             new CategoriaContabil { Id = 22, Nome = "Compra de Equipamento",       Tipo = "Saída", ContaDebito = "11", ContaCredito = "45", GrupoDre = "",                GrupoFluxoCaixa = "Investimento",   Ativo = true },
-            new CategoriaContabil { Id = 23, Nome = "Juros Bancários",             Tipo = "Saída", ContaDebito = "68", ContaCredito = "45", GrupoDre = "Custos e Perdas", GrupoFluxoCaixa = "Financiamento",  Ativo = true },
+            new CategoriaContabil { Id = 23, Nome = "Juros Bancários",             Tipo = "Saída", ContaDebito = "78", ContaCredito = "45", GrupoDre = "Custos e Perdas", GrupoFluxoCaixa = "Financiamento",  Ativo = true },
             new CategoriaContabil { Id = 24, Nome = "Amortização de Empréstimo",   Tipo = "Saída", ContaDebito = "33", ContaCredito = "45", GrupoDre = "",                GrupoFluxoCaixa = "Financiamento",  Ativo = true },
-            new CategoriaContabil { Id = 25, Nome = "Outras Despesas",             Tipo = "Saída", ContaDebito = "66", ContaCredito = "45", GrupoDre = "Custos e Perdas", GrupoFluxoCaixa = "Operacional",    Ativo = true }
+            new CategoriaContabil { Id = 25, Nome = "Outras Despesas",             Tipo = "Saída", ContaDebito = "76", ContaCredito = "45", GrupoDre = "Custos e Perdas", GrupoFluxoCaixa = "Operacional",    Ativo = true }
         );
-
 
         mb.Entity<Utilizador>().HasData(new Utilizador
         {

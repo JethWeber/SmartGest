@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "/home/weber/projects/SmartGest/SmartGest.Core/SmartGest.Core.csproj": {}
+    "/home/jeth/projects/SmartGest/SmartGest.Core/SmartGest.Core.csproj": {}
   },
   "projects": {
-    "/home/weber/projects/SmartGest/SmartGest.Core/SmartGest.Core.csproj": {
+    "/home/jeth/projects/SmartGest/SmartGest.Core/SmartGest.Core.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/home/weber/projects/SmartGest/SmartGest.Core/SmartGest.Core.csproj",
+        "projectUniqueName": "/home/jeth/projects/SmartGest/SmartGest.Core/SmartGest.Core.csproj",
         "projectName": "SmartGest.Core",
-        "projectPath": "/home/weber/projects/SmartGest/SmartGest.Core/SmartGest.Core.csproj",
-        "packagesPath": "/home/weber/.nuget/packages/",
-        "outputPath": "/home/weber/projects/SmartGest/SmartGest.Core/obj/",
+        "projectPath": "/home/jeth/projects/SmartGest/SmartGest.Core/SmartGest.Core.csproj",
+        "packagesPath": "/home/jeth/.nuget/packages/",
+        "outputPath": "/home/jeth/projects/SmartGest/SmartGest.Core/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "/home/weber/.nuget/NuGet/NuGet.Config"
+          "/home/jeth/.nuget/NuGet/NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net10.0"
@@ -24,6 +24,7 @@
         },
         "frameworks": {
           "net10.0": {
+            "framework": "net10.0",
             "targetAlias": "net10.0",
             "projectReferences": {}
           }
@@ -38,10 +39,11 @@
           "auditLevel": "low",
           "auditMode": "all"
         },
-        "SdkAnalysisLevel": "10.0.200"
+        "SdkAnalysisLevel": "10.0.300"
       },
       "frameworks": {
         "net10.0": {
+          "framework": "net10.0",
           "targetAlias": "net10.0",
           "imports": [
             "net461",
@@ -59,7 +61,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "/home/weber/.dotnet/sdk/10.0.203/PortableRuntimeIdentifierGraph.json",
+          "runtimeIdentifierGraphPath": "/home/jeth/.dotnet/sdk/10.0.301/PortableRuntimeIdentifierGraph.json",
           "packagesToPrune": {
             "Microsoft.CSharp": "(,4.7.32767]",
             "Microsoft.VisualBasic": "(,10.4.32767]",

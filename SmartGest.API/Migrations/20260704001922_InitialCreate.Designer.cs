@@ -12,7 +12,7 @@ using SmartGest.API.Data;
 namespace SmartGest.API.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260610211622_InitialCreate")]
+    [Migration("20260704001922_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -77,7 +77,7 @@ namespace SmartGest.API.Migrations
                             Id = 1,
                             AplicaImpostoSelo = false,
                             Ativo = true,
-                            ContaCredito = "71",
+                            ContaCredito = "61",
                             ContaDebito = "45",
                             GrupoBalanco = "",
                             GrupoDre = "Proveitos e Ganhos",
@@ -90,7 +90,7 @@ namespace SmartGest.API.Migrations
                             Id = 2,
                             AplicaImpostoSelo = false,
                             Ativo = true,
-                            ContaCredito = "72",
+                            ContaCredito = "62",
                             ContaDebito = "45",
                             GrupoBalanco = "",
                             GrupoDre = "Proveitos e Ganhos",
@@ -116,7 +116,7 @@ namespace SmartGest.API.Migrations
                             Id = 4,
                             AplicaImpostoSelo = false,
                             Ativo = true,
-                            ContaCredito = "73",
+                            ContaCredito = "63",
                             ContaDebito = "45",
                             GrupoBalanco = "",
                             GrupoDre = "Proveitos e Ganhos",
@@ -155,7 +155,7 @@ namespace SmartGest.API.Migrations
                             Id = 7,
                             AplicaImpostoSelo = false,
                             Ativo = true,
-                            ContaCredito = "78",
+                            ContaCredito = "68",
                             ContaDebito = "45",
                             GrupoBalanco = "",
                             GrupoDre = "Proveitos e Ganhos",
@@ -168,7 +168,7 @@ namespace SmartGest.API.Migrations
                             Id = 8,
                             AplicaImpostoSelo = false,
                             Ativo = true,
-                            ContaCredito = "79",
+                            ContaCredito = "69",
                             ContaDebito = "45",
                             GrupoBalanco = "",
                             GrupoDre = "Proveitos e Ganhos",
@@ -181,7 +181,7 @@ namespace SmartGest.API.Migrations
                             Id = 9,
                             AplicaImpostoSelo = false,
                             Ativo = true,
-                            ContaCredito = "72",
+                            ContaCredito = "62",
                             ContaDebito = "45",
                             GrupoBalanco = "",
                             GrupoDre = "Proveitos e Ganhos",
@@ -194,7 +194,7 @@ namespace SmartGest.API.Migrations
                             Id = 10,
                             AplicaImpostoSelo = false,
                             Ativo = true,
-                            ContaCredito = "73",
+                            ContaCredito = "63",
                             ContaDebito = "45",
                             GrupoBalanco = "",
                             GrupoDre = "Proveitos e Ganhos",
@@ -208,7 +208,7 @@ namespace SmartGest.API.Migrations
                             AplicaImpostoSelo = false,
                             Ativo = true,
                             ContaCredito = "45",
-                            ContaDebito = "61",
+                            ContaDebito = "71",
                             GrupoBalanco = "",
                             GrupoDre = "Custos e Perdas",
                             GrupoFluxoCaixa = "Operacional",
@@ -234,7 +234,7 @@ namespace SmartGest.API.Migrations
                             AplicaImpostoSelo = false,
                             Ativo = true,
                             ContaCredito = "45",
-                            ContaDebito = "63",
+                            ContaDebito = "73",
                             GrupoBalanco = "",
                             GrupoDre = "Custos e Perdas",
                             GrupoFluxoCaixa = "Operacional",
@@ -247,7 +247,7 @@ namespace SmartGest.API.Migrations
                             AplicaImpostoSelo = false,
                             Ativo = true,
                             ContaCredito = "36",
-                            ContaDebito = "63",
+                            ContaDebito = "73",
                             GrupoBalanco = "",
                             GrupoDre = "Custos e Perdas",
                             GrupoFluxoCaixa = "Operacional",
@@ -260,7 +260,7 @@ namespace SmartGest.API.Migrations
                             AplicaImpostoSelo = false,
                             Ativo = true,
                             ContaCredito = "34",
-                            ContaDebito = "65",
+                            ContaDebito = "75",
                             GrupoBalanco = "",
                             GrupoDre = "Custos e Perdas",
                             GrupoFluxoCaixa = "Operacional",
@@ -273,7 +273,7 @@ namespace SmartGest.API.Migrations
                             AplicaImpostoSelo = false,
                             Ativo = true,
                             ContaCredito = "34",
-                            ContaDebito = "65",
+                            ContaDebito = "75",
                             GrupoBalanco = "",
                             GrupoDre = "Custos e Perdas",
                             GrupoFluxoCaixa = "Operacional",
@@ -286,7 +286,7 @@ namespace SmartGest.API.Migrations
                             AplicaImpostoSelo = false,
                             Ativo = true,
                             ContaCredito = "34",
-                            ContaDebito = "65",
+                            ContaDebito = "75",
                             GrupoBalanco = "",
                             GrupoDre = "Custos e Perdas",
                             GrupoFluxoCaixa = "Operacional",
@@ -299,7 +299,7 @@ namespace SmartGest.API.Migrations
                             AplicaImpostoSelo = false,
                             Ativo = true,
                             ContaCredito = "45",
-                            ContaDebito = "62",
+                            ContaDebito = "72",
                             GrupoBalanco = "",
                             GrupoDre = "Custos e Perdas",
                             GrupoFluxoCaixa = "Operacional",
@@ -312,7 +312,7 @@ namespace SmartGest.API.Migrations
                             AplicaImpostoSelo = false,
                             Ativo = true,
                             ContaCredito = "45",
-                            ContaDebito = "62",
+                            ContaDebito = "72",
                             GrupoBalanco = "",
                             GrupoDre = "Custos e Perdas",
                             GrupoFluxoCaixa = "Operacional",
@@ -325,7 +325,7 @@ namespace SmartGest.API.Migrations
                             AplicaImpostoSelo = false,
                             Ativo = true,
                             ContaCredito = "45",
-                            ContaDebito = "62",
+                            ContaDebito = "72",
                             GrupoBalanco = "",
                             GrupoDre = "Custos e Perdas",
                             GrupoFluxoCaixa = "Operacional",
@@ -338,7 +338,7 @@ namespace SmartGest.API.Migrations
                             AplicaImpostoSelo = false,
                             Ativo = true,
                             ContaCredito = "45",
-                            ContaDebito = "62",
+                            ContaDebito = "72",
                             GrupoBalanco = "",
                             GrupoDre = "Custos e Perdas",
                             GrupoFluxoCaixa = "Operacional",
@@ -364,7 +364,7 @@ namespace SmartGest.API.Migrations
                             AplicaImpostoSelo = false,
                             Ativo = true,
                             ContaCredito = "45",
-                            ContaDebito = "68",
+                            ContaDebito = "78",
                             GrupoBalanco = "",
                             GrupoDre = "Custos e Perdas",
                             GrupoFluxoCaixa = "Financiamento",
@@ -390,7 +390,7 @@ namespace SmartGest.API.Migrations
                             AplicaImpostoSelo = false,
                             Ativo = true,
                             ContaCredito = "45",
-                            ContaDebito = "66",
+                            ContaDebito = "76",
                             GrupoBalanco = "",
                             GrupoDre = "Custos e Perdas",
                             GrupoFluxoCaixa = "Operacional",
@@ -617,6 +617,278 @@ namespace SmartGest.API.Migrations
                         .IsUnique();
 
                     b.ToTable("ContasContabeis");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Activa = true,
+                            Codigo = "11",
+                            Grupo = "Ativo",
+                            IsDevedora = true,
+                            Nome = "Activos Fixos Tangíveis"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Activa = true,
+                            Codigo = "12",
+                            Grupo = "Ativo",
+                            IsDevedora = true,
+                            Nome = "Activos Intangíveis"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Activa = true,
+                            Codigo = "13",
+                            Grupo = "Ativo",
+                            IsDevedora = true,
+                            Nome = "Investimentos Financeiros"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Activa = true,
+                            Codigo = "18",
+                            Grupo = "Ativo",
+                            IsDevedora = false,
+                            Nome = "Amortizações Acumuladas"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            Activa = true,
+                            Codigo = "22",
+                            Grupo = "Ativo",
+                            IsDevedora = true,
+                            Nome = "Mercadorias"
+                        },
+                        new
+                        {
+                            Id = 6,
+                            Activa = true,
+                            Codigo = "26",
+                            Grupo = "Ativo",
+                            IsDevedora = true,
+                            Nome = "Matérias-Primas e Subsidiárias"
+                        },
+                        new
+                        {
+                            Id = 7,
+                            Activa = true,
+                            Codigo = "31",
+                            Grupo = "Ativo",
+                            IsDevedora = true,
+                            Nome = "Clientes"
+                        },
+                        new
+                        {
+                            Id = 8,
+                            Activa = true,
+                            Codigo = "32",
+                            Grupo = "Passivo",
+                            IsDevedora = false,
+                            Nome = "Fornecedores"
+                        },
+                        new
+                        {
+                            Id = 9,
+                            Activa = true,
+                            Codigo = "33",
+                            Grupo = "Passivo",
+                            IsDevedora = false,
+                            Nome = "Empréstimos Obtidos"
+                        },
+                        new
+                        {
+                            Id = 10,
+                            Activa = true,
+                            Codigo = "34",
+                            Grupo = "Passivo",
+                            IsDevedora = false,
+                            Nome = "Estado e Outros Entes Públicos"
+                        },
+                        new
+                        {
+                            Id = 11,
+                            Activa = true,
+                            Codigo = "36",
+                            Grupo = "Passivo",
+                            IsDevedora = false,
+                            Nome = "Pessoal"
+                        },
+                        new
+                        {
+                            Id = 12,
+                            Activa = true,
+                            Codigo = "43",
+                            Grupo = "Ativo",
+                            IsDevedora = true,
+                            Nome = "Caixa"
+                        },
+                        new
+                        {
+                            Id = 13,
+                            Activa = true,
+                            Codigo = "45",
+                            Grupo = "Ativo",
+                            IsDevedora = true,
+                            Nome = "Depósitos Bancários"
+                        },
+                        new
+                        {
+                            Id = 14,
+                            Activa = true,
+                            Codigo = "51",
+                            Grupo = "Capital",
+                            IsDevedora = false,
+                            Nome = "Capital Social"
+                        },
+                        new
+                        {
+                            Id = 15,
+                            Activa = true,
+                            Codigo = "55",
+                            Grupo = "Capital",
+                            IsDevedora = false,
+                            Nome = "Reservas Legais"
+                        },
+                        new
+                        {
+                            Id = 16,
+                            Activa = true,
+                            Codigo = "59",
+                            Grupo = "Capital",
+                            IsDevedora = false,
+                            Nome = "Resultados Transitados"
+                        },
+                        new
+                        {
+                            Id = 17,
+                            Activa = true,
+                            Codigo = "71",
+                            Grupo = "Despesa",
+                            IsDevedora = true,
+                            Nome = "Custo das Mercadorias Vendidas"
+                        },
+                        new
+                        {
+                            Id = 18,
+                            Activa = true,
+                            Codigo = "72",
+                            Grupo = "Despesa",
+                            IsDevedora = true,
+                            Nome = "Fornecimentos e Serviços de Terceiros"
+                        },
+                        new
+                        {
+                            Id = 19,
+                            Activa = true,
+                            Codigo = "73",
+                            Grupo = "Despesa",
+                            IsDevedora = true,
+                            Nome = "Gastos com Pessoal"
+                        },
+                        new
+                        {
+                            Id = 20,
+                            Activa = true,
+                            Codigo = "74",
+                            Grupo = "Despesa",
+                            IsDevedora = true,
+                            Nome = "Amortizações e Depreciações do Exercício"
+                        },
+                        new
+                        {
+                            Id = 21,
+                            Activa = true,
+                            Codigo = "75",
+                            Grupo = "Despesa",
+                            IsDevedora = true,
+                            Nome = "Impostos e Taxas"
+                        },
+                        new
+                        {
+                            Id = 22,
+                            Activa = true,
+                            Codigo = "76",
+                            Grupo = "Despesa",
+                            IsDevedora = true,
+                            Nome = "Outros Custos e Perdas Operacionais"
+                        },
+                        new
+                        {
+                            Id = 23,
+                            Activa = true,
+                            Codigo = "78",
+                            Grupo = "Despesa",
+                            IsDevedora = true,
+                            Nome = "Custos e Perdas Financeiras"
+                        },
+                        new
+                        {
+                            Id = 24,
+                            Activa = true,
+                            Codigo = "79",
+                            Grupo = "Despesa",
+                            IsDevedora = true,
+                            Nome = "Custos e Perdas Extraordinárias"
+                        },
+                        new
+                        {
+                            Id = 25,
+                            Activa = true,
+                            Codigo = "61",
+                            Grupo = "Receita",
+                            IsDevedora = false,
+                            Nome = "Vendas de Mercadorias e Produtos Acabados"
+                        },
+                        new
+                        {
+                            Id = 26,
+                            Activa = true,
+                            Codigo = "62",
+                            Grupo = "Receita",
+                            IsDevedora = false,
+                            Nome = "Prestações de Serviços"
+                        },
+                        new
+                        {
+                            Id = 27,
+                            Activa = true,
+                            Codigo = "63",
+                            Grupo = "Receita",
+                            IsDevedora = false,
+                            Nome = "Outros Proveitos e Ganhos Operacionais"
+                        },
+                        new
+                        {
+                            Id = 28,
+                            Activa = true,
+                            Codigo = "68",
+                            Grupo = "Receita",
+                            IsDevedora = false,
+                            Nome = "Proveitos e Ganhos Financeiros"
+                        },
+                        new
+                        {
+                            Id = 29,
+                            Activa = true,
+                            Codigo = "69",
+                            Grupo = "Receita",
+                            IsDevedora = false,
+                            Nome = "Proveitos e Ganhos Extraordinários"
+                        },
+                        new
+                        {
+                            Id = 30,
+                            Activa = true,
+                            Codigo = "88",
+                            Grupo = "Capital",
+                            IsDevedora = false,
+                            Nome = "Resultado Líquido do Exercício"
+                        });
                 });
 
             modelBuilder.Entity("SmartGest.API.Models.Empresa", b =>

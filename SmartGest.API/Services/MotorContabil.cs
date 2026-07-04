@@ -186,7 +186,10 @@ public sealed class MotorContabil : IMotorContabil
         if (categoria.AplicaImpostoSelo)
         {
             is_        = Math.Round(lancamento.Valor * 0.01m, 2);
-            idEncargos = (await ObterContaOuFalharAsync("65")).Id;
+            // Correção Bug 2 (inversão Classes 6/7): "Impostos e Taxas" passou
+            // de "65" para "75" na renumeração PGC Angola. Ver migração
+            // Fix_Inversao_Classes_6_7.
+            idEncargos = (await ObterContaOuFalharAsync("75")).Id;
             idEstado   = (await ObterContaOuFalharAsync("34")).Id;
         }
 

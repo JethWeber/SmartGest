@@ -9,6 +9,10 @@ namespace SmartGest.API.Services;
 ///
 /// PRINCÍPIO: todos os relatórios consomem LancamentoDetalhe (partidas dobradas)
 /// gerados pelo MotorContabil. Nenhum relatório calcula regras contabilísticas.
+///
+/// NOTA (correção Bug 2 — Classes 6/7): a classificação Receita/Despesa usa o
+/// campo ContaContabil.Grupo ("Receita" / "Despesa"), não o prefixo do Codigo.
+/// Isto evita reintroduzir a inversão de classes caso a numeração volte a mudar.
 /// </summary>
 public class RelatoriosService
 {
@@ -107,14 +111,15 @@ public class RelatoriosService
         var inicio = (dataInicio ?? new DateTime(DateTime.Today.Year, 1, 1)).Date;
         var fim    = (dataFim ?? DateTime.Today).Date.AddDays(1).AddTicks(-1);
 
-        // DRE apenas consome contas de classe 6 (custos) e 7 (proveitos)
+        // DRE consome apenas contas de Despesa e Receita (classificação por Grupo,
+        // não pelo prefixo do Codigo — ver nota no topo do ficheiro)
         var linhasDb = await _db.LancamentoDetalhes
             .Where(d =>
                 !d.Lancamento!.Anulado &&
                 d.Lancamento.Data >= inicio &&
                 d.Lancamento.Data <= fim &&
-                (d.ContaContabil!.Codigo.StartsWith("6") ||
-                 d.ContaContabil.Codigo.StartsWith("7")))
+                (d.ContaContabil!.Grupo == "Despesa" ||
+                 d.ContaContabil.Grupo == "Receita"))
             .GroupBy(d => new
             {
                 d.ContaContabil!.Codigo,
@@ -134,7 +139,7 @@ public class RelatoriosService
 
         var linhas = linhasDb.Select(x =>
         {
-            var isReceita = x.Codigo.StartsWith("7");
+            var isReceita = x.Grupo == "Receita";
             var realizado = isReceita
                 ? x.TotalCredito - x.TotalDebito
                 : x.TotalDebito  - x.TotalCredito;
@@ -159,12 +164,12 @@ public class RelatoriosService
                 !d.Lancamento!.Anulado &&
                 d.Lancamento.Data >= new DateTime(anoRef, 1, 1) &&
                 d.Lancamento.Data <= fim &&
-                (d.ContaContabil!.Codigo.StartsWith("6") ||
-                 d.ContaContabil.Codigo.StartsWith("7")))
+                (d.ContaContabil!.Grupo == "Despesa" ||
+                 d.ContaContabil.Grupo == "Receita"))
             .Select(d => new
             {
                 d.Lancamento!.Data.Month,
-                d.ContaContabil!.Codigo,
+                d.ContaContabil!.Grupo,
                 d.Debito,
                 d.Credito
             })
@@ -175,8 +180,8 @@ public class RelatoriosService
         var fluxoMensal = Enumerable.Range(1, 12).Select(m =>
         {
             var doMes = detalhesMensais.Where(x => x.Month == m);
-            var rec   = doMes.Where(x => x.Codigo.StartsWith("7")).Sum(x => x.Credito - x.Debito);
-            var cus   = doMes.Where(x => x.Codigo.StartsWith("6")).Sum(x => x.Debito  - x.Credito);
+            var rec   = doMes.Where(x => x.Grupo == "Receita").Sum(x => x.Credito - x.Debito);
+            var cus   = doMes.Where(x => x.Grupo == "Despesa").Sum(x => x.Debito  - x.Credito);
             return new FluxoMensalItem(nomesMes[m - 1], rec, cus, rec - cus);
         }).ToList();
 
@@ -198,10 +203,11 @@ public class RelatoriosService
 
         var saldosDb = await _db.LancamentoDetalhes
             .Where(d => !d.Lancamento!.Anulado && d.Lancamento.Data <= ate)
-            .GroupBy(d => d.ContaContabil!.Codigo)
+            .GroupBy(d => new { d.ContaContabil!.Codigo, d.ContaContabil.Grupo })
             .Select(g => new
             {
-                Codigo       = g.Key,
+                g.Key.Codigo,
+                g.Key.Grupo,
                 TotalDebito  = g.Sum(d => d.Debito),
                 TotalCredito = g.Sum(d => d.Credito)
             })
@@ -264,9 +270,10 @@ public class RelatoriosService
         }
         else
         {
-            var totalProv = saldoDict.Where(kv => kv.Key.StartsWith("7"))
+            // Classificação por Grupo — não pelo prefixo do Codigo (ver nota no topo)
+            var totalProv = saldoDict.Where(kv => kv.Value.Grupo == "Receita")
                                      .Sum(kv => kv.Value.TotalCredito - kv.Value.TotalDebito);
-            var totalCust = saldoDict.Where(kv => kv.Key.StartsWith("6"))
+            var totalCust = saldoDict.Where(kv => kv.Value.Grupo == "Despesa")
                                      .Sum(kv => kv.Value.TotalDebito  - kv.Value.TotalCredito);
             resultadoExercicio = totalProv - totalCust;
         }
@@ -308,6 +315,7 @@ public class RelatoriosService
         var fim    = (dataFim ?? DateTime.Today).Date.AddDays(1).AddTicks(-1);
 
         // Saldo inicial = soma de tudo antes do período nas contas de caixa/banco (43/45)
+        // Nota: 43/45 são Classe 4 (Meios Monetários) — não afetadas pela correção das Classes 6/7
         var saldoInicialDb = await _db.LancamentoDetalhes
             .Where(d =>
                 !d.Lancamento!.Anulado &&

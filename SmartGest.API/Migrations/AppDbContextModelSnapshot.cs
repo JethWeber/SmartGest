@@ -74,7 +74,7 @@ namespace SmartGest.API.Migrations
                             Id = 1,
                             AplicaImpostoSelo = false,
                             Ativo = true,
-                            ContaCredito = "71",
+                            ContaCredito = "61",
                             ContaDebito = "45",
                             GrupoBalanco = "",
                             GrupoDre = "Proveitos e Ganhos",
@@ -87,7 +87,7 @@ namespace SmartGest.API.Migrations
                             Id = 2,
                             AplicaImpostoSelo = false,
                             Ativo = true,
-                            ContaCredito = "72",
+                            ContaCredito = "62",
                             ContaDebito = "45",
                             GrupoBalanco = "",
                             GrupoDre = "Proveitos e Ganhos",
@@ -113,7 +113,7 @@ namespace SmartGest.API.Migrations
                             Id = 4,
                             AplicaImpostoSelo = false,
                             Ativo = true,
-                            ContaCredito = "73",
+                            ContaCredito = "63",
                             ContaDebito = "45",
                             GrupoBalanco = "",
                             GrupoDre = "Proveitos e Ganhos",
@@ -152,7 +152,7 @@ namespace SmartGest.API.Migrations
                             Id = 7,
                             AplicaImpostoSelo = false,
                             Ativo = true,
-                            ContaCredito = "78",
+                            ContaCredito = "68",
                             ContaDebito = "45",
                             GrupoBalanco = "",
                             GrupoDre = "Proveitos e Ganhos",
@@ -165,7 +165,7 @@ namespace SmartGest.API.Migrations
                             Id = 8,
                             AplicaImpostoSelo = false,
                             Ativo = true,
-                            ContaCredito = "79",
+                            ContaCredito = "69",
                             ContaDebito = "45",
                             GrupoBalanco = "",
                             GrupoDre = "Proveitos e Ganhos",
@@ -178,7 +178,7 @@ namespace SmartGest.API.Migrations
                             Id = 9,
                             AplicaImpostoSelo = false,
                             Ativo = true,
-                            ContaCredito = "72",
+                            ContaCredito = "62",
                             ContaDebito = "45",
                             GrupoBalanco = "",
                             GrupoDre = "Proveitos e Ganhos",
@@ -191,7 +191,7 @@ namespace SmartGest.API.Migrations
                             Id = 10,
                             AplicaImpostoSelo = false,
                             Ativo = true,
-                            ContaCredito = "73",
+                            ContaCredito = "63",
                             ContaDebito = "45",
                             GrupoBalanco = "",
                             GrupoDre = "Proveitos e Ganhos",
@@ -205,7 +205,7 @@ namespace SmartGest.API.Migrations
                             AplicaImpostoSelo = false,
                             Ativo = true,
                             ContaCredito = "45",
-                            ContaDebito = "61",
+                            ContaDebito = "71",
                             GrupoBalanco = "",
                             GrupoDre = "Custos e Perdas",
                             GrupoFluxoCaixa = "Operacional",
@@ -231,7 +231,7 @@ namespace SmartGest.API.Migrations
                             AplicaImpostoSelo = false,
                             Ativo = true,
                             ContaCredito = "45",
-                            ContaDebito = "63",
+                            ContaDebito = "73",
                             GrupoBalanco = "",
                             GrupoDre = "Custos e Perdas",
                             GrupoFluxoCaixa = "Operacional",
@@ -244,7 +244,7 @@ namespace SmartGest.API.Migrations
                             AplicaImpostoSelo = false,
                             Ativo = true,
                             ContaCredito = "36",
-                            ContaDebito = "63",
+                            ContaDebito = "73",
                             GrupoBalanco = "",
                             GrupoDre = "Custos e Perdas",
                             GrupoFluxoCaixa = "Operacional",
@@ -257,7 +257,7 @@ namespace SmartGest.API.Migrations
                             AplicaImpostoSelo = false,
                             Ativo = true,
                             ContaCredito = "34",
-                            ContaDebito = "65",
+                            ContaDebito = "75",
                             GrupoBalanco = "",
                             GrupoDre = "Custos e Perdas",
                             GrupoFluxoCaixa = "Operacional",
@@ -270,7 +270,7 @@ namespace SmartGest.API.Migrations
                             AplicaImpostoSelo = false,
                             Ativo = true,
                             ContaCredito = "34",
-                            ContaDebito = "65",
+                            ContaDebito = "75",
                             GrupoBalanco = "",
                             GrupoDre = "Custos e Perdas",
                             GrupoFluxoCaixa = "Operacional",
@@ -283,7 +283,7 @@ namespace SmartGest.API.Migrations
                             AplicaImpostoSelo = false,
                             Ativo = true,
                             ContaCredito = "34",
-                            ContaDebito = "65",
+                            ContaDebito = "75",
                             GrupoBalanco = "",
                             GrupoDre = "Custos e Perdas",
                             GrupoFluxoCaixa = "Operacional",
@@ -296,7 +296,7 @@ namespace SmartGest.API.Migrations
                             AplicaImpostoSelo = false,
                             Ativo = true,
                             ContaCredito = "45",
-                            ContaDebito = "62",
+                            ContaDebito = "72",
                             GrupoBalanco = "",
                             GrupoDre = "Custos e Perdas",
                             GrupoFluxoCaixa = "Operacional",
@@ -309,7 +309,7 @@ namespace SmartGest.API.Migrations
                             AplicaImpostoSelo = false,
                             Ativo = true,
                             ContaCredito = "45",
-                            ContaDebito = "62",
+                            ContaDebito = "72",
                             GrupoBalanco = "",
                             GrupoDre = "Custos e Perdas",
                             GrupoFluxoCaixa = "Operacional",
@@ -322,7 +322,7 @@ namespace SmartGest.API.Migrations
                             AplicaImpostoSelo = false,
                             Ativo = true,
                             ContaCredito = "45",
-                            ContaDebito = "62",
+                            ContaDebito = "72",
                             GrupoBalanco = "",
                             GrupoDre = "Custos e Perdas",
                             GrupoFluxoCaixa = "Operacional",
@@ -335,7 +335,7 @@ namespace SmartGest.API.Migrations
                             AplicaImpostoSelo = false,
                             Ativo = true,
                             ContaCredito = "45",
-                            ContaDebito = "62",
+                            ContaDebito = "72",
                             GrupoBalanco = "",
                             GrupoDre = "Custos e Perdas",
                             GrupoFluxoCaixa = "Operacional",
@@ -361,7 +361,7 @@ namespace SmartGest.API.Migrations
                             AplicaImpostoSelo = false,
                             Ativo = true,
                             ContaCredito = "45",
-                            ContaDebito = "68",
+                            ContaDebito = "78",
                             GrupoBalanco = "",
                             GrupoDre = "Custos e Perdas",
                             GrupoFluxoCaixa = "Financiamento",
@@ -387,7 +387,7 @@ namespace SmartGest.API.Migrations
                             AplicaImpostoSelo = false,
                             Ativo = true,
                             ContaCredito = "45",
-                            ContaDebito = "66",
+                            ContaDebito = "76",
                             GrupoBalanco = "",
                             GrupoDre = "Custos e Perdas",
                             GrupoFluxoCaixa = "Operacional",
@@ -764,7 +764,7 @@ namespace SmartGest.API.Migrations
                         {
                             Id = 17,
                             Activa = true,
-                            Codigo = "61",
+                            Codigo = "71",
                             Grupo = "Despesa",
                             IsDevedora = true,
                             Nome = "Custo das Mercadorias Vendidas"
@@ -773,7 +773,7 @@ namespace SmartGest.API.Migrations
                         {
                             Id = 18,
                             Activa = true,
-                            Codigo = "62",
+                            Codigo = "72",
                             Grupo = "Despesa",
                             IsDevedora = true,
                             Nome = "Fornecimentos e Serviços de Terceiros"
@@ -782,7 +782,7 @@ namespace SmartGest.API.Migrations
                         {
                             Id = 19,
                             Activa = true,
-                            Codigo = "63",
+                            Codigo = "73",
                             Grupo = "Despesa",
                             IsDevedora = true,
                             Nome = "Gastos com Pessoal"
@@ -791,7 +791,7 @@ namespace SmartGest.API.Migrations
                         {
                             Id = 20,
                             Activa = true,
-                            Codigo = "64",
+                            Codigo = "74",
                             Grupo = "Despesa",
                             IsDevedora = true,
                             Nome = "Amortizações e Depreciações do Exercício"
@@ -800,7 +800,7 @@ namespace SmartGest.API.Migrations
                         {
                             Id = 21,
                             Activa = true,
-                            Codigo = "65",
+                            Codigo = "75",
                             Grupo = "Despesa",
                             IsDevedora = true,
                             Nome = "Impostos e Taxas"
@@ -809,7 +809,7 @@ namespace SmartGest.API.Migrations
                         {
                             Id = 22,
                             Activa = true,
-                            Codigo = "66",
+                            Codigo = "76",
                             Grupo = "Despesa",
                             IsDevedora = true,
                             Nome = "Outros Custos e Perdas Operacionais"
@@ -818,7 +818,7 @@ namespace SmartGest.API.Migrations
                         {
                             Id = 23,
                             Activa = true,
-                            Codigo = "68",
+                            Codigo = "78",
                             Grupo = "Despesa",
                             IsDevedora = true,
                             Nome = "Custos e Perdas Financeiras"
@@ -827,7 +827,7 @@ namespace SmartGest.API.Migrations
                         {
                             Id = 24,
                             Activa = true,
-                            Codigo = "69",
+                            Codigo = "79",
                             Grupo = "Despesa",
                             IsDevedora = true,
                             Nome = "Custos e Perdas Extraordinárias"
@@ -836,7 +836,7 @@ namespace SmartGest.API.Migrations
                         {
                             Id = 25,
                             Activa = true,
-                            Codigo = "71",
+                            Codigo = "61",
                             Grupo = "Receita",
                             IsDevedora = false,
                             Nome = "Vendas de Mercadorias e Produtos Acabados"
@@ -845,7 +845,7 @@ namespace SmartGest.API.Migrations
                         {
                             Id = 26,
                             Activa = true,
-                            Codigo = "72",
+                            Codigo = "62",
                             Grupo = "Receita",
                             IsDevedora = false,
                             Nome = "Prestações de Serviços"
@@ -854,7 +854,7 @@ namespace SmartGest.API.Migrations
                         {
                             Id = 27,
                             Activa = true,
-                            Codigo = "73",
+                            Codigo = "63",
                             Grupo = "Receita",
                             IsDevedora = false,
                             Nome = "Outros Proveitos e Ganhos Operacionais"
@@ -863,7 +863,7 @@ namespace SmartGest.API.Migrations
                         {
                             Id = 28,
                             Activa = true,
-                            Codigo = "78",
+                            Codigo = "68",
                             Grupo = "Receita",
                             IsDevedora = false,
                             Nome = "Proveitos e Ganhos Financeiros"
@@ -872,7 +872,7 @@ namespace SmartGest.API.Migrations
                         {
                             Id = 29,
                             Activa = true,
-                            Codigo = "79",
+                            Codigo = "69",
                             Grupo = "Receita",
                             IsDevedora = false,
                             Nome = "Proveitos e Ganhos Extraordinários"
