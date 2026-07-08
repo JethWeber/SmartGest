@@ -550,36 +550,50 @@
 
       <!-- Caixa do modal centrada — ZIndex 1, recebe cliques -->
       <Border ZIndex="1"
-              Background="White"
               CornerRadius="14"
-              BoxShadow="0 8 40 0 #28000000"
+              BoxShadow="0 12 40 0 #60000000"
               Width="940"
               MaxHeight="700"
               HorizontalAlignment="Center"
               VerticalAlignment="Center"
               Padding="0"
-              ClipToBounds="True">
+              ClipToBounds="True"
+              BorderThickness="1">
+
+        <Border.Background>
+          <LinearGradientBrush StartPoint="0%,0%" EndPoint="100%,100%">
+            <GradientStop Color="#1A2947" Offset="0"/>
+            <GradientStop Color="#0F1830" Offset="1"/>
+          </LinearGradientBrush>
+        </Border.Background>
+        <Border.BorderBrush>
+          <LinearGradientBrush StartPoint="0%,0%" EndPoint="100%,100%">
+            <GradientStop Offset="0"   Color="#30FFFFFF"/>
+            <GradientStop Offset="0.5" Color="#10FFFFFF"/>
+            <GradientStop Offset="1"   Color="#05FFFFFF"/>
+          </LinearGradientBrush>
+        </Border.BorderBrush>
 
         <Grid RowDefinitions="Auto, *, Auto">
 
           <!-- ── Cabeçalho do modal ── -->
           <Border Grid.Row="0"
                   Padding="28,20"
-                  BorderBrush="#F0F0F0"
+                  BorderBrush="#1FFFFFFF"
                   BorderThickness="0,0,0,1">
             <Grid ColumnDefinitions="*, Auto">
               <StackPanel Grid.Column="0" Spacing="2">
                 <TextBlock Text="Gerir Contas Bancárias"
-                           FontSize="17" FontWeight="Bold" Foreground="#1A2E5A"/>
+                           FontSize="17" FontWeight="Bold" Foreground="#F0F6FF"/>
                 <TextBlock Text="Adicione, edite ou elimine contas bancárias"
-                           FontSize="12" Foreground="#9AA0AB"/>
+                           FontSize="12" Foreground="#55FFFFFF"/>
               </StackPanel>
               <Button Grid.Column="1"
                       Background="Transparent" BorderThickness="0"
                       Padding="8" CornerRadius="8" Cursor="Hand"
                       Command="{Binding FecharModalCommand}"
                       VerticalAlignment="Center">
-                <mi:MaterialIcon Kind="Close" Width="18" Height="18" Foreground="#9AA0AB"/>
+                <mi:MaterialIcon Kind="Close" Width="18" Height="18" Foreground="#90AECF"/>
               </Button>
             </Grid>
           </Border>
@@ -592,17 +606,17 @@
 
               <Border DockPanel.Dock="Top"
                       Padding="20,14,20,12"
-                      BorderBrush="#F5F5F5"
+                      BorderBrush="#1AFFFFFF"
                       BorderThickness="0,0,0,1">
                 <TextBlock Text="Contas existentes"
-                           FontSize="12" FontWeight="SemiBold" Foreground="#1A2E5A"/>
+                           FontSize="12" FontWeight="SemiBold" Foreground="#C8DCFF"/>
               </Border>
 
               <ScrollViewer Padding="16,8">
                 <ItemsControl ItemsSource="{Binding ContasEditaveis}">
                   <ItemsControl.ItemTemplate>
                     <DataTemplate x:DataType="vm:ContaBancariaEditavel">
-                      <Border Background="#F8F9FC" CornerRadius="10"
+                      <Border Background="#12FFFFFF" CornerRadius="10"
                               Padding="14,12" Margin="0,0,0,8">
                         <Grid ColumnDefinitions="40, *, Auto, 8, Auto">
 
@@ -619,11 +633,11 @@
                           <!-- Info -->
                           <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="2">
                             <TextBlock Text="{Binding Banco}"
-                                       FontSize="13" FontWeight="SemiBold" Foreground="#1A2E5A"/>
+                                       FontSize="13" FontWeight="SemiBold" Foreground="#F0F6FF"/>
                             <StackPanel Orientation="Horizontal" Spacing="8">
-                              <TextBlock Text="{Binding Tipo}"      FontSize="11" Foreground="#9AA0AB"/>
-                              <TextBlock Text="·"                   FontSize="11" Foreground="#9AA0AB"/>
-                              <TextBlock Text="{Binding SaldoFmt}"  FontSize="11" Foreground="#555555" FontWeight="Medium"/>
+                              <TextBlock Text="{Binding Tipo}"      FontSize="11" Foreground="#90AECF"/>
+                              <TextBlock Text="·"                   FontSize="11" Foreground="#90AECF"/>
+                              <TextBlock Text="{Binding SaldoFmt}"  FontSize="11" Foreground="#C8DCFF" FontWeight="Medium"/>
                             </StackPanel>
                           </StackPanel>
 
@@ -656,17 +670,17 @@
             </DockPanel>
 
             <!-- Divisor vertical -->
-            <Border Grid.Column="1" Background="#F0F0F0"/>
+            <Border Grid.Column="1" Background="#1FFFFFFF"/>
 
             <!-- Formulário Nova / Editar conta -->
             <DockPanel Grid.Column="2">
 
               <Border DockPanel.Dock="Top"
                       Padding="20,14,20,12"
-                      BorderBrush="#F5F5F5"
+                      BorderBrush="#1AFFFFFF"
                       BorderThickness="0,0,0,1">
                 <TextBlock Text="{Binding FormTitulo}"
-                           FontSize="12" FontWeight="SemiBold" Foreground="#1A2E5A"/>
+                           FontSize="12" FontWeight="SemiBold" Foreground="#C8DCFF"/>
               </Border>
 
               <!-- Erro global do modal (ex: NIB duplicado, erro de rede) -->
@@ -778,13 +792,13 @@
           <!-- ── Rodapé do modal — acções sempre visíveis ── -->
           <Border Grid.Row="2"
                   Padding="24,14"
-                  BorderBrush="#F0F0F0"
+                  BorderBrush="#1FFFFFFF"
                   BorderThickness="0,1,0,0"
-                  Background="White">
+                  Background="#10FFFFFF">
             <Grid ColumnDefinitions="*, Auto">
               <TextBlock Grid.Column="0"
                          VerticalAlignment="Center"
-                         FontSize="11" Foreground="#9AA0AB"
+                         FontSize="11" Foreground="#90AECF"
                          Text="* Campos obrigatórios"/>
               <StackPanel Grid.Column="1"
                           Orientation="Horizontal" Spacing="10"

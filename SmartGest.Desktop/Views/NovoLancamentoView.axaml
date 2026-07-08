@@ -18,24 +18,37 @@
 
   <Window.Styles>
 
-    <!-- ── Card de secção ───────────────────────────────────────────── -->
+    <!-- ── Card de secção (glass, igual ao sg-card do CaixaView) ──────── -->
     <Style Selector="Border.secao">
-      <Setter Property="Background"   Value="#F4F6FB"/>
-      <Setter Property="CornerRadius" Value="12"/>
-      <Setter Property="Padding"      Value="24,20"/>
-      <Setter Property="BoxShadow"    Value="0 2 8 0 #10000000"/>
-      <Setter Property="Margin"       Value="0,0,0,12"/>
+      <Setter Property="CornerRadius"    Value="12"/>
+      <Setter Property="Padding"         Value="24,20"/>
+      <Setter Property="Margin"          Value="0,0,0,12"/>
+      <Setter Property="BorderThickness" Value="1"/>
+      <Setter Property="BoxShadow"       Value="0 4 24 0 #28000000"/>
+      <Setter Property="BorderBrush">
+        <LinearGradientBrush StartPoint="0%,0%" EndPoint="100%,100%">
+          <GradientStop Offset="0"   Color="#30FFFFFF"/>
+          <GradientStop Offset="0.5" Color="#10FFFFFF"/>
+          <GradientStop Offset="1"   Color="#05FFFFFF"/>
+        </LinearGradientBrush>
+      </Setter>
+      <Setter Property="Background">
+        <LinearGradientBrush StartPoint="0%,0%" EndPoint="100%,100%">
+          <GradientStop Offset="0" Color="#16FFFFFF"/>
+          <GradientStop Offset="1" Color="#0AFFFFFF"/>
+        </LinearGradientBrush>
+      </Setter>
     </Style>
 
     <!-- Cabeçalho de secção -->
     <Style Selector="TextBlock.secao-titulo">
       <Setter Property="FontSize"   Value="13"/>
       <Setter Property="FontWeight" Value="Bold"/>
-      <Setter Property="Foreground" Value="#1A2E5A"/>
+      <Setter Property="Foreground" Value="#C8DCFF"/>
     </Style>
     <Style Selector="TextBlock.secao-sub">
       <Setter Property="FontSize"   Value="11"/>
-      <Setter Property="Foreground" Value="#7A8499"/>
+      <Setter Property="Foreground" Value="#90AECF"/>
       <Setter Property="Margin"     Value="0,1,0,0"/>
     </Style>
 
@@ -43,40 +56,41 @@
     <Style Selector="TextBlock.lbl">
       <Setter Property="FontSize"   Value="11"/>
       <Setter Property="FontWeight" Value="SemiBold"/>
-      <Setter Property="Foreground" Value="#4A5568"/>
+      <Setter Property="Foreground" Value="#C8DCFF"/>
       <Setter Property="Margin"     Value="0,0,0,6"/>
     </Style>
 
-    <!-- ── Inputs ───────────────────────────────────────────────────── -->
+    <!-- ── Inputs (glass, mesma linguagem do sg-filter do CaixaView) ──── -->
     <Style Selector="TextBox.sg-in">
-      <Setter Property="Background"      Value="White"/>
-      <Setter Property="BorderBrush"     Value="#CBD5E0"/>
+      <Setter Property="Background"      Value="#12FFFFFF"/>
+      <Setter Property="BorderBrush"     Value="#25FFFFFF"/>
       <Setter Property="BorderThickness" Value="1.5"/>
       <Setter Property="CornerRadius"    Value="8"/>
       <Setter Property="Padding"         Value="11,9"/>
       <Setter Property="FontSize"        Value="12"/>
       <Setter Property="Height"          Value="40"/>
-      <Setter Property="Foreground"      Value="#1A202C"/>
+      <Setter Property="Foreground"      Value="#F0F6FF"/>
+      <Setter Property="CaretBrush"      Value="#F0F6FF"/>
     </Style>
     <Style Selector="TextBox.sg-in:focus">
       <Setter Property="BorderBrush" Value="#2196F3"/>
-      <Setter Property="Background"  Value="White"/>
+      <Setter Property="Background"  Value="#18FFFFFF"/>
     </Style>
 
     <Style Selector="ComboBox.sg-in">
-      <Setter Property="Background"      Value="White"/>
-      <Setter Property="BorderBrush"     Value="#CBD5E0"/>
+      <Setter Property="Background"      Value="#12FFFFFF"/>
+      <Setter Property="BorderBrush"     Value="#25FFFFFF"/>
       <Setter Property="BorderThickness" Value="1.5"/>
       <Setter Property="CornerRadius"    Value="8"/>
       <Setter Property="Padding"         Value="11,9"/>
       <Setter Property="FontSize"        Value="12"/>
       <Setter Property="Height"          Value="40"/>
-      <Setter Property="Foreground"      Value="#1A202C"/>
+      <Setter Property="Foreground"      Value="#F0F6FF"/>
     </Style>
 
     <Style Selector="TextBox.sg-area">
-      <Setter Property="Background"      Value="White"/>
-      <Setter Property="BorderBrush"     Value="#CBD5E0"/>
+      <Setter Property="Background"      Value="#12FFFFFF"/>
+      <Setter Property="BorderBrush"     Value="#25FFFFFF"/>
       <Setter Property="BorderThickness" Value="1.5"/>
       <Setter Property="CornerRadius"    Value="8"/>
       <Setter Property="Padding"         Value="11,9"/>
@@ -84,13 +98,14 @@
       <Setter Property="AcceptsReturn"   Value="True"/>
       <Setter Property="TextWrapping"    Value="Wrap"/>
       <Setter Property="MaxLength"       Value="500"/>
-      <Setter Property="Foreground"      Value="#1A202C"/>
+      <Setter Property="Foreground"      Value="#F0F6FF"/>
+      <Setter Property="CaretBrush"      Value="#F0F6FF"/>
     </Style>
 
     <!-- ── Botões de tipo ───────────────────────────────────────────── -->
     <Style Selector="Button.tipo-btn">
-      <Setter Property="Background"      Value="White"/>
-      <Setter Property="BorderBrush"     Value="#CBD5E0"/>
+      <Setter Property="Background"      Value="#10FFFFFF"/>
+      <Setter Property="BorderBrush"     Value="#25FFFFFF"/>
       <Setter Property="BorderThickness" Value="2"/>
       <Setter Property="CornerRadius"    Value="12"/>
       <Setter Property="Padding"         Value="0"/>
@@ -105,20 +120,19 @@
       </Setter>
     </Style>
     <Style Selector="Button.tipo-btn:pointerover /template/ ContentPresenter">
-      <Setter Property="Background" Value="#F0F4FF"/>
+      <Setter Property="Background" Value="#18FFFFFF"/>
     </Style>
     <Style Selector="Button.activo-entrada">
-      <Setter Property="Background"  Value="#E8F0FE"/>
+      <Setter Property="Background"  Value="#2A2196F3"/>
       <Setter Property="BorderBrush" Value="#2196F3"/>
     </Style>
     <Style Selector="Button.activo-saida">
-      <Setter Property="Background"  Value="#FEECEC"/>
+      <Setter Property="Background"  Value="#2AE53935"/>
       <Setter Property="BorderBrush" Value="#E53935"/>
     </Style>
 
-    <!-- ── Botão primário ───────────────────────────────────────────── -->
+    <!-- ── Botão primário (mesmo gradiente do "Nova Transação") ───────── -->
     <Style Selector="Button.btn-ok">
-      <Setter Property="Background"      Value="#1A73E8"/>
       <Setter Property="Foreground"      Value="White"/>
       <Setter Property="FontSize"        Value="13"/>
       <Setter Property="FontWeight"      Value="Bold"/>
@@ -126,28 +140,35 @@
       <Setter Property="CornerRadius"    Value="9"/>
       <Setter Property="Cursor"          Value="Hand"/>
       <Setter Property="BorderThickness" Value="0"/>
+      <Setter Property="Background">
+        <LinearGradientBrush StartPoint="0%,0%" EndPoint="100%,0%">
+          <GradientStop Color="#2196F3" Offset="0"/>
+          <GradientStop Color="#1A73E8" Offset="1"/>
+        </LinearGradientBrush>
+      </Setter>
     </Style>
     <Style Selector="Button.btn-ok:pointerover /template/ ContentPresenter">
-      <Setter Property="Background" Value="#1558B0"/>
+      <Setter Property="Background" Value="#1E88E5"/>
     </Style>
 
-    <!-- ── Botão secundário ─────────────────────────────────────────── -->
+    <!-- ── Botão secundário (ghost, glass) ─────────────────────────────── -->
     <Style Selector="Button.btn-ghost">
-      <Setter Property="Background"      Value="White"/>
-      <Setter Property="Foreground"      Value="#4A5568"/>
+      <Setter Property="Background"      Value="#12FFFFFF"/>
+      <Setter Property="Foreground"      Value="#C8DCFF"/>
       <Setter Property="FontSize"        Value="13"/>
       <Setter Property="FontWeight"      Value="SemiBold"/>
       <Setter Property="Padding"         Value="22,11"/>
       <Setter Property="CornerRadius"    Value="9"/>
       <Setter Property="Cursor"          Value="Hand"/>
-      <Setter Property="BorderBrush"     Value="#CBD5E0"/>
+      <Setter Property="BorderBrush"     Value="#25FFFFFF"/>
       <Setter Property="BorderThickness" Value="1.5"/>
     </Style>
     <Style Selector="Button.btn-ghost:pointerover /template/ ContentPresenter">
-      <Setter Property="Background" Value="#EDF2F7"/>
+      <Setter Property="Background" Value="#1AFFFFFF"/>
     </Style>
 
-    <!-- ── Erro ─────────────────────────────────────────────────────── -->
+    <!-- ── Erro (badge claro sobre card escuro — mesmo padrão das pills
+         entrada/saída do CaixaView, mantido de propósito) ────────────── -->
     <Style Selector="Border.erro-box">
       <Setter Property="Background"      Value="#FFF0F0"/>
       <Setter Property="CornerRadius"    Value="8"/>
@@ -157,7 +178,7 @@
       <Setter Property="BorderThickness" Value="1"/>
     </Style>
 
-    <!-- ── Pill de separador de secção (número) ─────────────────────── -->
+    <!-- ── Pill de separador de secção (mesmo tom do ícone de cabeçalho) ─ -->
     <Style Selector="Border.num-pill">
       <Setter Property="Width"        Value="26"/>
       <Setter Property="Height"       Value="26"/>
@@ -168,18 +189,30 @@
   </Window.Styles>
 
   <Border CornerRadius="14"
-          Background="#F0F2F7"
-          BorderBrush="#C8D0E0"
           BorderThickness="1"
           ClipToBounds="True"
-          BoxShadow="0 12 40 0 #40000000">
+          BoxShadow="0 12 40 0 #60000000">
+
+    <Border.Background>
+      <LinearGradientBrush StartPoint="0%,0%" EndPoint="100%,100%">
+        <GradientStop Color="#1A2947" Offset="0"/>
+        <GradientStop Color="#0F1830" Offset="1"/>
+      </LinearGradientBrush>
+    </Border.Background>
+    <Border.BorderBrush>
+      <LinearGradientBrush StartPoint="0%,0%" EndPoint="100%,100%">
+        <GradientStop Offset="0"   Color="#30FFFFFF"/>
+        <GradientStop Offset="0.5" Color="#10FFFFFF"/>
+        <GradientStop Offset="1"   Color="#05FFFFFF"/>
+      </LinearGradientBrush>
+    </Border.BorderBrush>
 
     <!-- ESTRUTURA: Cabeçalho | Scroll | Rodapé -->
     <Grid RowDefinitions="Auto, *, Auto">
 
       <!-- ════ CABEÇALHO ════════════════════════════════════════════════ -->
-      <Border Grid.Row="0" Background="White"
-              BorderBrush="#DDE3EE" BorderThickness="0,0,0,1"
+      <Border Grid.Row="0" Background="#10FFFFFF"
+              BorderBrush="#1FFFFFFF" BorderThickness="0,0,0,1"
               Padding="28,22,20,22">
         <Grid ColumnDefinitions="Auto, *, Auto">
 
@@ -197,9 +230,9 @@
           <StackPanel Grid.Column="1" VerticalAlignment="Center">
             <TextBlock Text="Novo Lançamento"
                        FontSize="17" FontWeight="Bold"
-                       Foreground="#1A2E5A"/>
+                       Foreground="#F0F6FF"/>
             <TextBlock Text="Registe uma nova movimentação financeira"
-                       FontSize="11" Foreground="#7A8499" Margin="0,2,0,0"/>
+                       FontSize="11" Foreground="#55FFFFFF" Margin="0,2,0,0"/>
           </StackPanel>
 
           <Button Grid.Column="2"
@@ -210,7 +243,7 @@
                   ToolTip.Tip="Fechar">
             <Border CornerRadius="16" Background="Transparent">
               <mi:MaterialIcon Kind="Close" Width="16" Height="16"
-                               Foreground="#7A8499"/>
+                               Foreground="#90AECF"/>
             </Border>
           </Button>
         </Grid>
@@ -219,7 +252,7 @@
       <!-- ════ ÁREA DE SCROLL ═══════════════════════════════════════════ -->
       <ScrollViewer Grid.Row="1" Padding="28,20,28,16"
                     VerticalScrollBarVisibility="Auto"
-                    Background="#F0F2F7">
+                    Background="Transparent">
         <StackPanel Spacing="0">
 
           <!-- Erro global -->
@@ -308,7 +341,7 @@
                                    Foreground="{Binding CorEntrada}"/>
                         <TextBlock Text="Receita / Recebimento"
                                    FontSize="10"
-                                   Foreground="#7A8499"/>
+                                   Foreground="#90AECF"/>
                       </StackPanel>
                     </Grid>
                   </Button>
@@ -336,7 +369,7 @@
                                    Foreground="{Binding CorSaida}"/>
                         <TextBlock Text="Despesa / Pagamento"
                                    FontSize="10"
-                                   Foreground="#7A8499"/>
+                                   Foreground="#90AECF"/>
                       </StackPanel>
                     </Grid>
                   </Button>
@@ -357,13 +390,13 @@
                              Watermark="0,00"
                              CornerRadius="8,0,0,8"/>
                     <Border Grid.Column="1"
-                            Background="#EBF0FA"
-                            BorderBrush="#CBD5E0"
+                            Background="#1A2196F3"
+                            BorderBrush="#25FFFFFF"
                             BorderThickness="0,1.5,1.5,1.5"
                             CornerRadius="0,8,8,0"
                             Padding="14,0">
                       <TextBlock Text="Kz" FontSize="12" FontWeight="Bold"
-                                 Foreground="#1A73E8"
+                                 Foreground="#64B5F6"
                                  VerticalAlignment="Center"/>
                     </Border>
                   </Grid>
@@ -462,7 +495,7 @@
 
                 <StackPanel Grid.Column="2" Spacing="0">
                   <TextBlock Classes="lbl" Text="Documento / Recibo (Opcional)"/>
-                  <Border Background="White"
+                  <Border Background="#12FFFFFF"
                           BorderBrush="{Binding CorBordaDoc}"
                           BorderThickness="1.5"
                           CornerRadius="8">
@@ -489,13 +522,13 @@
                         <mi:MaterialIcon Grid.Column="2"
                                          Kind="FolderOpenOutline"
                                          Width="15" Height="15"
-                                         Foreground="#7A8499"
+                                         Foreground="#90AECF"
                                          VerticalAlignment="Center"/>
                       </Grid>
                     </Button>
                   </Border>
                   <TextBlock Text="{Binding InfoDocumento}"
-                             FontSize="10" Foreground="#7A8499"
+                             FontSize="10" Foreground="#90AECF"
                              Margin="2,4,0,0"
                              IsVisible="{Binding TemDocumento}"/>
                   <Button Background="Transparent" BorderThickness="0"
@@ -546,9 +579,9 @@
                            Height="90"/>
                   <Grid Margin="2,4,0,0">
                     <TextBlock Text="Máx. 500 caracteres"
-                               FontSize="10" Foreground="#A0A9B8"/>
+                               FontSize="10" Foreground="#60FFFFFF"/>
                     <TextBlock Text="{Binding ContadorObs}"
-                               FontSize="10" Foreground="#A0A9B8"
+                               FontSize="10" Foreground="#60FFFFFF"
                                HorizontalAlignment="Right"/>
                   </Grid>
                 </StackPanel>
@@ -580,14 +613,14 @@
 
       <!-- ════ RODAPÉ ═══════════════════════════════════════════════════ -->
       <Border Grid.Row="2"
-              Background="White"
-              BorderBrush="#DDE3EE" BorderThickness="0,1,0,0"
+              Background="#10FFFFFF"
+              BorderBrush="#1FFFFFFF" BorderThickness="0,1,0,0"
               Padding="28,16,28,18">
         <Grid ColumnDefinitions="Auto, *, Auto">
 
           <TextBlock Grid.Column="0"
                      Text="* Campos obrigatórios"
-                     FontSize="11" Foreground="#7A8499"
+                     FontSize="11" Foreground="#90AECF"
                      VerticalAlignment="Center"/>
 
           <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8"
@@ -598,7 +631,7 @@
                              Width="15" Height="15"
                              Foreground="#1A73E8"/>
             <TextBlock Text="A guardar lançamento..."
-                       FontSize="12" Foreground="#4A5568"
+                       FontSize="12" Foreground="#C8DCFF"
                        VerticalAlignment="Center"/>
           </StackPanel>
 
