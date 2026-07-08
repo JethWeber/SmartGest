@@ -170,7 +170,7 @@
 
     <!-- ── Linhas alternadas da DataGrid ────────────────────────────── -->
     <Style Selector="DataGridRow:nth-child(odd)">
-      <Setter Property="Background" Value="#F9FAFC"/>
+      <Setter Property="Background" Value="#08FFFFFF"/>
     </Style>
 
   </UserControl.Styles>
@@ -192,15 +192,15 @@
           <!-- Cabeçalho da sidebar -->
           <Border DockPanel.Dock="Top"
                   Padding="16,18,16,14"
-                  BorderBrush="#F0F0F0"
+                  BorderBrush="#1FFFFFFF"
                   BorderThickness="0,0,0,1">
             <StackPanel Spacing="10">
 
               <StackPanel Spacing="2">
                 <TextBlock Text="Contas e Bancos"
-                           FontSize="15" FontWeight="Bold" Foreground="#1A2E5A"/>
+                           FontSize="15" FontWeight="Bold" Foreground="#F0F6FF"/>
                 <TextBlock Text="Clique numa conta para ver o detalhe"
-                           FontSize="11" Foreground="#9AA0AB"/>
+                           FontSize="11" Foreground="#90AECF"/>
               </StackPanel>
 
               <!-- Botão Gerir Contas -->
@@ -222,8 +222,8 @@
                       IsVisible="{Binding IsLoading}"
                       HorizontalAlignment="Center"
                       Margin="0,20,0,0" Spacing="8">
-            <mi:MaterialIcon Kind="Loading" Width="24" Height="24" Foreground="#9AA0AB"/>
-            <TextBlock Text="A carregar..." FontSize="12" Foreground="#9AA0AB" HorizontalAlignment="Center"/>
+            <mi:MaterialIcon Kind="Loading" Width="24" Height="24" Foreground="#90AECF"/>
+            <TextBlock Text="A carregar..." FontSize="12" Foreground="#90AECF" HorizontalAlignment="Center"/>
           </StackPanel>
 
           <!-- Mensagem de erro na sidebar -->
@@ -255,11 +255,11 @@
                                      Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </Border>
                         <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="2">
-                          <TextBlock Text="{Binding Banco}" FontSize="13" FontWeight="SemiBold" Foreground="#1A2E5A"/>
-                          <TextBlock Text="{Binding Tipo}"  FontSize="11" Foreground="#9AA0AB"/>
+                          <TextBlock Text="{Binding Banco}" FontSize="13" FontWeight="SemiBold" Foreground="#F0F6FF"/>
+                          <TextBlock Text="{Binding Tipo}"  FontSize="11" Foreground="#90AECF"/>
                           <StackPanel Orientation="Horizontal" Spacing="5" Margin="0,2,0,0">
                             <TextBlock Text="{Binding SaldoFmt}" FontSize="12" FontWeight="Bold"
-                                       Foreground="#1A2E5A" VerticalAlignment="Center"/>
+                                       Foreground="#C8DCFF" VerticalAlignment="Center"/>
                             <Border Background="{Binding FundoVariacao}" CornerRadius="4" Padding="5,1" VerticalAlignment="Center">
                               <TextBlock Text="{Binding VariacaoFmt}" FontSize="10" FontWeight="SemiBold"
                                          Foreground="{Binding CorVariacao}"/>
@@ -281,11 +281,11 @@
                                      Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </Border>
                         <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="2">
-                          <TextBlock Text="{Binding Banco}" FontSize="13" FontWeight="SemiBold" Foreground="#1A2E5A"/>
-                          <TextBlock Text="{Binding Tipo}"  FontSize="11" Foreground="#9AA0AB"/>
+                          <TextBlock Text="{Binding Banco}" FontSize="13" FontWeight="SemiBold" Foreground="#F0F6FF"/>
+                          <TextBlock Text="{Binding Tipo}"  FontSize="11" Foreground="#90AECF"/>
                           <StackPanel Orientation="Horizontal" Spacing="5" Margin="0,2,0,0">
                             <TextBlock Text="{Binding SaldoFmt}" FontSize="12" FontWeight="Bold"
-                                       Foreground="#1A2E5A" VerticalAlignment="Center"/>
+                                       Foreground="#C8DCFF" VerticalAlignment="Center"/>
                             <Border Background="{Binding FundoVariacao}" CornerRadius="4" Padding="5,1" VerticalAlignment="Center">
                               <TextBlock Text="{Binding VariacaoFmt}" FontSize="10" FontWeight="SemiBold"
                                          Foreground="{Binding CorVariacao}"/>
@@ -319,9 +319,9 @@
             <Grid ColumnDefinitions="*, Auto">
               <StackPanel Grid.Column="0">
                 <TextBlock Text="Detalhe da Conta"
-                           FontSize="20" FontWeight="Bold" Foreground="#1A2E5A"/>
+                           FontSize="20" FontWeight="Bold" Foreground="#F0F6FF"/>
                 <TextBlock Text="Movimentos bancários e evolução de saldo"
-                           FontSize="12" Foreground="#9AA0AB" Margin="0,2,0,0"/>
+                           FontSize="12" Foreground="#55FFFFFF" Margin="0,2,0,0"/>
               </StackPanel>
               <Button Grid.Column="1" Classes="btn-outline"
                       Command="{Binding ExportarCommand}" VerticalAlignment="Center">
@@ -389,27 +389,27 @@
                   <Grid ColumnDefinitions="*, *" RowDefinitions="Auto, 10, Auto, 10, Auto">
                     <StackPanel Grid.Column="0" Grid.Row="0" Spacing="2">
                       <TextBlock Text="NIB" Classes="metric-label"/>
-                      <TextBlock Text="{Binding ContaSelecionada.NIB}" FontSize="12" Foreground="#333333" FontWeight="Medium"/>
+                      <TextBlock Text="{Binding ContaSelecionada.NIB}" FontSize="12" Foreground="#F0F6FF" FontWeight="Medium"/>
                     </StackPanel>
                     <StackPanel Grid.Column="1" Grid.Row="0" Spacing="2">
                       <TextBlock Text="Tipo de Conta" Classes="metric-label"/>
-                      <TextBlock Text="{Binding ContaSelecionada.Tipo}" FontSize="12" Foreground="#333333" FontWeight="Medium"/>
+                      <TextBlock Text="{Binding ContaSelecionada.Tipo}" FontSize="12" Foreground="#F0F6FF" FontWeight="Medium"/>
                     </StackPanel>
                     <StackPanel Grid.Column="0" Grid.Row="2" Spacing="2">
                       <TextBlock Text="Agência" Classes="metric-label"/>
-                      <TextBlock Text="{Binding ContaSelecionada.Agencia}" FontSize="12" Foreground="#333333" FontWeight="Medium"/>
+                      <TextBlock Text="{Binding ContaSelecionada.Agencia}" FontSize="12" Foreground="#F0F6FF" FontWeight="Medium"/>
                     </StackPanel>
                     <StackPanel Grid.Column="1" Grid.Row="2" Spacing="2">
                       <TextBlock Text="Titular" Classes="metric-label"/>
-                      <TextBlock Text="{Binding ContaSelecionada.Titular}" FontSize="12" Foreground="#333333" FontWeight="Medium"/>
+                      <TextBlock Text="{Binding ContaSelecionada.Titular}" FontSize="12" Foreground="#F0F6FF" FontWeight="Medium"/>
                     </StackPanel>
                     <StackPanel Grid.Column="0" Grid.Row="4" Spacing="2">
                       <TextBlock Text="Moeda" Classes="metric-label"/>
-                      <TextBlock Text="{Binding ContaSelecionada.Moeda}" FontSize="12" Foreground="#333333" FontWeight="Medium"/>
+                      <TextBlock Text="{Binding ContaSelecionada.Moeda}" FontSize="12" Foreground="#F0F6FF" FontWeight="Medium"/>
                     </StackPanel>
                     <StackPanel Grid.Column="1" Grid.Row="4" Spacing="2">
                       <TextBlock Text="Saldo Actual" Classes="metric-label"/>
-                      <TextBlock Text="{Binding ContaSelecionada.SaldoFmt}" FontSize="15" FontWeight="Bold" Foreground="#1A2E5A"/>
+                      <TextBlock Text="{Binding ContaSelecionada.SaldoFmt}" FontSize="15" FontWeight="Bold" Foreground="#64B5F6"/>
                     </StackPanel>
                   </Grid>
                 </StackPanel>
@@ -456,7 +456,7 @@
                 <Grid DockPanel.Dock="Top" ColumnDefinitions="*, Auto" Margin="0,0,0,12">
                   <TextBlock Grid.Column="0" Text="Movimentos Bancários" Classes="section-title" Margin="0"/>
                   <TextBlock Grid.Column="1" Text="{Binding TotalMovimentosTexto}"
-                             FontSize="11" Foreground="#9AA0AB" VerticalAlignment="Center"/>
+                             FontSize="11" Foreground="#90AECF" VerticalAlignment="Center"/>
                 </Grid>
 
                 <DataGrid ItemsSource="{Binding MovimentosFiltrados}"
@@ -468,7 +468,7 @@
                     <DataGridTemplateColumn Header="Data" Width="100">
                       <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate x:DataType="vm:MovimentoBancarioItem">
-                          <TextBlock Text="{Binding Data}" VerticalAlignment="Center" Foreground="#555555" Margin="10,0"/>
+                          <TextBlock Text="{Binding Data}" VerticalAlignment="Center" Foreground="#90AECF" Margin="10,0"/>
                         </DataTemplate>
                       </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
@@ -477,7 +477,7 @@
                       <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate x:DataType="vm:MovimentoBancarioItem">
                           <TextBlock Text="{Binding Banco}" VerticalAlignment="Center"
-                                     Foreground="#333333" FontWeight="Medium" Margin="10,0"/>
+                                     Foreground="#C8DCFF" FontWeight="Medium" Margin="10,0"/>
                         </DataTemplate>
                       </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
@@ -486,7 +486,7 @@
                       <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate x:DataType="vm:MovimentoBancarioItem">
                           <TextBlock Text="{Binding Referencia}" VerticalAlignment="Center"
-                                     Foreground="#9AA0AB" FontSize="11" Margin="10,0"/>
+                                     Foreground="#90AECF" FontSize="11" Margin="10,0"/>
                         </DataTemplate>
                       </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
@@ -495,7 +495,7 @@
                       <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate x:DataType="vm:MovimentoBancarioItem">
                           <TextBlock Text="{Binding Descricao}" VerticalAlignment="Center"
-                                     Foreground="#333333" Margin="10,0"/>
+                                     Foreground="#C8DCFF" Margin="10,0"/>
                         </DataTemplate>
                       </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
