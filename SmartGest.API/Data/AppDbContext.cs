@@ -156,20 +156,20 @@ public class AppDbContext : DbContext
         //   Classe 8 — Resultados
         // ─────────────────────────────────────────────────────────────────────
 
-        mb.Entity<ContaContabil>().HasData(
-            new ContaContabil { Id = 1,  Codigo = "11", Nome = "Activos Fixos Tangíveis",                              Grupo = "Ativo",   IsDevedora = true,  Activa = true },
-            new ContaContabil { Id = 2,  Codigo = "12", Nome = "Activos Intangíveis",                                  Grupo = "Ativo",   IsDevedora = true,  Activa = true },
-            new ContaContabil { Id = 3,  Codigo = "13", Nome = "Investimentos Financeiros",                            Grupo = "Ativo",   IsDevedora = true,  Activa = true },
-            new ContaContabil { Id = 4,  Codigo = "18", Nome = "Amortizações Acumuladas",                              Grupo = "Ativo",   IsDevedora = false, Activa = true },
-            new ContaContabil { Id = 5,  Codigo = "22", Nome = "Mercadorias",                                         Grupo = "Ativo",   IsDevedora = true,  Activa = true },
-            new ContaContabil { Id = 6,  Codigo = "26", Nome = "Matérias-Primas e Subsidiárias",                      Grupo = "Ativo",   IsDevedora = true,  Activa = true },
-            new ContaContabil { Id = 7,  Codigo = "31", Nome = "Clientes",                                            Grupo = "Ativo",   IsDevedora = true,  Activa = true },
-            new ContaContabil { Id = 8,  Codigo = "32", Nome = "Fornecedores",                                        Grupo = "Passivo", IsDevedora = false, Activa = true },
-            new ContaContabil { Id = 9,  Codigo = "33", Nome = "Empréstimos Obtidos",                                 Grupo = "Passivo", IsDevedora = false, Activa = true },
-            new ContaContabil { Id = 10, Codigo = "34", Nome = "Estado e Outros Entes Públicos",                      Grupo = "Passivo", IsDevedora = false, Activa = true },
-            new ContaContabil { Id = 11, Codigo = "36", Nome = "Pessoal",                                             Grupo = "Passivo", IsDevedora = false, Activa = true },
-            new ContaContabil { Id = 12, Codigo = "43", Nome = "Caixa",                                               Grupo = "Ativo",   IsDevedora = true,  Activa = true },
-            new ContaContabil { Id = 13, Codigo = "45", Nome = "Depósitos Bancários",                                 Grupo = "Ativo",   IsDevedora = true,  Activa = true },
+       mb.Entity<ContaContabil>().HasData(
+            new ContaContabil { Id = 1,  Codigo = "11", Nome = "Activos Fixos Tangíveis",                              Grupo = "Ativo",   IsDevedora = true,  Activa = true, Corrente = false },
+            new ContaContabil { Id = 2,  Codigo = "12", Nome = "Activos Intangíveis",                                  Grupo = "Ativo",   IsDevedora = true,  Activa = true, Corrente = false },
+            new ContaContabil { Id = 3,  Codigo = "13", Nome = "Investimentos Financeiros",                            Grupo = "Ativo",   IsDevedora = true,  Activa = true, Corrente = true  },
+            new ContaContabil { Id = 4,  Codigo = "18", Nome = "Amortizações Acumuladas",                              Grupo = "Ativo",   IsDevedora = false, Activa = true, Corrente = false },
+            new ContaContabil { Id = 5,  Codigo = "22", Nome = "Mercadorias",                                         Grupo = "Ativo",   IsDevedora = true,  Activa = true, Corrente = true  },
+            new ContaContabil { Id = 6,  Codigo = "26", Nome = "Matérias-Primas e Subsidiárias",                      Grupo = "Ativo",   IsDevedora = true,  Activa = true, Corrente = true  },
+            new ContaContabil { Id = 7,  Codigo = "31", Nome = "Clientes",                                            Grupo = "Ativo",   IsDevedora = true,  Activa = true, Corrente = true  },
+            new ContaContabil { Id = 8,  Codigo = "32", Nome = "Fornecedores",                                        Grupo = "Passivo", IsDevedora = false, Activa = true, Corrente = true  },
+            new ContaContabil { Id = 9,  Codigo = "33", Nome = "Empréstimos Obtidos",                                 Grupo = "Passivo", IsDevedora = false, Activa = true, Corrente = true  },
+            new ContaContabil { Id = 10, Codigo = "34", Nome = "Estado e Outros Entes Públicos",                      Grupo = "Passivo", IsDevedora = false, Activa = true, Corrente = true  },
+            new ContaContabil { Id = 11, Codigo = "36", Nome = "Pessoal",                                             Grupo = "Passivo", IsDevedora = false, Activa = true, Corrente = true  },
+            new ContaContabil { Id = 12, Codigo = "43", Nome = "Caixa",                                               Grupo = "Ativo",   IsDevedora = true,  Activa = true, Corrente = true  },
+            new ContaContabil { Id = 13, Codigo = "45", Nome = "Depósitos Bancários",                                 Grupo = "Ativo",   IsDevedora = true,  Activa = true, Corrente = true  },
             new ContaContabil { Id = 14, Codigo = "51", Nome = "Capital Social",                                      Grupo = "Capital", IsDevedora = false, Activa = true },
             new ContaContabil { Id = 15, Codigo = "55", Nome = "Reservas Legais",                                     Grupo = "Capital", IsDevedora = false, Activa = true },
             new ContaContabil { Id = 16, Codigo = "59", Nome = "Resultados Transitados",                              Grupo = "Capital", IsDevedora = false, Activa = true },
@@ -194,6 +194,7 @@ public class AppDbContext : DbContext
             new ContaContabil { Id = 30, Codigo = "88", Nome = "Resultado Líquido do Exercício",                      Grupo = "Capital", IsDevedora = false, Activa = true }
         );
 
+        
         mb.Entity<CategoriaContabil>().HasData(
             // ENTRADAS
             new CategoriaContabil { Id = 1,  Nome = "Venda de Mercadoria",      Tipo = "Entrada", ContaDebito = "45", ContaCredito = "61", GrupoDre = "Proveitos e Ganhos", GrupoFluxoCaixa = "Operacional",   Ativo = true },

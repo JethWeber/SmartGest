@@ -116,7 +116,7 @@ public class ContaContabil
     public string Grupo      { get; set; } = string.Empty; // Ativo | Passivo | Capital | Receita | Despesa
     public bool   IsDevedora { get; set; } = true;
     public bool   Activa     { get; set; } = true;
-
+    public bool? Corrente { get; set; }
     public ICollection<LancamentoDetalhe> Lancamentos { get; set; } = new List<LancamentoDetalhe>();
 }
 
