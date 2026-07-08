@@ -21,7 +21,8 @@ public record ConfiguracaoResponse(
     string ApiBaseUrl, int TimeoutIndex, bool TlsAtivado, bool RetryAtivado);
 
 public record ContaContabilResponse(
-    int Id, string Codigo, string Nome, string Grupo, bool IsDevedora, bool Activa);
+    int Id, string Codigo, string Nome, string Grupo, bool IsDevedora, bool Activa, bool? Corrente);
+
 
 public record BalanceteItemResponse(
     string Codigo, string Nome, string Grupo,

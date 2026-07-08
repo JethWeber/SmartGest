@@ -27,7 +27,7 @@ public class ContasContabeisController : ControllerBase
 
         var items = await query
             .OrderBy(c => c.Codigo)
-            .Select(c => new ContaContabilResponse(c.Id, c.Codigo, c.Nome, c.Grupo, c.IsDevedora, c.Activa))
+            .Select(c => new ContaContabilResponse(c.Id, c.Codigo, c.Nome, c.Grupo, c.IsDevedora, c.Activa, c.Corrente))
             .ToListAsync();
         return Ok(items);
     }
@@ -37,7 +37,7 @@ public class ContasContabeisController : ControllerBase
     {
         var c = await _db.ContasContabeis.FindAsync(id);
         return c is null ? NotFound()
-            : Ok(new ContaContabilResponse(c.Id, c.Codigo, c.Nome, c.Grupo, c.IsDevedora, c.Activa));
+            : Ok(new ContaContabilResponse(c.Id, c.Codigo, c.Nome, c.Grupo, c.IsDevedora, c.Activa, c.Corrente));
     }
 
     [HttpPost]
@@ -47,12 +47,15 @@ public class ContasContabeisController : ControllerBase
         if (await _db.ContasContabeis.AnyAsync(c => c.Codigo == req.Codigo))
             return Conflict(new { message = "Código de conta já existe." });
 
+        if (req.Grupo is "Ativo" or "Passivo" && req.Corrente is null)
+            return BadRequest(new { message = "Contas de Ativo ou Passivo precisam indicar se são Corrente ou Não Corrente." });
+
         var conta = new ContaContabil
-            { Codigo = req.Codigo, Nome = req.Nome, Grupo = req.Grupo, IsDevedora = req.IsDevedora };
+            { Codigo = req.Codigo, Nome = req.Nome, Grupo = req.Grupo, IsDevedora = req.IsDevedora, Corrente = req.Corrente };
         _db.ContasContabeis.Add(conta);
         await _db.SaveChangesAsync();
         return CreatedAtAction(nameof(Obter), new { id = conta.Id },
-            new ContaContabilResponse(conta.Id, conta.Codigo, conta.Nome, conta.Grupo, conta.IsDevedora, conta.Activa));
+            new ContaContabilResponse(conta.Id, conta.Codigo, conta.Nome, conta.Grupo, conta.IsDevedora, conta.Activa, conta.Corrente));
     }
 
     [HttpPut("{id}")]
@@ -61,9 +64,13 @@ public class ContasContabeisController : ControllerBase
     {
         var c = await _db.ContasContabeis.FindAsync(id);
         if (c is null) return NotFound();
-        c.Codigo = req.Codigo; c.Nome = req.Nome; c.Grupo = req.Grupo; c.IsDevedora = req.IsDevedora;
+
+        if (req.Grupo is "Ativo" or "Passivo" && req.Corrente is null)
+            return BadRequest(new { message = "Contas de Ativo ou Passivo precisam indicar se são Corrente ou Não Corrente." });
+
+        c.Codigo = req.Codigo; c.Nome = req.Nome; c.Grupo = req.Grupo; c.IsDevedora = req.IsDevedora; c.Corrente = req.Corrente;
         await _db.SaveChangesAsync();
-        return Ok(new ContaContabilResponse(c.Id, c.Codigo, c.Nome, c.Grupo, c.IsDevedora, c.Activa));
+        return Ok(new ContaContabilResponse(c.Id, c.Codigo, c.Nome, c.Grupo, c.IsDevedora, c.Activa, c.Corrente));
     }
 
     [HttpDelete("{id}")]

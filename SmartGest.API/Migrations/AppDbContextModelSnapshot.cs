@@ -608,6 +608,9 @@ namespace SmartGest.API.Migrations
                         .HasMaxLength(20)
                         .HasColumnType("character varying(20)");
 
+                    b.Property<bool?>("Corrente")
+                        .HasColumnType("boolean");
+
                     b.Property<string>("Grupo")
                         .IsRequired()
                         .HasMaxLength(30)
@@ -634,6 +637,7 @@ namespace SmartGest.API.Migrations
                             Id = 1,
                             Activa = true,
                             Codigo = "11",
+                            Corrente = false,
                             Grupo = "Ativo",
                             IsDevedora = true,
                             Nome = "Activos Fixos Tangíveis"
@@ -643,6 +647,7 @@ namespace SmartGest.API.Migrations
                             Id = 2,
                             Activa = true,
                             Codigo = "12",
+                            Corrente = false,
                             Grupo = "Ativo",
                             IsDevedora = true,
                             Nome = "Activos Intangíveis"
@@ -652,6 +657,7 @@ namespace SmartGest.API.Migrations
                             Id = 3,
                             Activa = true,
                             Codigo = "13",
+                            Corrente = true,
                             Grupo = "Ativo",
                             IsDevedora = true,
                             Nome = "Investimentos Financeiros"
@@ -661,6 +667,7 @@ namespace SmartGest.API.Migrations
                             Id = 4,
                             Activa = true,
                             Codigo = "18",
+                            Corrente = false,
                             Grupo = "Ativo",
                             IsDevedora = false,
                             Nome = "Amortizações Acumuladas"
@@ -670,6 +677,7 @@ namespace SmartGest.API.Migrations
                             Id = 5,
                             Activa = true,
                             Codigo = "22",
+                            Corrente = true,
                             Grupo = "Ativo",
                             IsDevedora = true,
                             Nome = "Mercadorias"
@@ -679,6 +687,7 @@ namespace SmartGest.API.Migrations
                             Id = 6,
                             Activa = true,
                             Codigo = "26",
+                            Corrente = true,
                             Grupo = "Ativo",
                             IsDevedora = true,
                             Nome = "Matérias-Primas e Subsidiárias"
@@ -688,6 +697,7 @@ namespace SmartGest.API.Migrations
                             Id = 7,
                             Activa = true,
                             Codigo = "31",
+                            Corrente = true,
                             Grupo = "Ativo",
                             IsDevedora = true,
                             Nome = "Clientes"
@@ -697,6 +707,7 @@ namespace SmartGest.API.Migrations
                             Id = 8,
                             Activa = true,
                             Codigo = "32",
+                            Corrente = true,
                             Grupo = "Passivo",
                             IsDevedora = false,
                             Nome = "Fornecedores"
@@ -706,6 +717,7 @@ namespace SmartGest.API.Migrations
                             Id = 9,
                             Activa = true,
                             Codigo = "33",
+                            Corrente = true,
                             Grupo = "Passivo",
                             IsDevedora = false,
                             Nome = "Empréstimos Obtidos"
@@ -715,6 +727,7 @@ namespace SmartGest.API.Migrations
                             Id = 10,
                             Activa = true,
                             Codigo = "34",
+                            Corrente = true,
                             Grupo = "Passivo",
                             IsDevedora = false,
                             Nome = "Estado e Outros Entes Públicos"
@@ -724,6 +737,7 @@ namespace SmartGest.API.Migrations
                             Id = 11,
                             Activa = true,
                             Codigo = "36",
+                            Corrente = true,
                             Grupo = "Passivo",
                             IsDevedora = false,
                             Nome = "Pessoal"
@@ -733,6 +747,7 @@ namespace SmartGest.API.Migrations
                             Id = 12,
                             Activa = true,
                             Codigo = "43",
+                            Corrente = true,
                             Grupo = "Ativo",
                             IsDevedora = true,
                             Nome = "Caixa"
@@ -742,6 +757,7 @@ namespace SmartGest.API.Migrations
                             Id = 13,
                             Activa = true,
                             Codigo = "45",
+                            Corrente = true,
                             Grupo = "Ativo",
                             IsDevedora = true,
                             Nome = "Depósitos Bancários"

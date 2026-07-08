@@ -29,7 +29,7 @@ public record AtualizarUtilizadorRequest(
     string Nome, string Email, string Perfil, bool Activo);
 
 public record ContaContabilRequest(
-    string Codigo, string Nome, string Grupo, bool IsDevedora);
+    string Codigo, string Nome, string Grupo, bool IsDevedora, bool? Corrente = null);
 
 public record LancamentoRequest(
     DateTime Data,

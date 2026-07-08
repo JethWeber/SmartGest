@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using SmartGest.API.Data;
 using SmartGest.API.DTOs.Responses;
+using SmartGest.API.Models;
 
 namespace SmartGest.API.Services;
 
@@ -199,111 +200,77 @@ public class RelatoriosService
         var mesRef = mes ?? hoje.Month;
 
         var ate = new DateTime(anoRef, mesRef, DateTime.DaysInMonth(anoRef, mesRef))
-                      .AddDays(1).AddTicks(-1);
+                    .AddDays(1).AddTicks(-1);
 
         var saldosDb = await _db.LancamentoDetalhes
             .Where(d => !d.Lancamento!.Anulado && d.Lancamento.Data <= ate)
-            .GroupBy(d => new { d.ContaContabil!.Codigo, d.ContaContabil.Grupo })
+            .GroupBy(d => d.ContaContabilId)
             .Select(g => new
             {
-                g.Key.Codigo,
-                g.Key.Grupo,
+                ContaContabilId = g.Key,
                 TotalDebito  = g.Sum(d => d.Debito),
                 TotalCredito = g.Sum(d => d.Credito)
             })
             .ToListAsync();
 
-        var saldoDict = saldosDb.ToDictionary(x => x.Codigo);
+        var saldoPorConta = saldosDb.ToDictionary(x => x.ContaContabilId);
+        var contas = await _db.ContasContabeis.Where(c => c.Activa).ToListAsync();
 
-        decimal Saldo(string prefixo, bool devedora)
+        decimal LiquidoConta(ContaContabil conta)
         {
-            decimal deb = 0m, cre = 0m;
-            foreach (var kv in saldoDict)
-                if (kv.Key.StartsWith(prefixo))
-                {
-                    deb += kv.Value.TotalDebito;
-                    cre += kv.Value.TotalCredito;
-                }
-            var liq = devedora ? deb - cre : cre - deb;
-            return Math.Max(0, liq);
+            saldoPorConta.TryGetValue(conta.Id, out var s);
+            var deb = s?.TotalDebito  ?? 0m;
+            var cre = s?.TotalCredito ?? 0m;
+            return conta.IsDevedora ? deb - cre : cre - deb;
         }
 
-        var ativoCorrentes = new List<BalancoLinhaResponse>
-        {
-            new("Caixa (43)",                        Saldo("43", true)),
-            new("Depósitos Bancários (45)",          Saldo("45", true)),
-            new("Clientes (31)",                     Saldo("31", true)),
-            new("Mercadorias / Inventários (22)",    Saldo("22", true)),
-            new("Matérias-Primas (26)",              Saldo("26", true)),
-            new("Investimentos Financeiros CP (13)", Saldo("13", true)),
-        };
+        // Math.Max preservado aqui de propósito — é o Bug #1 (Math.Max), tratado à parte
+        decimal SaldoLinha(ContaContabil conta) => Math.Max(0, LiquidoConta(conta));
 
-        var ativoFixoBruto = Saldo("11", true);
-        var amortAcumulada = Saldo("18", false);
-        var ativosIntang   = Saldo("12", true);
+        List<BalancoLinhaResponse> LinhasPara(string grupo, bool? corrente) =>
+            contas
+                .Where(c => c.Grupo == grupo && c.Corrente == corrente)
+                .OrderBy(c => c.Codigo)
+                .Select(c => new BalancoLinhaResponse(
+                    $"{c.Nome} ({c.Codigo})",
+                    SaldoLinha(c),
+                    c.Grupo == "Ativo" && !c.IsDevedora))   // dedução automática (ex.: Amortizações)
+                .ToList();
 
-        var ativoNaoCorrentes = new List<BalancoLinhaResponse>
-        {
-            new("Activos Fixos Tangíveis — bruto (11)", ativoFixoBruto),
-            new("(–) Amortizações Acumuladas (18)",     amortAcumulada, true),
-            new("Activos Intangíveis (12)",              ativosIntang),
-        };
-
-        var passivoCorrentes = new List<BalancoLinhaResponse>
-        {
-            new("Fornecedores (32)",                      Saldo("32", false)),
-            new("Estado e Entes Públicos — IRT/IVA (34)", Saldo("34", false)),
-            new("Pessoal — Remunerações a Pagar (36)",    Saldo("36", false)),
-            new("Empréstimos Bancários CP (33)",          Saldo("33", false)),
-        };
-
-        var passivoNaoCorrentes = new List<BalancoLinhaResponse>
-        {
-            new("Empréstimos Bancários LP (33)", 0),
-            new("Provisões para Riscos e Encargos", 0),
-        };
+        var ativoCorrentes      = LinhasPara("Ativo", true);
+        var ativoNaoCorrentes   = LinhasPara("Ativo", false);
+        var passivoCorrentes    = LinhasPara("Passivo", true);
+        var passivoNaoCorrentes = LinhasPara("Passivo", false);
 
         decimal resultadoExercicio;
-        if (saldoDict.TryGetValue("88", out var c88) && (c88.TotalCredito - c88.TotalDebito) != 0)
+        var conta88 = contas.FirstOrDefault(c => c.Codigo == "88");
+        if (conta88 != null && saldoPorConta.TryGetValue(conta88.Id, out var s88) && (s88.TotalCredito - s88.TotalDebito) != 0)
         {
-            resultadoExercicio = c88.TotalCredito - c88.TotalDebito;
+            resultadoExercicio = s88.TotalCredito - s88.TotalDebito;
         }
         else
         {
-            // Classificação por Grupo — não pelo prefixo do Codigo (ver nota no topo)
-            var totalProv = saldoDict.Where(kv => kv.Value.Grupo == "Receita")
-                                     .Sum(kv => kv.Value.TotalCredito - kv.Value.TotalDebito);
-            var totalCust = saldoDict.Where(kv => kv.Value.Grupo == "Despesa")
-                                     .Sum(kv => kv.Value.TotalDebito  - kv.Value.TotalCredito);
+            var totalProv = contas.Where(c => c.Grupo == "Receita").Sum(LiquidoConta);
+            var totalCust = contas.Where(c => c.Grupo == "Despesa").Sum(LiquidoConta);
             resultadoExercicio = totalProv - totalCust;
         }
 
-        var capitalProprio = new List<BalancoLinhaResponse>
-        {
-            new("Capital Social (51)",         Saldo("51", false)),
-            new("Reservas Legais (55)",        Saldo("55", false)),
-            new("Resultados Transitados (59)", Saldo("59", false)),
-            new("Resultado do Exercício",      resultadoExercicio),
-        };
+        var capitalProprio = LinhasPara("Capital", null);
+        capitalProprio.Add(new BalancoLinhaResponse("Resultado do Exercício", resultadoExercicio));
 
         var totalAtivo = ativoCorrentes.Sum(x => x.Valor)
-                       + ativoNaoCorrentes.Where(x => !x.IsDeducao).Sum(x => x.Valor)
-                       - ativoNaoCorrentes.Where(x =>  x.IsDeducao).Sum(x => x.Valor);
+                    + ativoNaoCorrentes.Where(x => !x.IsDeducao).Sum(x => x.Valor)
+                    - ativoNaoCorrentes.Where(x =>  x.IsDeducao).Sum(x => x.Valor);
 
-        var totalPassivo  = passivoCorrentes.Sum(x => x.Valor) + passivoNaoCorrentes.Sum(x => x.Valor);
-        var totalCapital  = capitalProprio.Sum(x => x.Valor);
+        var totalPassivo = passivoCorrentes.Sum(x => x.Valor) + passivoNaoCorrentes.Sum(x => x.Valor);
+        var totalCapital = capitalProprio.Sum(x => x.Valor);
         var totalPassivoMaisCapital = totalPassivo + totalCapital;
-
-        // Validação de equilíbrio — Activo = Passivo + Capital Próprio
-        // (diferença tolerada de 1 centavo por arredondamentos)
-        var equilibrado = Math.Abs(totalAtivo - totalPassivoMaisCapital) < 0.01m;
 
         return new BalancoResponse(
             ativoCorrentes, ativoNaoCorrentes,
             passivoCorrentes, passivoNaoCorrentes, capitalProprio,
             totalAtivo, totalPassivo, totalCapital, totalPassivoMaisCapital);
     }
-
     // ─────────────────────────────────────────────────────────────────────────
     // FLUXO DE CAIXA
     // ─────────────────────────────────────────────────────────────────────────
