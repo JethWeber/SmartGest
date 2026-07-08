@@ -5,6 +5,7 @@ using SmartGest.API.Data;
 using SmartGest.API.DTOs.Requests;
 using SmartGest.API.DTOs.Responses;
 using SmartGest.API.Models;
+using SmartGest.API.Services;
 
 namespace SmartGest.API.Controllers;
 
@@ -14,7 +15,17 @@ namespace SmartGest.API.Controllers;
 public class ContasBancariasController : ControllerBase
 {
     private readonly AppDbContext _db;
-    public ContasBancariasController(AppDbContext db) => _db = db;
+    private readonly IMotorContabil _motor;
+
+    // public ContasBancariasController(AppDbContext db) => _db = db;
+
+    public ContasBancariasController(AppDbContext db, IMotorContabil motor)
+    {
+        _db = db;
+        _motor = motor;
+    }
+
+    private const int CategoriaSaldoAberturaId = 8; // "Saldo de Abertura" — ver seed em AppDbContext.cs
 
     [HttpGet]
     public async Task<IActionResult> Listar()
@@ -44,6 +55,9 @@ public class ContasBancariasController : ControllerBase
     [Authorize(Roles = "Administrador,Contabilista")]
     public async Task<IActionResult> Criar([FromBody] ContaBancariaRequest req)
     {
+        if (req.SaldoAtual < 0)
+            return BadRequest(new { message = "O saldo inicial não pode ser negativo." });
+
         if (await _db.ContasBancarias.AnyAsync(c => c.NIB == req.NIB))
             return Conflict(new { message = "Já existe uma conta com este NIB." });
 
@@ -59,6 +73,59 @@ public class ContasBancariasController : ControllerBase
 
         _db.ContasBancarias.Add(conta);
         await _db.SaveChangesAsync();
+
+        // ── Lançamento de abertura (corrige saldo inicial sem partida dobrada) ──
+        if (req.SaldoAtual > 0)
+        {
+            var categoriaAbertura = await _db.CategoriaContabeis.FindAsync(CategoriaSaldoAberturaId);
+            if (categoriaAbertura is null || !categoriaAbertura.Ativo)
+            {
+                return CreatedAtAction(nameof(Obter), new { id = conta.Id }, new
+                {
+                    conta = Map(conta),
+                    avisoContabil = "Conta criada, mas a categoria 'Saldo de Abertura' não foi " +
+                                    "encontrada ou está inactiva. O saldo inicial não foi registado " +
+                                    "no livro-razão — verifique o Plano de Contas."
+                });
+            }
+
+            var lancamentoAbertura = new Lancamento
+            {
+                Data                = req.DataAbertura ?? DateTime.Today,
+                Descricao           = $"Saldo de abertura — {conta.Banco}",
+                Categoria           = categoriaAbertura.Nome,
+                CategoriaContabilId = categoriaAbertura.Id,
+                Tipo                = "Entrada",
+                Valor               = req.SaldoAtual,
+                Beneficiario        = string.Empty,
+                MetodoPagamento     = string.Empty,
+                CaminhoDocumento    = string.Empty,
+                Observacoes         = "Gerado automaticamente na criação da conta bancária.",
+                CentroCusto         = string.Empty,
+                ReferenciaInterna   = string.Empty,
+                ContaBancariaId     = conta.Id,
+                CriadoEm            = DateTime.UtcNow,
+            };
+
+            _db.Lancamentos.Add(lancamentoAbertura);
+            await _db.SaveChangesAsync();   // <- garante Id real antes do motor
+
+            try
+            {
+                await _motor.ProcessarAsync(lancamentoAbertura);
+            }
+            catch (Exception ex)
+            {
+                return CreatedAtAction(nameof(Obter), new { id = conta.Id }, new
+                {
+                    conta = Map(conta),
+                    avisoContabil = $"Conta criada, mas o lançamento de saldo de abertura falhou " +
+                                    $"ao gerar partidas dobradas: {ex.Message}. Será reprocessado " +
+                                    "na próxima reconciliação."
+                });
+            }
+        }
+
         return CreatedAtAction(nameof(Obter), new { id = conta.Id }, Map(conta));
     }
 

@@ -48,7 +48,8 @@ public record LancamentoRequest(
 public record ContaBancariaRequest(
     string Banco, string NIB, string Tipo, string Moeda,
     decimal SaldoAtual, string Agencia, string Titular, string CorAccent,
-    int? ContaContabilId = null);
+    int? ContaContabilId = null,
+    DateTime? DataAbertura = null);
 
 public record MovimentoBancarioRequest(
     int ContaBancariaId, DateTime Data, string Descricao,

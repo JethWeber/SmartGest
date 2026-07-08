@@ -165,6 +165,19 @@ namespace SmartGest.API.Migrations
                             Id = 8,
                             AplicaImpostoSelo = false,
                             Ativo = true,
+                            ContaCredito = "59",
+                            ContaDebito = "45",
+                            GrupoBalanco = "",
+                            GrupoDre = "",
+                            GrupoFluxoCaixa = "Financiamento",
+                            Nome = "Saldo de Abertura",
+                            Tipo = "Entrada"
+                        },
+                        new
+                        {
+                            Id = 9,
+                            AplicaImpostoSelo = false,
+                            Ativo = true,
                             ContaCredito = "69",
                             ContaDebito = "45",
                             GrupoBalanco = "",
@@ -175,7 +188,7 @@ namespace SmartGest.API.Migrations
                         },
                         new
                         {
-                            Id = 9,
+                            Id = 10,
                             AplicaImpostoSelo = false,
                             Ativo = true,
                             ContaCredito = "62",
@@ -188,7 +201,7 @@ namespace SmartGest.API.Migrations
                         },
                         new
                         {
-                            Id = 10,
+                            Id = 11,
                             AplicaImpostoSelo = false,
                             Ativo = true,
                             ContaCredito = "63",
@@ -201,7 +214,7 @@ namespace SmartGest.API.Migrations
                         },
                         new
                         {
-                            Id = 11,
+                            Id = 12,
                             AplicaImpostoSelo = false,
                             Ativo = true,
                             ContaCredito = "45",
@@ -214,7 +227,7 @@ namespace SmartGest.API.Migrations
                         },
                         new
                         {
-                            Id = 12,
+                            Id = 13,
                             AplicaImpostoSelo = false,
                             Ativo = true,
                             ContaCredito = "45",
@@ -227,7 +240,7 @@ namespace SmartGest.API.Migrations
                         },
                         new
                         {
-                            Id = 13,
+                            Id = 14,
                             AplicaImpostoSelo = false,
                             Ativo = true,
                             ContaCredito = "45",
@@ -240,7 +253,7 @@ namespace SmartGest.API.Migrations
                         },
                         new
                         {
-                            Id = 14,
+                            Id = 15,
                             AplicaImpostoSelo = false,
                             Ativo = true,
                             ContaCredito = "36",
@@ -253,7 +266,7 @@ namespace SmartGest.API.Migrations
                         },
                         new
                         {
-                            Id = 15,
+                            Id = 16,
                             AplicaImpostoSelo = false,
                             Ativo = true,
                             ContaCredito = "34",
@@ -266,7 +279,7 @@ namespace SmartGest.API.Migrations
                         },
                         new
                         {
-                            Id = 16,
+                            Id = 17,
                             AplicaImpostoSelo = false,
                             Ativo = true,
                             ContaCredito = "34",
@@ -279,7 +292,7 @@ namespace SmartGest.API.Migrations
                         },
                         new
                         {
-                            Id = 17,
+                            Id = 18,
                             AplicaImpostoSelo = false,
                             Ativo = true,
                             ContaCredito = "34",
@@ -292,7 +305,7 @@ namespace SmartGest.API.Migrations
                         },
                         new
                         {
-                            Id = 18,
+                            Id = 19,
                             AplicaImpostoSelo = false,
                             Ativo = true,
                             ContaCredito = "45",
@@ -305,7 +318,7 @@ namespace SmartGest.API.Migrations
                         },
                         new
                         {
-                            Id = 19,
+                            Id = 20,
                             AplicaImpostoSelo = false,
                             Ativo = true,
                             ContaCredito = "45",
@@ -318,7 +331,7 @@ namespace SmartGest.API.Migrations
                         },
                         new
                         {
-                            Id = 20,
+                            Id = 21,
                             AplicaImpostoSelo = false,
                             Ativo = true,
                             ContaCredito = "45",
@@ -331,7 +344,7 @@ namespace SmartGest.API.Migrations
                         },
                         new
                         {
-                            Id = 21,
+                            Id = 22,
                             AplicaImpostoSelo = false,
                             Ativo = true,
                             ContaCredito = "45",
@@ -344,7 +357,7 @@ namespace SmartGest.API.Migrations
                         },
                         new
                         {
-                            Id = 22,
+                            Id = 23,
                             AplicaImpostoSelo = false,
                             Ativo = true,
                             ContaCredito = "45",
@@ -357,7 +370,7 @@ namespace SmartGest.API.Migrations
                         },
                         new
                         {
-                            Id = 23,
+                            Id = 24,
                             AplicaImpostoSelo = false,
                             Ativo = true,
                             ContaCredito = "45",
@@ -370,7 +383,7 @@ namespace SmartGest.API.Migrations
                         },
                         new
                         {
-                            Id = 24,
+                            Id = 25,
                             AplicaImpostoSelo = false,
                             Ativo = true,
                             ContaCredito = "45",
@@ -383,7 +396,7 @@ namespace SmartGest.API.Migrations
                         },
                         new
                         {
-                            Id = 25,
+                            Id = 26,
                             AplicaImpostoSelo = false,
                             Ativo = true,
                             ContaCredito = "45",
