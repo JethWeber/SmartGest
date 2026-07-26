@@ -494,44 +494,7 @@
 
           <!-- ══════════════════════════════════════════════════════════════
                RODAPÉ DE TOTAIS
-               ══════════════════════════════════════════════════════════════ -->
-          <Border Classes="sg-card" Padding="16,12"
-                  Background="#08FFFFFF">
-            <Grid ColumnDefinitions="2*, *, *, *, *, *, *, *">
-
-              <TextBlock Grid.Column="0"
-                         Text="TOTAIS GERAIS"
-                         FontSize="12" FontWeight="Bold"
-                         Foreground="#C8DCFF"
-                         VerticalAlignment="Center"/>
-
-              <TextBlock Grid.Column="3"
-                         Text="{Binding TotalDebitos}"
-                         FontSize="12" FontWeight="Bold"
-                         TextAlignment="Right"
-                         Foreground="#1565C0"
-                         VerticalAlignment="Center"
-                         Margin="10,0"/>
-
-              <TextBlock Grid.Column="4"
-                         Text="{Binding TotalCreditos}"
-                         FontSize="12" FontWeight="Bold"
-                         TextAlignment="Right"
-                         Foreground="#2E7D32"
-                         VerticalAlignment="Center"
-                         Margin="10,0"/>
-
-              <TextBlock Grid.Column="7"
-                         Text="{Binding DiferencaSaldo}"
-                         FontSize="12" FontWeight="Bold"
-                         TextAlignment="Right"
-                         Foreground="{Binding CorDiferenca}"
-                         VerticalAlignment="Center"
-                         Margin="10,0"/>
-
-            </Grid>
-          </Border>
-
+               ══════════════════════════════════════════════════════════════ -->          
         </StackPanel>
       </Border>
     </ScrollViewer>
