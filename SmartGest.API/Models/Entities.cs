@@ -23,7 +23,7 @@ public class Utilizador
 
     public ICollection<SessaoActiva> Sessoes { get; set; } = new List<SessaoActiva>();
 }
-
+// jknefçgçjngçdjkngçdng jghçrehgçre
 public class SessaoActiva
 {
     public int      Id               { get; set; }

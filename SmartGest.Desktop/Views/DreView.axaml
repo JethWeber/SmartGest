@@ -402,42 +402,6 @@
         <!-- ══════════════════════════════════════════════════════════════
              RODAPÉ DE TOTAIS
              ══════════════════════════════════════════════════════════════ -->
-        <Border Classes="sg-card" Padding="16,12" Background="#F0F4FF">
-          <Grid ColumnDefinitions="2*, *, *, *">
-
-            <TextBlock Grid.Column="0"
-                       Text="TOTAIS GERAIS"
-                       FontSize="12" FontWeight="Bold"
-                       Foreground="#1A2E5A"
-                       VerticalAlignment="Center"/>
-
-            <StackPanel Grid.Column="1" Spacing="2" HorizontalAlignment="Right">
-              <TextBlock Text="Receitas" FontSize="10" Foreground="#9AA0AB"/>
-              <TextBlock Text="{Binding RodapeReceitas}"
-                         FontSize="12" FontWeight="Bold"
-                         TextAlignment="Right"
-                         Foreground="#2E7D32"/>
-            </StackPanel>
-
-            <StackPanel Grid.Column="2" Spacing="2" HorizontalAlignment="Right">
-              <TextBlock Text="Custos" FontSize="10" Foreground="#9AA0AB"/>
-              <TextBlock Text="{Binding RodapeCustos}"
-                         FontSize="12" FontWeight="Bold"
-                         TextAlignment="Right"
-                         Foreground="#C62828"/>
-            </StackPanel>
-
-            <StackPanel Grid.Column="3" Spacing="2" HorizontalAlignment="Right">
-              <TextBlock Text="Resultado Líquido" FontSize="10" Foreground="#9AA0AB"/>
-              <TextBlock Text="{Binding RodapeResultado}"
-                         FontSize="12" FontWeight="Bold"
-                         TextAlignment="Right"
-                         Foreground="{Binding CorRodapeResultado}"/>
-            </StackPanel>
-
-          </Grid>
-        </Border>
-
       </StackPanel>
     </Border>
   </ScrollViewer>
