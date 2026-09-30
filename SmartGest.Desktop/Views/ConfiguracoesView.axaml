@@ -247,7 +247,11 @@
     <!-- ══════════════════════════════════════════════════════════════
          CONTEÚDO DAS TABS
          ══════════════════════════════════════════════════════════════ -->
-    <ScrollViewer Padding="28,24">
+    <ScrollViewer Padding="28,24"
+                  VerticalScrollBarVisibility="Visible"
+                  HorizontalScrollBarVisibility="Disabled"
+                  IsScrollChainingEnabled="True"
+                  BringIntoViewOnFocusChange="True">
       <Panel>
 
         <!-- ────────────────────────────────────────────────────────
