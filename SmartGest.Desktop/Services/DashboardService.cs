@@ -9,15 +9,16 @@ namespace SmartGest.Desktop.Services;
 
 public class DashboardService
 {
-    private readonly SmartGestDbContext _db;
-    public DashboardService(SmartGestDbContext db) => _db = db;
+    private readonly IDbContextFactory<SmartGestDbContext> _factory;
+    public DashboardService(IDbContextFactory<SmartGestDbContext> factory) => _factory = factory;
 
     public async Task<DashboardResponse?> ObterAsync()
     {
+        await using var db = await _factory.CreateDbContextAsync();
         var hoje = DateTime.Today;
         var inicioAno = new DateTime(hoje.Year, 1, 1);
-        var lanc = await _db.Lancamentos.AsNoTracking().Where(x => !x.Anulado && x.Data >= inicioAno).ToListAsync();
-        var anterior = await _db.Lancamentos.AsNoTracking().Where(x => !x.Anulado && x.Data >= inicioAno.AddYears(-1) && x.Data < inicioAno).ToListAsync();
+        var lanc = await db.Lancamentos.AsNoTracking().Where(x => !x.Anulado && x.Data >= inicioAno).ToListAsync();
+        var anterior = await db.Lancamentos.AsNoTracking().Where(x => !x.Anulado && x.Data >= inicioAno.AddYears(-1) && x.Data < inicioAno).ToListAsync();
 
         decimal rec = lanc.Where(x => x.Tipo=="Entrada").Sum(x=>x.Valor);
         decimal desp = lanc.Where(x => x.Tipo=="Saída").Sum(x=>x.Valor);
@@ -31,11 +32,11 @@ public class DashboardService
             return new FluxoMensalItem(new DateTime(hoje.Year,m,1).ToString("MMM"),r,d,r-d);
         }).ToList();
 
-        var ult = await _db.Lancamentos.AsNoTracking().Where(x=>!x.Anulado)
+        var ult = await db.Lancamentos.AsNoTracking().Where(x=>!x.Anulado)
             .OrderByDescending(x=>x.Data).ThenByDescending(x=>x.Id).Take(10).ToListAsync();
 
         var contaIds=ult.Where(x=>x.ContaBancariaId.HasValue).Select(x=>x.ContaBancariaId!.Value).Distinct().ToList();
-        var contas=await _db.ContasBancarias.AsNoTracking().Where(x=>contaIds.Contains(x.Id))
+        var contas=await db.ContasBancarias.AsNoTracking().Where(x=>contaIds.Contains(x.Id))
             .ToDictionaryAsync(x=>x.Id,x=>x.Banco);
 
         return new(rec,desp,rec-desp,recAnt,despAnt,recAnt-despAnt,fluxo,
