@@ -247,17 +247,10 @@
 
         <!-- Fundo glass da sidebar -->
         <Border.Background>
-          <LinearGradientBrush StartPoint="0%,0%" EndPoint="100%,100%">
-            <GradientStop Offset="0" Color="#1AFFFFFF"/>
-            <GradientStop Offset="1" Color="#0EFFFFFF"/>
-          </LinearGradientBrush>
+          <SolidColorBrush Color="{DynamicResource SgCardBackground}"/>
         </Border.Background>
         <Border.BorderBrush>
-          <LinearGradientBrush StartPoint="0%,0%" EndPoint="0%,100%">
-            <GradientStop Offset="0"   Color="#30FFFFFF"/>
-            <GradientStop Offset="0.5" Color="#12FFFFFF"/>
-            <GradientStop Offset="1"   Color="#05FFFFFF"/>
-          </LinearGradientBrush>
+          <SolidColorBrush Color="{DynamicResource SgCardBorder}"/>
         </Border.BorderBrush>
 
         <Grid RowDefinitions="Auto,*,Auto">
@@ -391,14 +384,14 @@
                            HorizontalAlignment="Center"
                            FontWeight="Bold"
                            FontSize="13"
-                           Foreground="#90C4FF"/>
+                           Foreground="{DynamicResource SgAccentHover}"/>
               </Border>
               <StackPanel Classes="user-info" VerticalAlignment="Center">
                 <TextBlock Text="{Binding UsuarioNome}"
                            FontSize="13" FontWeight="SemiBold"
-                           Foreground="#E8F0FF"/>
+                           Foreground="{DynamicResource SgTextPrimary}"/>
                 <TextBlock Text="Administrador"
-                           FontSize="11" Foreground="#55FFFFFF"/>
+                           FontSize="11" Foreground="{DynamicResource SgTextMuted}"/>
               </StackPanel>
             </StackPanel>
           </Border>
