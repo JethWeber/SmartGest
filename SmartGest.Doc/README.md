@@ -2,26 +2,32 @@
 
 Documentação oficial da arquitetura, desenvolvimento, operação e evolução do SmartGest.
 
-## Visão
+## Prioridade atual
 
-O SmartGest é projetado para suportar duas modalidades:
+**Fase atual: SmartGest Desktop Local.**
 
-- **SmartGest Server/Web** — aplicação orientada a servidor, API e PostgreSQL.
-- **SmartGest Local/Desktop** — aplicação local/offline, desktop e SQLite.
+O objetivo imediato é entregar uma aplicação Desktop **100% funcional e offline**, sem depender de Web/API, Docker, PostgreSQL ou Internet.
 
-A regra central é evitar duplicação da lógica de negócio. O domínio e os casos de uso devem ser compartilhados sempre que possível.
+A modalidade Web/API fica para uma fase posterior e não bloqueia a primeira entrega.
 
-## Estrutura
+## Arquitetura-alvo atual
 
 ```
 SmartGest
 ├── SmartGest.Domain
 ├── SmartGest.Application
 ├── SmartGest.Infrastructure
-├── SmartGest.Web
 ├── SmartGest.Desktop
 └── SmartGest.Doc
 ```
+
+Posteriormente:
+
+```
+SmartGest.Web/API
+```
+
+poderá ser adicionada reutilizando Domain, Application e Infrastructure.
 
 ## Documentos
 
@@ -30,7 +36,6 @@ SmartGest
 - [Aplicação](APPLICATION.md)
 - [Infraestrutura](INFRASTRUCTURE.md)
 - [Base de dados](DATABASE.md)
-- [API](API.md)
 - [Desktop](DESKTOP.md)
 - [Segurança](SECURITY.md)
 - [Backup e recuperação](BACKUP.md)
@@ -41,14 +46,17 @@ SmartGest
 
 ## Princípios
 
-1. Regras de negócio não dependem de UI, HTTP ou banco.
-2. Application coordena casos de uso.
-3. Infrastructure implementa detalhes técnicos.
-4. Web/API e Desktop são pontos de entrada.
-5. SQLite é destinado ao cenário local de máquina única.
-6. PostgreSQL continua sendo a opção para cenários server/multiutilizador.
-7. Backup e recuperação são requisitos de produção, não extras.
+1. Desktop Local é a prioridade da primeira entrega.
+2. A aplicação essencial deve funcionar sem Internet.
+3. Regras de negócio não dependem de UI, HTTP ou banco específico.
+4. Application coordena casos de uso.
+5. Infrastructure implementa detalhes técnicos.
+6. SQLite é o banco da edição Local.
+7. PostgreSQL/API/Web ficam para uma fase posterior.
+8. Backup e recuperação são requisitos de produção.
 
-## Estado
+## Estratégia
 
-Esta documentação define a arquitetura-alvo. A implementação deve avançar incrementalmente sem quebrar a versão funcional existente.
+Não criar agora uma Web/API apenas por arquitetura. Primeiro extrair Domain e Application do código existente e fazer o Desktop consumir essas camadas.
+
+A futura API poderá reutilizar os mesmos casos de uso.
