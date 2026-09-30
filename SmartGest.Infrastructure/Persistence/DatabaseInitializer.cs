@@ -31,8 +31,9 @@ public static class DatabaseInitializer
                         "ProductVersion" TEXT NOT NULL
                     );""", cancellationToken);
                 var productVersion = "10.0.0";
-                await db.Database.ExecuteSqlInterpolatedAsync(
-                    $"INSERT INTO "__EFMigrationsHistory" ("MigrationId", "ProductVersion") VALUES ({migrations[0]}, {productVersion})",
+                await db.Database.ExecuteSqlRawAsync(
+                    "INSERT INTO \"__EFMigrationsHistory\" (\"MigrationId\", \"ProductVersion\") VALUES ({0}, {1})",
+                    new object[] { migrations[0], productVersion },
                     cancellationToken);
             }
 
