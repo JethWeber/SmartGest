@@ -6,6 +6,7 @@
 #define AppPublisher "Weber Tech"
 #define AppExeName "SmartGest.Desktop.exe"
 #define PublishDir "..\artifacts\publish\win-x64"
+#define AppIcon "..\SmartGest.Desktop\Assets\SmartGest_-_ImaLogo01.ico"
 
 [Setup]
 AppId={{A6B8C4C2-5F1D-4B1C-9D6F-3A4D2B8E71F0}
@@ -25,8 +26,8 @@ WizardStyle=modern
 PrivilegesRequired=admin
 ArchitecturesAllowed=x64compatible
 ArchitecturesInstallIn64BitMode=x64compatible
-SetupIconFile={#PublishDir}\SmartGest_-_ImaLogo01.ico
-UninstallDisplayIcon={app}\SmartGest_-_ImaLogo01.ico
+SetupIconFile={#AppIcon}
+UninstallDisplayIcon={app}\{#AppExeName}
 VersionInfoCompany={#AppPublisher}
 VersionInfoDescription={#AppName} - Sistema de gestão financeira e empresarial
 VersionInfoProductName={#AppName}
