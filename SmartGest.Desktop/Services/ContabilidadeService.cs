@@ -18,15 +18,16 @@ public record DreSumarioApiResponse(decimal TotalReceitas,decimal TotalCustos,de
 
 public class ContabilidadeService
 {
-    private readonly SmartGestDbContext _db;
-    public ContabilidadeService(SmartGestDbContext db)=>_db=db;
+    private readonly IDbContextFactory<SmartGestDbContext> _factory;
+    public ContabilidadeService(IDbContextFactory<SmartGestDbContext> factory)=>_factory=factory;
 
     public async Task<BalanceteApiResponse?> ObterBalanceteAsync(DateTime? dataInicio=null,DateTime? dataFim=null,string? grupo=null)
     {
+        await using var db = await _factory.CreateDbContextAsync();
         var inicio=dataInicio?.Date ?? new DateTime(DateTime.Today.Year,1,1);
         var fim=(dataFim?.Date ?? DateTime.Today).AddDays(1);
-        var cats=await _db.CategoriaContabeis.AsNoTracking().ToListAsync();
-        var lanc=await _db.Lancamentos.AsNoTracking().Where(x=>!x.Anulado && x.Data>=inicio && x.Data<fim).ToListAsync();
+        var cats=await db.CategoriaContabeis.AsNoTracking().ToListAsync();
+        var lanc=await db.Lancamentos.AsNoTracking().Where(x=>!x.Anulado && x.Data>=inicio && x.Data<fim).ToListAsync();
         var rows=new Dictionary<string,(string Nome,string Grupo,double Deb,double Cred)>();
         void Add(string code,string nome,string g,double deb,double cred)
         {
@@ -47,10 +48,11 @@ public class ContabilidadeService
 
     public async Task<BalancoApiResponse?> ObterBalancoAsync(int? ano=null,int? mes=null)
     {
+        await using var db = await _factory.CreateDbContextAsync();
         var y=ano??DateTime.Today.Year; var m=mes??DateTime.Today.Month;
         var inicio=new DateTime(y,m,1); var fim=inicio.AddMonths(1);
-        var cats=await _db.CategoriaContabeis.AsNoTracking().ToListAsync();
-        var lanc=await _db.Lancamentos.AsNoTracking().Where(x=>!x.Anulado && x.Data<fim).ToListAsync();
+        var cats=await db.CategoriaContabeis.AsNoTracking().ToListAsync();
+        var lanc=await db.Lancamentos.AsNoTracking().Where(x=>!x.Anulado && x.Data<fim).ToListAsync();
         var dict=new Dictionary<string,decimal>();
         foreach(var l in lanc){var c=cats.FirstOrDefault(x=>x.Id==l.CategoriaContabilId); if(c is null||string.IsNullOrWhiteSpace(c.GrupoBalanco)) continue; var sign=l.Tipo=="Entrada"?1m:-1m; dict[c.GrupoBalanco]=dict.GetValueOrDefault(c.GrupoBalanco)+l.Valor*sign;}
         var ativoC=Line(dict,"AtivoCorrente"); var ativoNC=Line(dict,"AtivoNaoCorrente"); var passC=Line(dict,"PassivoCorrente"); var passNC=Line(dict,"PassivoNaoCorrente"); var cap=Line(dict,"CapitalProprio");
@@ -60,9 +62,10 @@ public class ContabilidadeService
 
     public async Task<DreSumarioApiResponse?> ObterDreAsync(DateTime? dataInicio=null,DateTime? dataFim=null)
     {
+        await using var db = await _factory.CreateDbContextAsync();
         var inicio=dataInicio?.Date??new DateTime(DateTime.Today.Year,1,1); var fim=(dataFim?.Date??DateTime.Today).AddDays(1);
-        var cats=await _db.CategoriaContabeis.AsNoTracking().ToListAsync();
-        var lanc=await _db.Lancamentos.AsNoTracking().Where(x=>!x.Anulado&&x.Data>=inicio&&x.Data<fim).ToListAsync();
+        var cats=await db.CategoriaContabeis.AsNoTracking().ToListAsync();
+        var lanc=await db.Lancamentos.AsNoTracking().Where(x=>!x.Anulado&&x.Data>=inicio&&x.Data<fim).ToListAsync();
         var linhas=lanc.GroupBy(x=>x.CategoriaContabilId).Select(g=>{var l=g.First();var c=cats.FirstOrDefault(x=>x.Id==g.Key);var val=g.Sum(x=>x.Valor);var receita=l.Tipo=="Entrada";return new DreItemResponse(c?.ContaCredito??"",c?.Nome??l.Categoria,c?.GrupoDre??"",0,val,receita,l.Data);}).ToList();
         var rec=lanc.Where(x=>x.Tipo=="Entrada").Sum(x=>x.Valor); var desp=lanc.Where(x=>x.Tipo=="Saída").Sum(x=>x.Valor);
         var fluxo=Enumerable.Range(1,12).Select(m=>{var a=lanc.Where(x=>x.Data.Month==m);var r=a.Where(x=>x.Tipo=="Entrada").Sum(x=>x.Valor);var d=a.Where(x=>x.Tipo=="Saída").Sum(x=>x.Valor);return new DreFluxoMensalItem(new DateTime(inicio.Year,m,1).ToString("MMM"),r,d,r-d);}).ToList();
