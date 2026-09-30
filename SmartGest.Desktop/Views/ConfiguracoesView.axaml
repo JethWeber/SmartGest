@@ -32,21 +32,21 @@
     <Style Selector="TextBlock.group-title">
       <Setter Property="FontSize"   Value="12"/>
       <Setter Property="FontWeight" Value="SemiBold"/>
-      <Setter Property="Foreground" Value="#1A2E5A"/>
+      <Setter Property="Foreground" Value="{DynamicResource SgTextPrimary}"/>
       <Setter Property="Margin"     Value="0,0,0,12"/>
     </Style>
 
     <!-- ── Label de campo ───────────────────────────────────────────── -->
     <Style Selector="TextBlock.field-label">
       <Setter Property="FontSize"   Value="11"/>
-      <Setter Property="Foreground" Value="#5A6478"/>
+      <Setter Property="Foreground" Value="{DynamicResource SgTextSecondary}"/>
       <Setter Property="Margin"     Value="0,0,0,4"/>
     </Style>
 
     <!-- ── Input ────────────────────────────────────────────────────── -->
     <Style Selector="TextBox.sg-input">
-      <Setter Property="Background"      Value="#12FFFFFF"/>
-      <Setter Property="BorderBrush"     Value="#25FFFFFF"/>
+      <Setter Property="Background"      Value="{DynamicResource SgInputBackground}"/>
+      <Setter Property="BorderBrush"     Value="{DynamicResource SgInputBorder}"/>
       <Setter Property="BorderThickness" Value="1"/>
       <Setter Property="CornerRadius"    Value="7"/>
       <Setter Property="Padding"         Value="10,8"/>
@@ -70,12 +70,12 @@
     <!-- ── Toggle Switch label ──────────────────────────────────────── -->
     <Style Selector="TextBlock.toggle-label">
       <Setter Property="FontSize"   Value="13"/>
-      <Setter Property="Foreground" Value="#333333"/>
+      <Setter Property="Foreground" Value="{DynamicResource SgTextPrimary}"/>
       <Setter Property="VerticalAlignment" Value="Center"/>
     </Style>
     <Style Selector="TextBlock.toggle-sub">
       <Setter Property="FontSize"   Value="11"/>
-      <Setter Property="Foreground" Value="#9AA0AB"/>
+      <Setter Property="Foreground" Value="{DynamicResource SgTextMuted}"/>
     </Style>
 
     <!-- ── Botão primário ───────────────────────────────────────────── -->
@@ -111,14 +111,14 @@
     <!-- ── Botão outline ────────────────────────────────────────────── -->
     <Style Selector="Button.btn-outline">
       <Setter Property="Background"      Value="Transparent"/>
-      <Setter Property="Foreground"      Value="#E8F0FF"/>
+      <Setter Property="Foreground"      Value="{DynamicResource SgTextPrimary}"/>
       <Setter Property="FontSize"        Value="12"/>
       <Setter Property="FontWeight"      Value="SemiBold"/>
       <Setter Property="Padding"         Value="14,8"/>
       <Setter Property="CornerRadius"    Value="7"/>
       <Setter Property="Cursor"          Value="Hand"/>
       <Setter Property="BorderThickness" Value="1"/>
-      <Setter Property="BorderBrush"     Value="#20FFFFFF"/>
+      <Setter Property="BorderBrush"     Value="{DynamicResource SgCardBorder}"/>
     </Style>
     <Style Selector="Button.btn-outline:pointerover /template/ ContentPresenter">
       <Setter Property="Background" Value="#12FFFFFF"/>
@@ -127,18 +127,18 @@
     <!-- ── Separador horizontal ─────────────────────────────────────── -->
     <Style Selector="Border.sep">
       <Setter Property="Height"     Value="1"/>
-      <Setter Property="Background" Value="#F0F2F5"/>
+      <Setter Property="Background" Value="{DynamicResource SgDivider}"/>
       <Setter Property="Margin"     Value="0,16,0,16"/>
     </Style>
 
   </UserControl.Styles>
 
-  <DockPanel Background="Transparent">
+  <DockPanel Background="{DynamicResource SgAppBackground}">
 
     <!-- ══════════════════════════════════════════════════════════════
          CABEÇALHO + TABS  (fixo no topo)
          ══════════════════════════════════════════════════════════════ -->
-    <Border DockPanel.Dock="Top" Background="#16FFFFFF"
+    <Border DockPanel.Dock="Top" Background="{DynamicResource SgCardBackground}"
             BoxShadow="0 2 8 0 #08000000"
             Padding="28,20,28,0">
       <StackPanel Spacing="16">
@@ -147,9 +147,9 @@
         <StackPanel>
           <TextBlock Text="Configurações"
                      FontSize="20" FontWeight="Bold"
-                     Foreground="#1A2E5A"/>
+                     Foreground="{DynamicResource SgTextPrimary}"/>
           <TextBlock Text="Gerir preferências e parâmetros do sistema"
-                     FontSize="12" Foreground="#9AA0AB" Margin="0,2,0,0"/>
+                     FontSize="12" Foreground="{DynamicResource SgTextMuted}" Margin="0,2,0,0"/>
         </StackPanel>
 
         <!-- Tabs -->
@@ -347,8 +347,8 @@
                 <TextBlock Classes="group-title" Text="Logótipo da Empresa"/>
 
                 <!-- Zona do logo -->
-                <Border Background="#14FFFFFF" CornerRadius="8"
-                  Height="160" BorderBrush="#DDE3EE" BorderThickness="2">
+                <Border Background="{DynamicResource SgSubtleBackground}" CornerRadius="8"
+                  Height="160" BorderBrush="{DynamicResource SgCardBorder}" BorderThickness="2">
                   <Panel>
                     <!-- Placeholder sem logo -->
                     <StackPanel IsVisible="{Binding !TemLogo}"
@@ -356,9 +356,9 @@
                                 VerticalAlignment="Center"
                                 Spacing="8">
                       <mi:MaterialIcon Kind="ImagePlusOutline" Width="36" Height="36"
-                                       HorizontalAlignment="Center" Foreground="#C8CDD6"/>
+                                       HorizontalAlignment="Center" Foreground="{DynamicResource SgTextMuted}"/>
                       <TextBlock Text="Sem logótipo" FontSize="12"
-                                 Foreground="#9AA0AB" HorizontalAlignment="Center"/>
+                                 Foreground="{DynamicResource SgTextMuted}" HorizontalAlignment="Center"/>
                     </StackPanel>
                   </Panel>
                 </Border>
@@ -378,7 +378,7 @@
                 </Button>
 
                 <TextBlock Text="PNG ou SVG · máximo 2 MB · fundo transparente recomendado"
-                           FontSize="10" Foreground="#9AA0AB"
+                           FontSize="10" Foreground="{DynamicResource SgTextMuted}"
                            TextWrapping="Wrap"/>
               </StackPanel>
             </Border>
@@ -400,13 +400,13 @@
                            Text="Membros da Equipa"/>
                 <TextBlock Grid.Column="1"
                            Text="{Binding Utilizadores.Count, StringFormat='{}{0} utilizador(es)'}"
-                           FontSize="11" Foreground="#9AA0AB" VerticalAlignment="Center"/>
+                           FontSize="11" Foreground="{DynamicResource SgTextMuted}" VerticalAlignment="Center"/>
               </Grid>
 
               <ItemsControl ItemsSource="{Binding Utilizadores}">
                 <ItemsControl.ItemTemplate>
                   <DataTemplate x:DataType="vm:UtilizadorItem">
-                    <Border Padding="0,10" BorderBrush="#F0F2F5" BorderThickness="0,0,0,1">
+                    <Border Padding="0,10" BorderBrush="{DynamicResource SgDivider}" BorderThickness="0,0,0,1">
                       <Grid ColumnDefinitions="44, 12, *, 100, 80, 80">
 
                         <!-- Avatar -->
@@ -424,9 +424,9 @@
                         <StackPanel Grid.Column="2" VerticalAlignment="Center" Spacing="2">
                           <TextBlock Text="{Binding Nome}"
                                      FontSize="13" FontWeight="SemiBold"
-                                     Foreground="#1A2E5A"/>
+                                     Foreground="{DynamicResource SgTextPrimary}"/>
                           <TextBlock Text="{Binding Email}"
-                                     FontSize="11" Foreground="#9AA0AB"/>
+                                     FontSize="11" Foreground="{DynamicResource SgTextMuted}"/>
                         </StackPanel>
 
                         <!-- Badge de perfil -->
@@ -501,12 +501,12 @@
               <!-- Descrição dos perfis -->
               <StackPanel Spacing="8">
                 <TextBlock Text="Permissões por perfil" FontSize="11"
-                           FontWeight="SemiBold" Foreground="#5A6478"/>
+                           FontWeight="SemiBold" Foreground="{DynamicResource SgTextSecondary}"/>
                 <StackPanel Spacing="4">
-                  <TextBlock Text="• Administrador — acesso total" FontSize="11" Foreground="#444"/>
-                  <TextBlock Text="• Contabilista — lançamentos e relatórios" FontSize="11" Foreground="#444"/>
-                  <TextBlock Text="• Operador — apenas lançamentos" FontSize="11" Foreground="#444"/>
-                  <TextBlock Text="• Visualizador — só leitura" FontSize="11" Foreground="#444"/>
+                  <TextBlock Text="• Administrador — acesso total" FontSize="11" Foreground="{DynamicResource SgTextSecondary}"/>
+                  <TextBlock Text="• Contabilista — lançamentos e relatórios" FontSize="11" Foreground="{DynamicResource SgTextSecondary}"/>
+                  <TextBlock Text="• Operador — apenas lançamentos" FontSize="11" Foreground="{DynamicResource SgTextSecondary}"/>
+                  <TextBlock Text="• Visualizador — só leitura" FontSize="11" Foreground="{DynamicResource SgTextSecondary}"/>
                 </StackPanel>
               </StackPanel>
 
@@ -539,8 +539,29 @@
                   <ComboBoxItem Content="☀️  Claro"/>
                   <ComboBoxItem Content="🌙  Escuro"/>
                   <ComboBoxItem Content="💻  Seguir o Sistema"/>
+                  <ComboBoxItem Content="◆  SG Tema"/>
                 </ComboBox>
               </StackPanel>
+
+              <Border Background="{DynamicResource SgSubtleBackground}"
+                      BorderBrush="{DynamicResource SgCardBorder}"
+                      BorderThickness="1"
+                      CornerRadius="10"
+                      Padding="14,12">
+                <StackPanel Spacing="4">
+                  <StackPanel Orientation="Horizontal" Spacing="8">
+                    <mi:MaterialIcon Kind="PaletteOutline" Width="16" Height="16"
+                                     Foreground="{DynamicResource SgAccent}"/>
+                    <TextBlock Text="{Binding TemaNome}"
+                               FontSize="12" FontWeight="SemiBold"
+                               Foreground="{DynamicResource SgTextPrimary}"/>
+                  </StackPanel>
+                  <TextBlock Text="{Binding TemaDescricao}"
+                             FontSize="11"
+                             Foreground="{DynamicResource SgTextSecondary}"
+                             TextWrapping="Wrap"/>
+                </StackPanel>
+              </Border>
 
               <StackPanel Spacing="4">
                 <TextBlock Classes="field-label" Text="Idioma"/>
@@ -797,23 +818,23 @@
                 <ItemsControl ItemsSource="{Binding SessoesActivas}">
                   <ItemsControl.ItemTemplate>
                     <DataTemplate x:DataType="vm:SessaoItem">
-                      <Border Padding="0,8" BorderBrush="#F0F2F5" BorderThickness="0,0,0,1">
+                      <Border Padding="0,8" BorderBrush="{DynamicResource SgDivider}" BorderThickness="0,0,0,1">
                         <Grid ColumnDefinitions="Auto, 12, *, Auto">
                           <mi:MaterialIcon Grid.Column="0"
                                            Kind="Monitor" Width="20" Height="20"
-                                           Foreground="#9AA0AB" VerticalAlignment="Center"/>
+                                           Foreground="{DynamicResource SgTextMuted}" VerticalAlignment="Center"/>
                           <StackPanel Grid.Column="2" VerticalAlignment="Center" Spacing="2">
                             <StackPanel Orientation="Horizontal" Spacing="8">
                               <TextBlock Text="{Binding Dispositivo}"
                                          FontSize="12" FontWeight="SemiBold"
-                                         Foreground="#1A2E5A"/>
+                                         Foreground="{DynamicResource SgTextPrimary}"/>
                               <Border IsVisible="{Binding IsAtual}"
                                       Background="#E8F5E9" CornerRadius="4" Padding="6,2">
                                 <TextBlock Text="Sessão actual" FontSize="9"
                                            Foreground="#2E7D32" FontWeight="SemiBold"/>
                               </Border>
                             </StackPanel>
-                            <TextBlock FontSize="11" Foreground="#9AA0AB">
+                            <TextBlock FontSize="11" Foreground="{DynamicResource SgTextMuted}">
                               <Run Text="{Binding Localizacao}"/>
                               <Run Text=" · "/>
                               <Run Text="{Binding UltimaActividade}"/>
@@ -1011,20 +1032,20 @@
               </Grid>
 
               <TextBlock Text="Envie eventos da aplicação para URLs externas (n8n, Zapier, etc.)"
-                         FontSize="11" Foreground="#9AA0AB" TextWrapping="Wrap"
+                         FontSize="11" Foreground="{DynamicResource SgTextMuted}" TextWrapping="Wrap"
                          Margin="0,0,0,8"/>
 
               <ItemsControl ItemsSource="{Binding Webhooks}">
                 <ItemsControl.ItemTemplate>
                   <DataTemplate x:DataType="vm:WebhookItem">
-                    <Border Padding="12" Background="#F9FAFC" CornerRadius="7"
+                    <Border Padding="12" Background="{DynamicResource SgSubtleBackground}" CornerRadius="7"
                             Margin="0,0,0,8">
                       <StackPanel Spacing="8">
                         <Grid ColumnDefinitions="*, Auto">
                           <TextBlock Grid.Column="0"
                                      Text="{Binding Evento}"
                                      FontSize="12" FontWeight="SemiBold"
-                                     Foreground="#1A2E5A"/>
+                                     Foreground="{DynamicResource SgTextPrimary}"/>
                           <Button Grid.Column="1" Classes="btn-danger" Padding="6"
                                   Command="{Binding $parent[UserControl].((vm:ConfiguracoesViewModel)DataContext).RemoverWebhookCommand}"
                                   CommandParameter="{Binding}">
