@@ -7,6 +7,7 @@
 
   <Application.Resources>
     <ResourceDictionary>
+      <theme:ButtonTooltipConverter x:Key="ButtonTooltipConverter"/>
       <ResourceDictionary.ThemeDictionaries>
         <ResourceDictionary x:Key="Light">
           <SolidColorBrush x:Key="SgAppBackground" Color="#F5F7FB"/>
@@ -75,8 +76,6 @@
     <FluentTheme />
     <StyleInclude Source="avares://Avalonia.Controls.DataGrid/Themes/Fluent.xaml"/>
     <StyleInclude Source="avares://Material.Icons.Avalonia/MaterialIconStyles.axaml"/>
-
-    <theme:ButtonTooltipConverter x:Key="ButtonTooltipConverter"/>
 
     <!-- Dicas contextuais para todos os botões da aplicação. -->
     <Style Selector="Button">
