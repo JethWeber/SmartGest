@@ -115,12 +115,14 @@ public partial class App : Avalonia.Application
                                 if (!onboarding.IsCompleted)
                                     mainVm.IniciarOnboarding();
                             });
-                        setup.Closed += (_, _) =>
+                        setup.Closing += (_, e) =>
                         {
+                            // A configuração inicial é obrigatória. Não permite
+                            // fechar a janela antes de concluir empresa + banco.
                             if (!onboarding.IsSetupCompleted)
-                                mainVm.IniciarOnboarding();
+                                e.Cancel = true;
                         };
-                        setup.ShowDialog(main);
+                        _ = setup.ShowDialog(main);
                     }
                     else if (!onboarding.IsCompleted)
                     {
