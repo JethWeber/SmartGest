@@ -53,18 +53,15 @@ public partial class App : Avalonia.Application
 
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
-            var splashVm = new SplashViewModel();
-            var splash   = new SplashView { DataContext = splashVm };
-
-            splashVm.LoadingCompleted += () =>
+            void ShowLogin()
             {
                 var loginVm = Services.GetRequiredService<LoginViewModel>();
-                var login   = new LoginView { DataContext = loginVm };
+                var login = new LoginView { DataContext = loginVm };
 
                 loginVm.LoginSucceeded += () =>
                 {
                     var mainVm = Services.GetRequiredService<MainWindowViewModel>();
-                    var main   = new MainWindow { DataContext = mainVm };
+                    var main = new MainWindow { DataContext = mainVm };
 
                     mainVm.PedirAbrirNovoLancamento += async vm =>
                     {
@@ -72,31 +69,36 @@ public partial class App : Avalonia.Application
                         await dialog.ShowDialog(main);
                     };
 
-                    desktop.MainWindow = main;
-
                     mainVm.SessionExpiredRequested += () =>
                     {
                         Avalonia.Threading.Dispatcher.UIThread.Post(() =>
                         {
                             if (desktop.MainWindow == main)
                             {
-                                var freshLoginVm = Services.GetRequiredService<LoginViewModel>();
-                                var freshLogin = new MainWindow();
-                                // O login é recriado pelo fluxo normal abaixo.
-                                desktop.MainWindow = new LoginView { DataContext = freshLoginVm };
-                                desktop.MainWindow.Show();
+                                Services.GetRequiredService<SessionSecurityService>().DisposeAsync().AsTask().GetAwaiter().GetResult();
                                 main.Close();
+                                ShowLogin();
                             }
                         });
                     };
 
                     _ = Services.GetRequiredService<SessionSecurityService>().StartAsync();
+                    desktop.MainWindow = main;
                     main.Show();
                     login.Close();
+
+                    _ = Services.GetRequiredService<AuditService>().RegistarAsync("Login", "Utilizador");
                 };
 
                 desktop.MainWindow = login;
                 login.Show();
+            }
+
+            var splashVm = new SplashViewModel();
+            var splash = new SplashView { DataContext = splashVm };
+            splashVm.LoadingCompleted += () =>
+            {
+                ShowLogin();
                 splash.Close();
             };
 
