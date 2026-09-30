@@ -5,9 +5,9 @@ public sealed class MovimentoBancario
     public int Id { get; private set; }
     public int ContaBancariaId { get; private set; }
     public DateTime Data { get; private set; }
-    public string Descricao { get; private set; }
-    public string Referencia { get; private set; }
-    public string Tipo { get; private set; }
+    public string Descricao { get; private set; } = string.Empty;
+    public string Referencia { get; private set; } = string.Empty;
+    public string Tipo { get; private set; } = string.Empty;
     public decimal Valor { get; private set; }
 
     private MovimentoBancario() { }
