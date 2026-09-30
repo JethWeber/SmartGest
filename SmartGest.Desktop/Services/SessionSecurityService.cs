@@ -63,7 +63,7 @@ public sealed class SessionSecurityService : IAsyncDisposable
                 if (!_store.EstaAutenticado) continue;
 
                 var timeout = await ObterTimeoutAsync(token);
-                if ((DateTime.UtcNow - _lastActivityUtc).TotalMinutes >= timeout)
+                if (timeout > 0 && (DateTime.UtcNow - _lastActivityUtc).TotalMinutes >= timeout)
                 {
                     AppLogService.Warning("Sessão terminada por inactividade.");
                     _store.Limpar();
@@ -81,9 +81,8 @@ public sealed class SessionSecurityService : IAsyncDisposable
         try
         {
             await using var db = await _factory.CreateDbContextAsync(token);
-            return Math.Clamp(
-                await db.Configuracoes.AsNoTracking().Select(x => x.SessaoTimeoutMins).FirstOrDefaultAsync(token),
-                5, 480);
+            var value = await db.Configuracoes.AsNoTracking().Select(x => x.SessaoTimeoutMins).FirstOrDefaultAsync(token);
+            return value == 0 ? 0 : Math.Clamp(value, 5, 480);
         }
         catch { return 30; }
     }
