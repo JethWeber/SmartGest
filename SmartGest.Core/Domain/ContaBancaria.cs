@@ -3,15 +3,15 @@ namespace SmartGest.Core.Domain;
 public sealed class ContaBancaria
 {
     public int Id { get; private set; }
-    public string Banco { get; private set; }
-    public string NIB { get; private set; }
-    public string Tipo { get; private set; }
-    public string Moeda { get; private set; }
+    public string Banco { get; private set; } = string.Empty;
+    public string NIB { get; private set; } = string.Empty;
+    public string Tipo { get; private set; } = string.Empty;
+    public string Moeda { get; private set; } = string.Empty;
     public decimal SaldoAtual { get; private set; }
     public decimal SaldoOntem { get; private set; }
-    public string Agencia { get; private set; }
-    public string Titular { get; private set; }
-    public string CorAccent { get; private set; }
+    public string Agencia { get; private set; } = string.Empty;
+    public string Titular { get; private set; } = string.Empty;
+    public string CorAccent { get; private set; } = string.Empty;
     public bool Activa { get; private set; }
     public int? ContaContabilId { get; private set; }
 
