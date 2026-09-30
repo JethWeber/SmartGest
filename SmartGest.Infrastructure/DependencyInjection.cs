@@ -20,12 +20,16 @@ public static class DependencyInjection
         if (!string.IsNullOrWhiteSpace(directory))
             Directory.CreateDirectory(directory);
 
-        services.AddDbContext<SmartGestDbContext>(options =>
+        services.AddDbContextFactory<SmartGestDbContext>(options =>
             options.UseSqlite($"Data Source={fullPath}"));
+        services.AddScoped<SmartGestDbContext>(sp =>
+            sp.GetRequiredService<IDbContextFactory<SmartGestDbContext>>().CreateDbContext());
 
         services.AddScoped<ICategoriaContabilRepository, CategoriaContabilRepository>();
         services.AddScoped<ILancamentoRepository, LancamentoRepository>();
         services.AddScoped<IUnitOfWork, UnitOfWork>();
+        services.AddSingleton(sp => new LocalDatabaseMaintenance(
+            sp.GetRequiredService<IDbContextFactory<SmartGestDbContext>>(), fullPath));
 
         return services;
     }
@@ -36,6 +40,6 @@ public static class DependencyInjection
     {
         using var scope = services.CreateScope();
         var db = scope.ServiceProvider.GetRequiredService<SmartGestDbContext>();
-        await db.Database.EnsureCreatedAsync(cancellationToken);
+        await DatabaseInitializer.InitializeAsync(db, cancellationToken);
     }
 }
