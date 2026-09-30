@@ -21,7 +21,7 @@ public static class DependencyInjection
             Directory.CreateDirectory(directory);
 
         services.AddDbContextFactory<SmartGestDbContext>(options =>
-            options.UseSqlite($"Data Source={fullPath}"));
+            options.UseSqlite($"Data Source={fullPath}", sqlite => sqlite.MigrationsAssembly("SmartGest.Migrations")));
         services.AddScoped<SmartGestDbContext>(sp =>
             sp.GetRequiredService<IDbContextFactory<SmartGestDbContext>>().CreateDbContext());
 
