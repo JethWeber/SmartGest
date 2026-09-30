@@ -856,7 +856,7 @@
               <!-- Tempo de sessão -->
               <StackPanel Spacing="4">
                 <TextBlock Classes="field-label" Text="Tempo de inactividade até expirar sessão"/>
-                <ComboBox Classes="sg-combo" SelectedIndex="{Binding SessaoTempomins}">
+                <ComboBox Classes="sg-combo" SelectedIndex="{Binding SessaoTimeoutIndex}">
                   <ComboBoxItem Content="15 minutos"/>
                   <ComboBoxItem Content="30 minutos"/>
                   <ComboBoxItem Content="1 hora"/>
