@@ -111,11 +111,7 @@ public partial class App : Avalonia.Application
                     desktop.MainWindow = main;
                     main.Show();
 
-                    Dispatcher.UIThread.Post(() =>
-                    {
-                        if (!login.IsClosed)
-                            login.Close();
-                    });
+                    Dispatcher.UIThread.Post(() => login.Close());
 
                     var onboarding = Services.GetRequiredService<FirstRunService>();
                     if (!onboarding.IsSetupCompleted)
