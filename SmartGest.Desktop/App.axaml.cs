@@ -75,7 +75,6 @@ public partial class App : Avalonia.Application
                         {
                             if (desktop.MainWindow == main)
                             {
-                                Services.GetRequiredService<SessionSecurityService>().DisposeAsync().AsTask().GetAwaiter().GetResult();
                                 main.Close();
                                 ShowLogin();
                             }
