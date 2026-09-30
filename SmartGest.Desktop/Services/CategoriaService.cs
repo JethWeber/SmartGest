@@ -8,12 +8,13 @@ namespace SmartGest.Desktop.Services;
 
 public class CategoriaService
 {
-    private readonly SmartGestDbContext _db;
-    public CategoriaService(SmartGestDbContext db) => _db = db;
+    private readonly IDbContextFactory<SmartGestDbContext> _factory;
+    public CategoriaService(IDbContextFactory<SmartGestDbContext> factory) => _factory = factory;
 
     public async Task<List<CategoriaItem>> ListarAsync(string? tipo = null)
     {
-        var query = _db.CategoriaContabeis.AsNoTracking().Where(x => x.Ativo);
+        await using var db = await _factory.CreateDbContextAsync();
+        var query = db.CategoriaContabeis.AsNoTracking().Where(x => x.Ativo);
         if (!string.IsNullOrWhiteSpace(tipo))
             query = query.Where(x => x.Tipo == tipo);
 
