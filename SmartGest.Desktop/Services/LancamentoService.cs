@@ -1,85 +1,81 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+using SmartGest.Application.Lancamentos;
+using SmartGest.Infrastructure.Persistence;
 
 namespace SmartGest.Desktop.Services;
 
-/// <summary>
-/// Serviço de lançamentos financeiros.
-/// Endpoints usados:
-///   POST /api/lancamentos   → criar lançamento
-///   GET  /api/lancamentos   → listar com filtros e paginação
-/// </summary>
 public class LancamentoService
 {
-    private readonly ApiClient _api;
-    public LancamentoService(ApiClient api) => _api = api;
+    private readonly SmartGestDbContext _db;
+    private readonly ILancamentoApplicationService _application;
 
-    /// <summary>Cria um novo lançamento na API.</summary>
+    public LancamentoService(SmartGestDbContext db, ILancamentoApplicationService application)
+    {
+        _db = db;
+        _application = application;
+    }
+
     public async Task<LancamentoResponse> CriarAsync(LancamentoRequest req)
     {
-        var resp = await _api.PostAsync<LancamentoResponse>("api/lancamentos", req);
-        return resp ?? throw new InvalidOperationException("Servidor não devolveu o lançamento criado.");
+        var result = await _application.CriarAsync(new CriarLancamentoCommand(
+            req.Data, req.Descricao, req.Tipo, req.Valor, req.CategoriaId,
+            req.Beneficiario, req.MetodoPagamento, req.CaminhoDocumento,
+            req.Observacoes, req.CentroCusto, req.ReferenciaInterna, req.ContaBancariaId));
+
+        var entity = await _db.Lancamentos.AsNoTracking().FirstAsync(x => x.Id == result.Id);
+        var categoria = await _db.CategoriaContabeis.AsNoTracking()
+            .FirstOrDefaultAsync(x => x.Id == entity.CategoriaContabilId);
+        return Map(entity, categoria?.Nome, null);
     }
 
-    /// <summary>Lista lançamentos com filtros opcionais.</summary>
     public async Task<LancamentosPageResponse> ListarAsync(
-        string?   tipo            = null,
-        DateTime? dataInicio      = null,
-        DateTime? dataFim         = null,
-        string?   texto           = null,
-        int?      contaId         = null,
-        bool      incluirAnulados = false,
-        int       pagina          = 1,
-        int       tamPagina       = 50)
+        string? tipo = null, DateTime? dataInicio = null, DateTime? dataFim = null,
+        string? texto = null, int? contaId = null, bool incluirAnulados = false,
+        int pagina = 1, int tamPagina = 50)
     {
-        var qs = $"api/lancamentos?pagina={pagina}&tamPagina={tamPagina}&incluirAnulados={incluirAnulados}";
-        if (!string.IsNullOrWhiteSpace(tipo))  qs += $"&tipo={Uri.EscapeDataString(tipo)}";
-        if (!string.IsNullOrWhiteSpace(texto)) qs += $"&texto={Uri.EscapeDataString(texto)}";
-        if (dataInicio.HasValue) qs += $"&dataInicio={dataInicio.Value:yyyy-MM-dd}";
-        if (dataFim.HasValue)    qs += $"&dataFim={dataFim.Value:yyyy-MM-dd}";
-        if (contaId.HasValue)    qs += $"&contaBancariaId={contaId.Value}";
+        var q = _db.Lancamentos.AsNoTracking().AsQueryable();
+        if (!incluirAnulados) q = q.Where(x => !x.Anulado);
+        if (!string.IsNullOrWhiteSpace(tipo)) q = q.Where(x => x.Tipo == tipo);
+        if (dataInicio.HasValue) q = q.Where(x => x.Data >= dataInicio.Value.Date);
+        if (dataFim.HasValue) q = q.Where(x => x.Data < dataFim.Value.Date.AddDays(1));
+        if (!string.IsNullOrWhiteSpace(texto))
+        {
+            var t = texto.Trim().ToLower();
+            q = q.Where(x => x.Descricao.ToLower().Contains(t) || x.Categoria.ToLower().Contains(t) || x.Beneficiario.ToLower().Contains(t));
+        }
+        if (contaId.HasValue) q = q.Where(x => x.ContaBancariaId == contaId);
 
-        var resp = await _api.GetAsync<LancamentosPageResponse>(qs);
-        return resp ?? new LancamentosPageResponse(0, pagina, tamPagina, new());
+        var total = await q.CountAsync();
+        var items = await q.OrderByDescending(x => x.Data).ThenByDescending(x => x.Id)
+            .Skip((pagina - 1) * tamPagina).Take(tamPagina).ToListAsync();
+
+        var contaIds = items.Where(x => x.ContaBancariaId.HasValue).Select(x => x.ContaBancariaId!.Value).Distinct().ToList();
+        var contas = await _db.ContasBancarias.AsNoTracking().Where(x => contaIds.Contains(x.Id))
+            .ToDictionaryAsync(x => x.Id, x => $"{x.Banco} · {x.SaldoAtual:N0} {x.Moeda}");
+
+        return new(total, pagina, tamPagina, items.Select(x =>
+            Map(x, x.Categoria, x.ContaBancariaId.HasValue && contas.TryGetValue(x.ContaBancariaId.Value, out var n) ? n : null)).ToList());
     }
 
-    // ── DTOs ─────────────────────────────────────────────────────────────────
+    private static LancamentoResponse Map(SmartGest.Core.Domain.Lancamento x, string? categoria, string? conta) =>
+        new(x.Id, x.Data, x.Descricao, categoria ?? x.Categoria, x.Tipo, x.Valor,
+            x.Beneficiario, x.MetodoPagamento, x.CaminhoDocumento, x.Observacoes,
+            x.CentroCusto, x.ReferenciaInterna, x.CriadoEm, x.ContaBancariaId, conta);
 
     public record LancamentoRequest(
-        DateTime Data,
-        string   Descricao,
-        string   Tipo,
-        decimal  Valor,
-        int      CategoriaId,
-        string?  Beneficiario,
-        string?  MetodoPagamento,
-        string?  CaminhoDocumento,
-        string?  Observacoes,
-        string?  CentroCusto,
-        string?  ReferenciaInterna,
-        int?     ContaBancariaId);
+        DateTime Data, string Descricao, string Tipo, decimal Valor, int CategoriaId,
+        string? Beneficiario, string? MetodoPagamento, string? CaminhoDocumento,
+        string? Observacoes, string? CentroCusto, string? ReferenciaInterna, int? ContaBancariaId);
 
     public record LancamentoResponse(
-        int      Id,
-        DateTime Data,
-        string   Descricao,
-        string   Categoria,
-        string   Tipo,
-        decimal  Valor,
-        string   Beneficiario,
-        string   MetodoPagamento,
-        string   CaminhoDocumento,
-        string   Observacoes,
-        string   CentroCusto,
-        string   ReferenciaInterna,
-        DateTime CriadoEm,
-        int?     ContaBancariaId,
-        string?  ContaBancariaNome);
+        int Id, DateTime Data, string Descricao, string Categoria, string Tipo, decimal Valor,
+        string Beneficiario, string MetodoPagamento, string CaminhoDocumento, string Observacoes,
+        string CentroCusto, string ReferenciaInterna, DateTime CriadoEm, int? ContaBancariaId,
+        string? ContaBancariaNome);
 
-    public record LancamentosPageResponse(
-        int                    Total,
-        int                    Pagina,
-        int                    TamPagina,
-        List<LancamentoResponse> Items);
+    public record LancamentosPageResponse(int Total, int Pagina, int TamPagina, List<LancamentoResponse> Items);
 }
