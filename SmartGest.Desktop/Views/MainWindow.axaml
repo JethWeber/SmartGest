@@ -243,11 +243,9 @@
               ClipToBounds="True"
               Padding="12,16"
               BorderThickness="0,0,1,0"
+              BorderBrush="{DynamicResource SgCardBorder}"
+              Background="{DynamicResource SgCardBackground}"
               BoxShadow="4 0 32 0 #30000000">
-
-        <!-- Fundo glass da sidebar -->
-        <Border.Background Value="{DynamicResource SgCardBackground}"/>
-        <Border.BorderBrush Value="{DynamicResource SgCardBorder}"/>
 
         <Grid RowDefinitions="Auto,*,Auto">
 
