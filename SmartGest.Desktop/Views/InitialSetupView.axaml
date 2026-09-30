@@ -9,7 +9,7 @@
              WindowStartupLocation="CenterOwner"
              CanResize="True">
 
-  <UserControl.Styles>
+  <Window.Styles>
     <Style Selector="Border.sg-card">
       <Setter Property="CornerRadius" Value="14"/>
       <Setter Property="BorderThickness" Value="1"/>
@@ -29,7 +29,7 @@
       <Setter Property="CornerRadius" Value="7"/>
       <Setter Property="Padding" Value="10,8"/>
     </Style>
-  </UserControl.Styles>
+  </Window.Styles>
 
   <Border Background="{DynamicResource SgAppBackground}">
     <Grid RowDefinitions="Auto,*,Auto">
@@ -66,7 +66,7 @@
       </ScrollViewer>
       <StackPanel Grid.Row="2" Margin="48,18" Spacing="10">
         <TextBlock Text="{Binding Erro}" Foreground="#E53935" TextWrapping="Wrap"/>
-        <Button Content="Guardar e começar" Command="{Binding GuardarCommand}" Classes="btn-primary" HorizontalAlignment="Right"/>
+        <Button Content="Guardar e começar" Command="{Binding GuardarCommand}" Classes="sg-btn-primary" HorizontalAlignment="Right"/>
       </StackPanel>
     </Grid>
   </Border>
