@@ -8,7 +8,7 @@ services:
     environment:
       POSTGRES_DB:       smartgest
       POSTGRES_USER:     postgres
-      POSTGRES_PASSWORD: PostegrePass@root2026
+      POSTGRES_PASSWORD: ${SMARTGEST_POSTGRES_PASSWORD:?Set SMARTGEST_POSTGRES_PASSWORD in .env}
     ports:
       - "5432:5432"          # expõe para o Desktop na máquina host
     volumes:
@@ -35,10 +35,10 @@ services:
     environment:
       ASPNETCORE_ENVIRONMENT: Production
       ASPNETCORE_URLS: http://+:8080
-      ConnectionStrings__Default: "Host=postgres;Port=5432;Database=smartgest;Username=postgres;Password=PostegrePass@root2026"
-      Jwt__Key:      SmartGest@Angola#SecretKey2025!XyZ
-      Jwt__Issuer:   SmartGest.API
-      Jwt__Audience: SmartGest.Desktop
+      ConnectionStrings__Default: "Host=postgres;Port=5432;Database=smartgest;Username=postgres;Password=${SMARTGEST_POSTGRES_PASSWORD}"
+      Jwt__Key:      ${SMARTGEST_JWT_KEY:?Set SMARTGEST_JWT_KEY in .env}
+      Jwt__Issuer:   ${SMARTGEST_JWT_ISSUER:-SmartGest.API}
+      Jwt__Audience: ${SMARTGEST_JWT_AUDIENCE:-SmartGest.Desktop}
     ports:
       - "8080:8080"
     networks:
