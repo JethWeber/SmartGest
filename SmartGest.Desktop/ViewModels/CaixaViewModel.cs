@@ -10,6 +10,7 @@ using LiveChartsCore.SkiaSharpView;
 using LiveChartsCore.SkiaSharpView.Painting;
 using SkiaSharp;
 using SmartGest.Desktop.Services;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace SmartGest.Desktop.ViewModels;
 
@@ -60,8 +61,7 @@ public partial class CaixaViewModel : ViewModelBase
 
     public CaixaViewModel()
     {
-        var stubApi = new ApiClient(new TokenStore());
-        _lancamentoSvc = new LancamentoService(stubApi);
+        _lancamentoSvc = App.Services.GetRequiredService<LancamentoService>();
 
         LancamentosFiltrados = new ObservableCollection<LancamentoCaixaItem>
         {
