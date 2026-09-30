@@ -38,6 +38,11 @@ public partial class App : Avalonia.Application
         Services.InitializeSmartGestDatabaseAsync().GetAwaiter().GetResult();
         Services.GetRequiredService<LocalDatabaseMaintenance>().CreateAutomaticBackupIfNeededAsync().GetAwaiter().GetResult();
 
+        // Aplica o tema persistido antes de abrir a janela principal.
+        var temaInicial = Services.GetRequiredService<ConfiguracoesService>()
+            .ObterAsync().GetAwaiter().GetResult().TemaIndex;
+        Services.GetRequiredService<ThemeService>().Apply(temaInicial);
+
         var pluginsToRemove = BindingPlugins.DataValidators
             .OfType<DataAnnotationsValidationPlugin>()
             .ToArray();
@@ -97,6 +102,7 @@ public partial class App : Avalonia.Application
 
         // ── Infraestrutura de sessão/API (compatibilidade durante a migração) ──
         services.AddSingleton<TokenStore>();
+        services.AddSingleton<ThemeService>();
         services.AddSingleton<ApiClient>();
 
         // ── Serviços de API ───────────────────────────────────────────────────
