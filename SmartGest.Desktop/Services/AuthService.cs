@@ -11,11 +11,13 @@ public class AuthService
 {
     private readonly IDbContextFactory<SmartGestDbContext> _factory;
     private readonly TokenStore _store;
+    private readonly AuditService _audit;
 
-    public AuthService(IDbContextFactory<SmartGestDbContext> factory, TokenStore store)
+    public AuthService(IDbContextFactory<SmartGestDbContext> factory, TokenStore store, AuditService audit)
     {
         _factory = factory;
         _store = store;
+        _audit = audit;
     }
 
     public async Task LoginAsync(string telefone, string password)
@@ -34,6 +36,7 @@ public class AuthService
         _store.Perfil = user.Perfil;
         _store.Iniciais = user.Iniciais;
         _store.CorAvatar = user.CorAvatar;
+        await _audit.RegistarAsync("Login", "Utilizador", user.Id.ToString());
     }
 
     public async Task AlterarSenhaAsync(string senhaAtual, string senhaNova, string senhaConf)
@@ -50,6 +53,13 @@ public class AuthService
 
         await db.Database.ExecuteSqlInterpolatedAsync(
             $"UPDATE Utilizadores SET PasswordHash = {BCrypt.Net.BCrypt.HashPassword(senhaNova, workFactor: 12)} WHERE Id = {user.Id}");
+        await _audit.RegistarAsync("Alteração de senha", "Utilizador", user.Id.ToString());
+    }
+
+    public async Task LogoutAsync()
+    {
+        await _audit.RegistarAsync("Logout", "Utilizador");
+        _store.Limpar();
     }
 
     public void Logout() => _store.Limpar();
