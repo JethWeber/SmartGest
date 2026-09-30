@@ -8,7 +8,7 @@
         Title="SmartGest - Automatize Numeros. Multiplique Resultados."
         Width="1280" Height="760"
         WindowStartupLocation="CenterScreen"
-        Background="#080E1E"
+        Background="{DynamicResource SgAppBackground}"
         Icon="avares://SmartGest.Desktop/Assets/SmartGest_-_ImaLogo01.ico"
         TransparencyLevelHint="AcrylicBlur,Transparent">
 
@@ -148,7 +148,7 @@
 
     <!-- Ícones MaterialIcon -->
     <Style Selector="ListBoxItem.menu-item mi|MaterialIcon">
-      <Setter Property="Foreground" Value="#55FFFFFF"/>
+      <Setter Property="Foreground" Value="{DynamicResource SgTextMuted}"/>
       <Setter Property="Width"      Value="18"/>
       <Setter Property="Height"     Value="18"/>
     </Style>
@@ -161,16 +161,16 @@
 
     <!-- Texto dos itens -->
     <Style Selector="ListBoxItem.menu-item TextBlock.menu-label">
-      <Setter Property="Foreground" Value="#70FFFFFF"/>
+      <Setter Property="Foreground" Value="{DynamicResource SgTextSecondary}"/>
       <Setter Property="FontSize"   Value="13"/>
       <Setter Property="FontWeight" Value="Medium"/>
     </Style>
     <Style Selector="ListBoxItem.menu-item:selected TextBlock.menu-label">
-      <Setter Property="Foreground" Value="#E8F0FF"/>
+      <Setter Property="Foreground" Value="{DynamicResource SgTextPrimary}"/>
       <Setter Property="FontWeight" Value="SemiBold"/>
     </Style>
     <Style Selector="ListBoxItem.menu-item:pointerover TextBlock.menu-label">
-      <Setter Property="Foreground" Value="#C8DCFF"/>
+      <Setter Property="Foreground" Value="{DynamicResource SgTextSecondary}"/>
     </Style>
 
   </Window.Styles>
@@ -188,13 +188,9 @@
   <Panel>
 
     <!-- Gradiente de fundo -->
-    <Border>
+    <Border Background="{DynamicResource SgAppBackground}">
       <Border.Background>
-        <LinearGradientBrush StartPoint="0%,0%" EndPoint="100%,100%">
-          <GradientStop Offset="0"    Color="#080E1E"/>
-          <GradientStop Offset="0.5"  Color="#0A1628"/>
-          <GradientStop Offset="1"    Color="#060D1A"/>
-        </LinearGradientBrush>
+        {DynamicResource SgAppBackground}
       </Border.Background>
     </Border>
 
