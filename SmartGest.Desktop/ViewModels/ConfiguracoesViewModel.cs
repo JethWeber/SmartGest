@@ -3,11 +3,46 @@ using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using SmartGest.Desktop.Services;
 
 namespace SmartGest.Desktop.ViewModels;
 
 public partial class ConfiguracoesViewModel : ViewModelBase
 {
+    private readonly ConfiguracoesService _configService;
+    private readonly AuthService _authService;
+
+    public ConfiguracoesViewModel(ConfiguracoesService configService, AuthService authService)
+    {
+        _configService = configService;
+        _authService = authService;
+        _ = CarregarAsync();
+    }
+
+    public ConfiguracoesViewModel() : this(
+        App.Services.GetRequiredService<ConfiguracoesService>(),
+        App.Services.GetRequiredService<AuthService>()) { }
+
+    private async Task CarregarAsync()
+    {
+        try
+        {
+            var s = await _configService.ObterAsync();
+            EmpresaNome=s.EmpresaNome; EmpresaNif=s.EmpresaNif; EmpresaMorada=s.EmpresaMorada;
+            EmpresaCidade=s.EmpresaCidade; EmpresaPais=s.EmpresaPais; EmpresaTelefone=s.EmpresaTelefone;
+            EmpresaEmail=s.EmpresaEmail; EmpresaWebsite=s.EmpresaWebsite; EmpresaCapital=s.EmpresaCapital.ToString("N0");
+            LogoCaminho=s.LogoPath; TemLogo=!string.IsNullOrWhiteSpace(LogoCaminho);
+            TemaIndex=s.TemaIndex; IdiomaIndex=s.IdiomaIndex; MoedaIndex=s.MoedaIndex; DataFormatoIndex=s.DataFormatoIndex;
+            MostrarSparklines=s.MostrarSparklines; AnimacoesAtivadas=s.AnimacoesAtivadas; MostrarSaldosOcultos=s.MostrarSaldosOcultos;
+            NotifEmailAtivo=s.NotifEmail; NotifAppAtivo=s.NotifApp; NotifSaldoBaixo=s.NotifSaldoBaixo;
+            NotifLancamentos=s.NotifLancamentos; NotifRelatorios=s.NotifRelatorios; NotifErrosSistema=s.NotifErrosSistema;
+            NotifBackup=s.NotifBackup; EmailNotificacoes=s.EmailNotificacoes; LimiarSaldoBaixo=s.LimiarSaldoBaixo.ToString("N0");
+            DoisFatoresAtivo=s.DoisFatoresAtivo; SessaoTempomins=s.SessaoTimeoutMins.ToString(); RegistarAuditoria=s.RegistarAuditoria;
+            Utilizadores.Clear();
+            foreach(var u in s.Utilizadores) Utilizadores.Add(new(u.Nome,u.Email,u.Perfil,u.Activo,u.Iniciais,u.CorAvatar));
+        }
+        catch { }
+    }
     // ── Tab activa ────────────────────────────────────────────────────────────
     [ObservableProperty] private int _tabIndex = 0;
 
@@ -135,6 +170,8 @@ public partial class ConfiguracoesViewModel : ViewModelBase
     [RelayCommand]
     private async Task SalvarPerfilAsync()
     {
+        decimal.TryParse(EmpresaCapital.Replace(".","").Replace(",", "."), System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out var capital);
+        await _configService.GuardarEmpresaAsync(EmpresaNome,EmpresaNif,EmpresaMorada,EmpresaCidade,EmpresaPais,EmpresaTelefone,EmpresaEmail,EmpresaWebsite,capital,LogoCaminho);
         await SimularGuardar("Perfil da empresa actualizado com sucesso.");
     }
 
@@ -190,14 +227,14 @@ public partial class ConfiguracoesViewModel : ViewModelBase
     [RelayCommand]
     private async Task SalvarAparenciaAsync()
     {
-        await SimularGuardar("Preferências de aparência guardadas.");
+        await GuardarConfiguracaoAsync("Preferências de aparência guardadas.");
     }
 
     // ── Notificações ─────────────────────────────────────────────────────────
     [RelayCommand]
     private async Task SalvarNotificacoesAsync()
     {
-        await SimularGuardar("Configurações de notificações actualizadas.");
+        await GuardarConfiguracaoAsync("Configurações de notificações actualizadas.");
     }
 
     // ── Segurança ─────────────────────────────────────────────────────────────
@@ -217,8 +254,9 @@ public partial class ConfiguracoesViewModel : ViewModelBase
         { ErroSeguranca = "As senhas não coincidem."; TemErroSeguranca = true; return; }
 
         IsLoading = true;
-        await Task.Delay(900);
-        IsLoading         = false;
+        try { await _authService.AlterarSenhaAsync(SenhaAtual,SenhaNova,SenhaConfirmacao); }
+        catch(Exception ex) { ErroSeguranca=ex.Message; TemErroSeguranca=true; IsLoading=false; return; }
+        IsLoading=false;
         SenhaAtual        = string.Empty;
         SenhaNova         = string.Empty;
         SenhaConfirmacao  = string.Empty;
@@ -236,7 +274,7 @@ public partial class ConfiguracoesViewModel : ViewModelBase
     [RelayCommand]
     private async Task SalvarSegurancaAsync()
     {
-        await SimularGuardar("Configurações de segurança guardadas.");
+        await GuardarConfiguracaoAsync("Configurações de segurança guardadas.");
     }
 
     // ── API / Integração ──────────────────────────────────────────────────────
@@ -284,6 +322,15 @@ public partial class ConfiguracoesViewModel : ViewModelBase
     }
 
     // ── Helpers ──────────────────────────────────────────────────────────────
+    private async Task GuardarConfiguracaoAsync(string mensagem)
+    {
+        int.TryParse(SessaoTempomins, out var timeout);
+        decimal.TryParse(LimiarSaldoBaixo.Replace(".","").Replace(",", "."), System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out var limiar);
+        await _configService.GuardarConfiguracaoAsync(TemaIndex,IdiomaIndex,MoedaIndex,DataFormatoIndex,MostrarSparklines,AnimacoesAtivadas,MostrarSaldosOcultos,
+            NotifEmailAtivo,NotifAppAtivo,NotifSaldoBaixo,NotifLancamentos,NotifRelatorios,NotifErrosSistema,NotifBackup,EmailNotificacoes,limiar,DoisFatoresAtivo,timeout,RegistarAuditoria);
+        await SimularGuardar(mensagem);
+    }
+
 
     private async Task SimularGuardar(string mensagem)
     {
