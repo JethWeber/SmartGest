@@ -39,7 +39,6 @@ public class AuthService
     public async Task AlterarSenhaAsync(string senhaAtual, string senhaNova, string senhaConf)
     {
         await using var db = await _factory.CreateDbContextAsync();
-        await using var db = await _factory.CreateDbContextAsync();
         if (senhaNova.Length < 8)
             throw new ArgumentException("A nova senha deve ter pelo menos 8 caracteres.");
         if (senhaNova != senhaConf)
