@@ -142,3 +142,14 @@ O Desktop deve executar as operações principais através de Application, sem d
 ## Regra
 
 Não marcar uma fase como concluída apenas porque os projetos compilam. A funcionalidade precisa estar integrada e validada.
+
+
+## Estado da migração Desktop Local — 2026-09-30
+
+### Fase 4 — Desktop Integration
+Concluída na base funcional. O Desktop utiliza SQLite local para autenticação, categorias, lançamentos, caixa, contas bancárias, dashboard, balancete, balanço, DRE e configurações persistidas. O API client permanece no projeto apenas para compatibilidade/futura sincronização.
+
+### Fase 5 — Production Local
+Infraestrutura operacional implementada: backups diários automáticos, backup manual, verificação de integridade SQLite, WAL, foreign keys, sessão local com BCrypt, projecto dedicado SmartGest.Migrations e script para gerar migrations EF Core. A aplicação aceita uma base criada anteriormente com EnsureCreated e cria um baseline antes de aplicar migrations futuras.
+
+> Antes de uma distribuição de produção, deve ser gerada e revista a migration inicial com ScriptsDeLancamento/gerar-migracao-local.sh. O EF Core recomenda migrations para bases persistentes; EnsureCreated é apropriado sobretudo para prototipagem/testes e não deve ser combinado com migrations no mesmo fluxo. SQLite também possui limitações específicas de migrations.
