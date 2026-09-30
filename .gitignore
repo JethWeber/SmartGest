@@ -41,3 +41,8 @@ UI_ViewModels_V2.md
 SmartGest.API/smartgest.db
 SmartGest.API/*.db
 SmartGest.API/Backups/
+
+# Environment secrets
+.env
+.env.*
+!.env.example
