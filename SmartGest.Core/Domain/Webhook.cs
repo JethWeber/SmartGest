@@ -3,8 +3,8 @@ namespace SmartGest.Core.Domain;
 public sealed class Webhook
 {
     public int Id { get; private set; }
-    public string Evento { get; private set; }
-    public string Url { get; private set; }
+    public string Evento { get; private set; } = string.Empty;
+    public string Url { get; private set; } = string.Empty;
     public bool Activo { get; private set; }
 
     private Webhook() { }
