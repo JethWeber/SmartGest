@@ -49,7 +49,7 @@ public static class DatabaseInitializer
                 "Administrador SmartGest",
                 "admin@smartgest.local",
                 "999999999",
-                BCrypt.HashPassword("admin123", workFactor: 12),
+                BCrypt.Net.BCrypt.HashPassword("admin123", workFactor: 12),
                 "Administrador");
 
             db.Utilizadores.Add(admin);
