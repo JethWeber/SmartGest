@@ -32,9 +32,15 @@ public partial class MainWindowViewModel : ViewModelBase
 
     // ── Factory para NovoLancamentoViewModel (injectada pelo DI) ─────────────
     private readonly Func<NovoLancamentoViewModel> _novoLancamentoFactory;
+    private readonly SessionSecurityService _sessionSecurity;
+
+    public UiFeedbackService Feedback { get; }
 
     // ── Evento que a View subscreve para abrir o modal ────────────────────────
     public event Action<NovoLancamentoViewModel>? PedirAbrirNovoLancamento;
+    public event Action? SessionExpiredRequested;
+
+    public void RegistarActividade() => _sessionSecurity.Touch();
 
     // ── Construtor principal (DI) ─────────────────────────────────────────────
     // ContaseBancosViewModel é injectado pelo DI (Singleton) — garante que usa
@@ -47,9 +53,14 @@ public partial class MainWindowViewModel : ViewModelBase
         DashboardViewModel dashboardVm,
         BalanceteViewModel balanceteVm,
         BalancoViewModel balancoVm,
-        DreViewModel dreVm)
+        DreViewModel dreVm,
+        UiFeedbackService feedback,
+        SessionSecurityService sessionSecurity)
     {
         _novoLancamentoFactory = novoLancamentoFactory;
+        Feedback = feedback;
+        _sessionSecurity = sessionSecurity;
+        _sessionSecurity.SessionExpired += () => SessionExpiredRequested?.Invoke();
 
         UsuarioNome      = store.Nome;
         UsuarioIniciais  = store.Iniciais;
@@ -82,7 +93,9 @@ public partial class MainWindowViewModel : ViewModelBase
         App.Services.GetRequiredService<DashboardViewModel>(),
         App.Services.GetRequiredService<BalanceteViewModel>(),
         App.Services.GetRequiredService<BalancoViewModel>(),
-        App.Services.GetRequiredService<DreViewModel>())
+        App.Services.GetRequiredService<DreViewModel>(),
+        App.Services.GetRequiredService<UiFeedbackService>(),
+        App.Services.GetRequiredService<SessionSecurityService>())
     { }
 
     // ── Navegação ─────────────────────────────────────────────────────────────
