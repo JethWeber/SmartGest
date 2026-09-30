@@ -105,6 +105,7 @@ public partial class App : Avalonia.Application
         services.AddTransient<ContabilidadeService>();
         services.AddTransient<CategoriaService>();
         services.AddTransient<DashboardService>();
+        services.AddTransient<ConfiguracoesService>();
 
         // ── ViewModels simples ────────────────────────────────────────────────
         services.AddTransient<LoginViewModel>();
