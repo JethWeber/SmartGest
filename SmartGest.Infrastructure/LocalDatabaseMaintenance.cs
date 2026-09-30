@@ -85,6 +85,10 @@ public sealed class LocalDatabaseMaintenance
         if (string.Equals(fullBackupPath, _databasePath, StringComparison.OrdinalIgnoreCase))
             throw new InvalidOperationException("O backup de origem não pode ser a própria base de dados.");
 
+        // Protege o estado actual antes de qualquer restauração.
+        if (File.Exists(_databasePath))
+            await BackupAsync(cancellationToken: cancellationToken);
+
         await using (var db = await _factory.CreateDbContextAsync(cancellationToken))
         {
             await db.Database.CloseConnectionAsync();
