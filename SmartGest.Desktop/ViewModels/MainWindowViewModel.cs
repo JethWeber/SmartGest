@@ -77,12 +77,12 @@ public partial class MainWindowViewModel : ViewModelBase
             CorAvatar = "#1A2E5A"
         },
         () => new NovoLancamentoViewModel(),
-        new LancamentoService(new ApiClient(new TokenStore())),
-        new ContaseBancosViewModel(new ContasBancariasService(new ApiClient(new TokenStore()))),
-        new DashboardViewModel(new DashboardService(new ApiClient(new TokenStore()))),
-        new BalanceteViewModel(new ContabilidadeService(new ApiClient(new TokenStore()))),
-        new BalancoViewModel(new ContabilidadeService(new ApiClient(new TokenStore()))),
-        new DreViewModel(new ContabilidadeService(new ApiClient(new TokenStore()))))
+        App.Services.GetRequiredService<LancamentoService>(),
+        App.Services.GetRequiredService<ContaseBancosViewModel>(),
+        App.Services.GetRequiredService<DashboardViewModel>(),
+        App.Services.GetRequiredService<BalanceteViewModel>(),
+        App.Services.GetRequiredService<BalancoViewModel>(),
+        App.Services.GetRequiredService<DreViewModel>())
     { }
 
     // ── Navegação ─────────────────────────────────────────────────────────────
