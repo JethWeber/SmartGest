@@ -52,6 +52,7 @@ public partial class App : Avalonia.Application
         // O caminho fica no perfil do utilizador, nunca dentro da pasta da aplicação.
         Services.InitializeSmartGestDatabaseAsync().GetAwaiter().GetResult();
         Services.GetRequiredService<LocalDatabaseMaintenance>().CreateAutomaticBackupIfNeededAsync().GetAwaiter().GetResult();
+        _ = Services.GetRequiredService<BackupService>().LimparAntigosAsync(14);
 
         // Preferência visual é local à instalação/utilizador e fica em JSON.
         // Dados empresariais e financeiros continuam na BD.
@@ -142,6 +143,7 @@ public partial class App : Avalonia.Application
         services.AddSingleton<AuditService>();
         services.AddSingleton<SessionSecurityService>();
         services.AddSingleton<FirstRunService>();
+        services.AddSingleton<BackupService>();
         services.AddSingleton<ApiClient>();
 
         // ── Serviços de API ───────────────────────────────────────────────────
