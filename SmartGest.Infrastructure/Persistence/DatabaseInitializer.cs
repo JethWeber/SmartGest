@@ -62,8 +62,8 @@ public static class DatabaseInitializer
         string nome,
         CancellationToken cancellationToken)
     {
-        var result = await db.Database.SqlQueryRaw<int>(
-            $"SELECT COUNT(*) AS Value FROM sqlite_master WHERE type='table' AND name='{nome.Replace("'", "''")}'")
+        var result = await db.Database.SqlQuery<int>(
+            $"SELECT COUNT(*) AS Value FROM sqlite_master WHERE type='table' AND name={nome}")
             .FirstAsync(cancellationToken);
 
         return result > 0;
