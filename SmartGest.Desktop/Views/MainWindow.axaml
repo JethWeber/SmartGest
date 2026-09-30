@@ -246,12 +246,8 @@
               BoxShadow="4 0 32 0 #30000000">
 
         <!-- Fundo glass da sidebar -->
-        <Border.Background>
-          <SolidColorBrush Color="{DynamicResource SgCardBackground}"/>
-        </Border.Background>
-        <Border.BorderBrush>
-          <SolidColorBrush Color="{DynamicResource SgCardBorder}"/>
-        </Border.BorderBrush>
+        <Border.Background Value="{DynamicResource SgCardBackground}"/>
+        <Border.BorderBrush Value="{DynamicResource SgCardBorder}"/>
 
         <Grid RowDefinitions="Auto,*,Auto">
 
