@@ -1,86 +1,124 @@
 # SmartGest — Arquitetura
 
-## Arquitetura-alvo
+## Prioridade da primeira fase
+
+A primeira entrega é **Desktop Local 100% funcional e offline**.
+
+Portanto, a arquitetura de produção imediata é:
 
 ```
-                         SmartGest
-                             |
-              +--------------+--------------+
-              |                             |
-       SmartGest.Web                 SmartGest.Desktop
-              |                             |
-              +--------------+--------------+
-                             |
-                  SmartGest.Application
-                             |
-                     SmartGest.Domain
-                             |
-                  SmartGest.Infrastructure
-                       /             \
-                PostgreSQL          SQLite
+┌──────────────────────────────┐
+│       SmartGest.Desktop      │
+└──────────────┬───────────────┘
+               ↓
+┌──────────────────────────────┐
+│    SmartGest.Application     │
+└──────────────┬───────────────┘
+               ↓
+┌──────────────────────────────┐
+│       SmartGest.Domain       │
+└──────────────┬───────────────┘
+               ↓
+┌──────────────────────────────┐
+│   SmartGest.Infrastructure   │
+│          SQLite              │
+└──────────────────────────────┘
 ```
 
-## Responsabilidades
+## Projetos
 
-### Domain
+### SmartGest.Domain
 
-Contém entidades, regras de negócio, value objects, enums e exceções de domínio.
+Coração do negócio.
 
-**Não depende de:** ASP.NET, Avalonia, EF Core, PostgreSQL, SQLite, Docker ou HTTP.
+Contém:
 
-### Application
+- entidades;
+- value objects;
+- enums;
+- regras;
+- exceções;
+- contratos essenciais.
 
-Implementa casos de uso e coordena o domínio através de interfaces.
+Não conhece UI, HTTP, EF Core, SQLite, PostgreSQL ou Docker.
+
+### SmartGest.Application
+
+Casos de uso do sistema.
 
 Exemplos:
 
-- Registrar venda
-- Registrar compra
-- Atualizar stock
-- Cadastrar produto
-- Gerir clientes e fornecedores
-- Fechar caixa
-- Consultar movimentos
+- cadastrar produto;
+- registrar venda;
+- registrar compra;
+- atualizar stock;
+- gerir clientes;
+- gerir fornecedores;
+- fechar caixa;
+- gerar relatórios.
 
-### Infrastructure
+### SmartGest.Infrastructure
 
-Implementa persistência, repositórios, banco de dados, autenticação, logs, backups e integração com sistema operativo.
+Implementações técnicas da edição Local:
 
-### Web/API
+- EF Core;
+- SQLite;
+- repositórios;
+- migrations;
+- logs;
+- backup;
+- persistência;
+- serviços do sistema.
 
-Expõe os casos de uso por HTTP. Controllers devem ser finos e não conter regras empresariais complexas.
+### SmartGest.Desktop
 
-### Desktop
+Interface e composição da aplicação.
 
-Interface local para operação offline. Executa Application diretamente e usa infraestrutura SQLite.
+```
+View
+ ↓
+ViewModel
+ ↓
+Application
+ ↓
+Domain
+ ↓
+Infrastructure
+ ↓
+SQLite
+```
+
+## Web/API
+
+**Não faz parte da primeira fase.**
+
+Quando necessário, será adicionada como outra entrada:
+
+```
+SmartGest.Web/API
+       ↓
+Application
+       ↓
+Domain
+       ↓
+Infrastructure
+       ↓
+PostgreSQL
+```
+
+O Desktop não deve esperar pela API para ficar pronto.
 
 ## Regra de dependência
 
 ```
-Web ────────────────┐
-                    ├──> Application ───> Domain
-Desktop ────────────┘
-                         ^
-                         |
-                   Infrastructure
+Desktop ────────→ Application ────────→ Domain
+                      ↑
+                      │
+               Infrastructure
 ```
 
-O objetivo é impedir que o Domain conheça detalhes externos.
+A implementação concreta de persistência permanece em Infrastructure.
 
-## Cenários
+## Objetivo arquitetural
 
-### Server
-
-```
-Cliente → Web/API → Application → Domain → Infrastructure → PostgreSQL
-```
-
-### Local
-
-```
-Desktop → Application → Domain → Infrastructure → SQLite
-```
-
-## Multi-PC local
-
-SQLite não deve ser tratado como banco compartilhado através de uma pasta de rede. Se uma instalação precisar de vários terminais simultâneos, deve ser criada uma arquitetura de serviço local/LAN apropriada.
+Construir primeiro um produto local completo e depois reutilizar o mesmo núcleo para outros modos de distribuição.
