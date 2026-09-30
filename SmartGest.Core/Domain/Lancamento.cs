@@ -4,17 +4,17 @@ public sealed class Lancamento
 {
     public int Id { get; private set; }
     public DateTime Data { get; private set; }
-    public string Descricao { get; private set; }
-    public string Categoria { get; private set; }
+    public string Descricao { get; private set; } = string.Empty;
+    public string Categoria { get; private set; } = string.Empty;
     public int? CategoriaContabilId { get; private set; }
-    public string Tipo { get; private set; }
+    public string Tipo { get; private set; } = string.Empty;
     public decimal Valor { get; private set; }
-    public string Beneficiario { get; private set; }
-    public string MetodoPagamento { get; private set; }
-    public string CaminhoDocumento { get; private set; }
-    public string Observacoes { get; private set; }
-    public string CentroCusto { get; private set; }
-    public string ReferenciaInterna { get; private set; }
+    public string Beneficiario { get; private set; } = string.Empty;
+    public string MetodoPagamento { get; private set; } = string.Empty;
+    public string CaminhoDocumento { get; private set; } = string.Empty;
+    public string Observacoes { get; private set; } = string.Empty;
+    public string CentroCusto { get; private set; } = string.Empty;
+    public string ReferenciaInterna { get; private set; } = string.Empty;
     public decimal ImpostoSelo { get; private set; }
     public DateTime CriadoEm { get; private set; }
     public bool Anulado { get; private set; }
