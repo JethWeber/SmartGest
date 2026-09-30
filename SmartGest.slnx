@@ -2,5 +2,6 @@
   <Project Path="SmartGest.API/SmartGest.API.csproj" />
   <Project Path="SmartGest.Core/SmartGest.Core.csproj" />
   <Project Path="SmartGest.Application/SmartGest.Application.csproj" />
+  <Project Path="SmartGest.Infrastructure/SmartGest.Infrastructure.csproj" />
   <Project Path="SmartGest.Desktop/SmartGest.Desktop.csproj" />
 </Solution>
