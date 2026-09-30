@@ -3,14 +3,14 @@ namespace SmartGest.Core.Domain;
 public sealed class Empresa
 {
     public int Id { get; private set; }
-    public string Nome { get; private set; }
-    public string NIF { get; private set; }
-    public string Morada { get; private set; }
-    public string Cidade { get; private set; }
-    public string Pais { get; private set; }
-    public string Telefone { get; private set; }
-    public string Email { get; private set; }
-    public string Website { get; private set; }
+    public string Nome { get; private set; } = string.Empty;
+    public string NIF { get; private set; } = string.Empty;
+    public string Morada { get; private set; } = string.Empty;
+    public string Cidade { get; private set; } = string.Empty;
+    public string Pais { get; private set; } = string.Empty;
+    public string Telefone { get; private set; } = string.Empty;
+    public string Email { get; private set; } = string.Empty;
+    public string Website { get; private set; } = string.Empty;
     public decimal Capital { get; private set; }
     public string? LogoPath { get; private set; }
 
