@@ -84,7 +84,11 @@ public sealed class SessionSecurityService : IAsyncDisposable
             var value = await db.Configuracoes.AsNoTracking().Select(x => x.SessaoTimeoutMins).FirstOrDefaultAsync(token);
             return value == 0 ? 0 : Math.Clamp(value, 5, 480);
         }
-        catch (Exception ex)\n        {\n            AppLogService.Error("Falha ao ler o timeout da sessão; a aplicação usará 30 minutos.", ex);\n            return 30;\n        }
+        catch (Exception ex)
+        {
+            AppLogService.Error("Falha ao ler o timeout da sessão; a aplicação usará 30 minutos.", ex);
+            return 30;
+        }
     }
 
     public ValueTask DisposeAsync()
