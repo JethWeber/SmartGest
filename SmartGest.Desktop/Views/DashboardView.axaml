@@ -94,24 +94,24 @@
                     </LinearGradientBrush>
                   </Border.Background>
                   <TextBlock Text="e" FontSize="20" FontWeight="Bold"
-                             Foreground="White"
+                             Foreground="{DynamicResource SgTextOnAccent}"
                              HorizontalAlignment="Center"
                              VerticalAlignment="Center"/>
                 </Border>
                 <StackPanel VerticalAlignment="Center" Spacing="0">
                   <StackPanel Orientation="Horizontal" Spacing="0">
                     <TextBlock Text="educa"   FontSize="15" FontWeight="Bold"  Foreground="#FF6BA8"/>
-                    <TextBlock Text="Empreende" FontSize="15" FontWeight="Light" Foreground="#E8F0FF"/>
+                    <TextBlock Text="Empreende" FontSize="15" FontWeight="Light" Foreground="{DynamicResource SgTextPrimary}"/>
                   </StackPanel>
                   <TextBlock Text="Gestão para MPMEs"
-                             FontSize="10" Foreground="#60FFFFFF" LetterSpacing="1"/>
+                             FontSize="10" Foreground="{DynamicResource SgTextMuted}" LetterSpacing="1"/>
                 </StackPanel>
               </StackPanel>
 
               <!-- Slogan central -->
               <TextBlock Grid.Column="1"
                          Text="Transformando negócios através da gestão"
-                         FontSize="12" Foreground="#70FFFFFF"
+                         FontSize="12" Foreground="{DynamicResource SgTextSecondary}"
                          HorizontalAlignment="Center"
                          VerticalAlignment="Center"
                          FontStyle="Italic"/>
@@ -138,9 +138,9 @@
           <StackPanel Grid.Column="0">
             <TextBlock Text="Dashboard"
                        FontSize="26" FontWeight="Bold"
-                       Foreground="#F0F6FF"/>
+                       Foreground="{DynamicResource SgTextPrimary}"/>
             <TextBlock Text="Visão geral do desempenho financeiro"
-                       FontSize="12" Foreground="#55FFFFFF" Margin="0,4,0,0"/>
+                       FontSize="12" Foreground="{DynamicResource SgTextMuted}" Margin="0,4,0,0"/>
           </StackPanel>
           <Border Grid.Column="1"
                   CornerRadius="20" Padding="14,8"
@@ -336,7 +336,7 @@
                     <DataTemplate x:DataType="vm:MovimentacaoItem">
                       <TextBlock Text="{Binding Categoria}"
                                  VerticalAlignment="Center"
-                                 Foreground="#C8DCFF"
+                                 Foreground="{DynamicResource SgTextSecondary}"
                                  Margin="10,0"/>
                     </DataTemplate>
                   </DataGridTemplateColumn.CellTemplate>
