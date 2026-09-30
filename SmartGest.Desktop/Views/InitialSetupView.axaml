@@ -1,8 +1,13 @@
-<UserControl xmlns="https://github.com/avaloniaui"
+<Window xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:vm="using:SmartGest.Desktop.ViewModels"
              x:Class="SmartGest.Desktop.Views.InitialSetupView"
-             x:DataType="vm:InitialSetupViewModel">
+             x:DataType="vm:InitialSetupViewModel"
+             Title="Configuração inicial"
+             Width="1120" Height="760"
+             MinWidth="900" MinHeight="650"
+             WindowStartupLocation="CenterOwner"
+             CanResize="True">
 
   <UserControl.Styles>
     <Style Selector="Border.sg-card">
@@ -65,4 +70,4 @@
       </StackPanel>
     </Grid>
   </Border>
-</UserControl>
+</Window>
