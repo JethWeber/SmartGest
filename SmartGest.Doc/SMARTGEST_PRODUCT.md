@@ -1,18 +1,33 @@
 # SmartGest — Produto
 
-## Visão
+## Primeira entrega
 
-O SmartGest será tratado como uma plataforma com modalidades diferentes, compartilhando o máximo possível da lógica de negócio.
+A prioridade comercial e técnica imediata é:
+
+# SmartGest Local
+
+Aplicação Desktop de gestão, totalmente funcional e capaz de operar sem Internet.
 
 ## SmartGest Local
 
-- operação offline;
-- desktop;
+Características:
+
+- Desktop;
+- offline;
 - SQLite;
 - instalação simples;
-- baixa dependência de infraestrutura.
+- sem Docker;
+- sem PostgreSQL no cliente;
+- sem dependência de API externa;
+- dados locais;
+- backup e restore;
+- atualização controlada.
 
 ## SmartGest Server
+
+Será uma modalidade posterior.
+
+Características previstas:
 
 - API;
 - PostgreSQL;
@@ -22,11 +37,13 @@ O SmartGest será tratado como uma plataforma com modalidades diferentes, compar
 
 ## SmartGest Cloud
 
-Possibilidade futura de produto hospedado. Não faz parte do MVP Local.
+Possibilidade futura de serviço hospedado.
+
+Não faz parte da primeira entrega.
 
 ## Sincronização
 
-Visão futura:
+Também é futura:
 
 ```
 SmartGest Local
@@ -36,8 +53,4 @@ SmartGest Local
 SmartGest Server/Cloud
 ```
 
-A sincronização não deve ser introduzida antes de a operação local e a operação server estarem estáveis.
-
-## Regra
-
-Não manter duas implementações independentes das mesmas regras de negócio quando elas podem ser compartilhadas.
+Primeiro fazemos o Local funcionar perfeitamente. Depois sincronizamos.
