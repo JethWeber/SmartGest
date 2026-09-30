@@ -76,8 +76,16 @@ public partial class App : Avalonia.Application
                 var loginVm = Services.GetRequiredService<LoginViewModel>();
                 var login = new LoginView { DataContext = loginVm };
 
+                var loginTransitionStarted = false;
+
                 loginVm.LoginSucceeded += () =>
                 {
+                    if (loginTransitionStarted)
+                        return;
+
+                    loginTransitionStarted = true;
+                    login.Hide();
+
                     var mainVm = Services.GetRequiredService<MainWindowViewModel>();
                     var main = new MainWindow { DataContext = mainVm };
 
@@ -102,6 +110,12 @@ public partial class App : Avalonia.Application
                     _ = Services.GetRequiredService<SessionSecurityService>().StartAsync();
                     desktop.MainWindow = main;
                     main.Show();
+
+                    Dispatcher.UIThread.Post(() =>
+                    {
+                        if (!login.IsClosed)
+                            login.Close();
+                    });
 
                     var onboarding = Services.GetRequiredService<FirstRunService>();
                     if (!onboarding.IsSetupCompleted)
@@ -128,8 +142,6 @@ public partial class App : Avalonia.Application
                     {
                         mainVm.IniciarOnboarding();
                     }
-
-                    login.Close();
 
                 };
 
