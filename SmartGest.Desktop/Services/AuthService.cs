@@ -9,18 +9,19 @@ namespace SmartGest.Desktop.Services;
 
 public class AuthService
 {
-    private readonly SmartGestDbContext _db;
+    private readonly IDbContextFactory<SmartGestDbContext> _factory;
     private readonly TokenStore _store;
 
-    public AuthService(SmartGestDbContext db, TokenStore store)
+    public AuthService(IDbContextFactory<SmartGestDbContext> factory, TokenStore store)
     {
-        _db = db;
+        _factory = factory;
         _store = store;
     }
 
     public async Task LoginAsync(string telefone, string password)
     {
-        var user = await _db.Utilizadores
+        await using var db = await _factory.CreateDbContextAsync();
+        var user = await db.Utilizadores
             .AsNoTracking()
             .FirstOrDefaultAsync(u => u.Telefone == telefone && u.Activo);
 
@@ -37,16 +38,18 @@ public class AuthService
 
     public async Task AlterarSenhaAsync(string senhaAtual, string senhaNova, string senhaConf)
     {
+        await using var db = await _factory.CreateDbContextAsync();
+        await using var db = await _factory.CreateDbContextAsync();
         if (senhaNova.Length < 8)
             throw new ArgumentException("A nova senha deve ter pelo menos 8 caracteres.");
         if (senhaNova != senhaConf)
             throw new ArgumentException("As senhas não coincidem.");
 
-        var user = await _db.Utilizadores.FirstOrDefaultAsync(u => u.Telefone == _store.Telefone);
+        var user = await db.Utilizadores.FirstOrDefaultAsync(u => u.Telefone == _store.Telefone);
         if (user is null || !BCrypt.Verify(senhaAtual, user.PasswordHash))
             throw new UnauthorizedAccessException("Senha actual incorrecta.");
 
-        await _db.Database.ExecuteSqlInterpolatedAsync(
+        await db.Database.ExecuteSqlInterpolatedAsync(
             $"UPDATE Utilizadores SET PasswordHash = {BCrypt.HashPassword(senhaNova, workFactor: 12)} WHERE Id = {user.Id}");
     }
 
