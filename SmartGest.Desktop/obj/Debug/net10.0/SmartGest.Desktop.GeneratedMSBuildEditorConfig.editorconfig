@@ -6,6 +6,10 @@ build_property.AvaloniaNameGeneratorFilterByPath = *
 build_property.AvaloniaNameGeneratorFilterByNamespace = *
 build_property.AvaloniaNameGeneratorViewFileNamingStrategy = NamespaceAndClassName
 build_property.AvaloniaNameGeneratorAttachDevTools = true
+build_property.AvaloniaUseCompiledBindingsByDefault = true
+build_property.AvaloniaMainPackageVersion = 11.3.21
+build_property.AvaloniaPreviewerNetCoreToolPath = /home/hidden/.nuget/packages/avalonia/11.3.21/buildTransitive//../tools/netstandard2.0/designer/Avalonia.Designer.HostApp.dll
+build_property.AvaloniaResourcePaths = /home/hidden/Project/SmartGest/SmartGest.Desktop/Assets/avalonia-logo.ico,/home/hidden/Project/SmartGest/SmartGest.Desktop/Assets/educaLogo.png,/home/hidden/Project/SmartGest/SmartGest.Desktop/Assets/SmartGest_-_ImaLogo01.ico,/home/hidden/Project/SmartGest/SmartGest.Desktop/Assets/SmartGest_-_ImaLogo1.png,/home/hidden/Project/SmartGest/SmartGest.Desktop/Assets/smartgest_logo.png,/home/hidden/Project/SmartGest/SmartGest.Desktop/Assets/smartgest_logo_white.png,/home/hidden/Project/SmartGest/SmartGest.Desktop/Assets/SmartGest_-_ImaLogo01.ico,/home/hidden/Project/SmartGest/SmartGest.Desktop/App.axaml,/home/hidden/Project/SmartGest/SmartGest.Desktop/Views/BalanceteView.axaml,/home/hidden/Project/SmartGest/SmartGest.Desktop/Views/BalancoView.axaml,/home/hidden/Project/SmartGest/SmartGest.Desktop/Views/CaixaView.axaml,/home/hidden/Project/SmartGest/SmartGest.Desktop/Views/ConfiguracoesView.axaml,/home/hidden/Project/SmartGest/SmartGest.Desktop/Views/ContaseBancosView.axaml,/home/hidden/Project/SmartGest/SmartGest.Desktop/Views/DashboardView.axaml,/home/hidden/Project/SmartGest/SmartGest.Desktop/Views/DreView.axaml,/home/hidden/Project/SmartGest/SmartGest.Desktop/Views/LoginView.axaml,/home/hidden/Project/SmartGest/SmartGest.Desktop/Views/MainWindow.axaml,/home/hidden/Project/SmartGest/SmartGest.Desktop/Views/NovoLancamentoView.axaml,/home/hidden/Project/SmartGest/SmartGest.Desktop/Views/SplashView.axaml
 build_property.MvvmToolkitEnableINotifyPropertyChangingSupport = true
 build_property._MvvmToolkitIsUsingWindowsRuntimePack = false
 build_property.CsWinRTComponent = 
@@ -20,47 +24,46 @@ build_property.ProjectTypeGuids =
 build_property.InvariantGlobalization = 
 build_property.PlatformNeutralAssembly = 
 build_property.EnforceExtendedAnalyzerRules = 
-build_property.EntryPointFilePath = 
 build_property._SupportedPlatformList = Linux,macOS,Windows
 build_property.RootNamespace = SmartGest.Desktop
-build_property.ProjectDir = /home/jeth/projects/SmartGest/SmartGest.Desktop/
+build_property.ProjectDir = /home/hidden/Project/SmartGest/SmartGest.Desktop/
 build_property.EnableComHosting = 
 build_property.EnableGeneratedComInterfaceComImportInterop = 
 build_property.EffectiveAnalysisLevelStyle = 10.0
 build_property.EnableCodeStyleSeverity = 
 
-[/home/jeth/projects/SmartGest/SmartGest.Desktop/App.axaml]
+[/home/hidden/Project/SmartGest/SmartGest.Desktop/App.axaml]
 build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml
 
-[/home/jeth/projects/SmartGest/SmartGest.Desktop/Views/BalanceteView.axaml]
+[/home/hidden/Project/SmartGest/SmartGest.Desktop/Views/BalanceteView.axaml]
 build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml
 
-[/home/jeth/projects/SmartGest/SmartGest.Desktop/Views/BalancoView.axaml]
+[/home/hidden/Project/SmartGest/SmartGest.Desktop/Views/BalancoView.axaml]
 build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml
 
-[/home/jeth/projects/SmartGest/SmartGest.Desktop/Views/CaixaView.axaml]
+[/home/hidden/Project/SmartGest/SmartGest.Desktop/Views/CaixaView.axaml]
 build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml
 
-[/home/jeth/projects/SmartGest/SmartGest.Desktop/Views/ConfiguracoesView.axaml]
+[/home/hidden/Project/SmartGest/SmartGest.Desktop/Views/ConfiguracoesView.axaml]
 build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml
 
-[/home/jeth/projects/SmartGest/SmartGest.Desktop/Views/ContaseBancosView.axaml]
+[/home/hidden/Project/SmartGest/SmartGest.Desktop/Views/ContaseBancosView.axaml]
 build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml
 
-[/home/jeth/projects/SmartGest/SmartGest.Desktop/Views/DashboardView.axaml]
+[/home/hidden/Project/SmartGest/SmartGest.Desktop/Views/DashboardView.axaml]
 build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml
 
-[/home/jeth/projects/SmartGest/SmartGest.Desktop/Views/DreView.axaml]
+[/home/hidden/Project/SmartGest/SmartGest.Desktop/Views/DreView.axaml]
 build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml
 
-[/home/jeth/projects/SmartGest/SmartGest.Desktop/Views/LoginView.axaml]
+[/home/hidden/Project/SmartGest/SmartGest.Desktop/Views/LoginView.axaml]
 build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml
 
-[/home/jeth/projects/SmartGest/SmartGest.Desktop/Views/MainWindow.axaml]
+[/home/hidden/Project/SmartGest/SmartGest.Desktop/Views/MainWindow.axaml]
 build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml
 
-[/home/jeth/projects/SmartGest/SmartGest.Desktop/Views/NovoLancamentoView.axaml]
+[/home/hidden/Project/SmartGest/SmartGest.Desktop/Views/NovoLancamentoView.axaml]
 build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml
 
-[/home/jeth/projects/SmartGest/SmartGest.Desktop/Views/SplashView.axaml]
+[/home/hidden/Project/SmartGest/SmartGest.Desktop/Views/SplashView.axaml]
 build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml

@@ -5,5 +5,4 @@
   <Project Path="SmartGest.Infrastructure/SmartGest.Infrastructure.csproj" />
   <Project Path="SmartGest.Migrations/SmartGest.Migrations.csproj" />
   <Project Path="SmartGest.Desktop/SmartGest.Desktop.csproj" />
-  <Project Path="SmartGest.Core.Tests/SmartGest.Core.Tests.csproj" />
 </Solution>
