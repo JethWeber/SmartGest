@@ -33,8 +33,17 @@ public partial class MainWindowViewModel : ViewModelBase
     // ── Factory para NovoLancamentoViewModel (injectada pelo DI) ─────────────
     private readonly Func<NovoLancamentoViewModel> _novoLancamentoFactory;
     private readonly SessionSecurityService _sessionSecurity;
+    private readonly FirstRunService _firstRunService;
 
     public UiFeedbackService Feedback { get; }
+
+    [ObservableProperty] private bool _onboardingVisible;
+    [ObservableProperty] private int _onboardingStep;
+    [ObservableProperty] private string _onboardingTitle = string.Empty;
+    [ObservableProperty] private string _onboardingDescription = string.Empty;
+    [ObservableProperty] private string _onboardingProgress = string.Empty;
+    [ObservableProperty] private string _onboardingAction = "Começar";
+    [ObservableProperty] private bool _onboardingIsLast;
 
     // ── Evento que a View subscreve para abrir o modal ────────────────────────
     public event Action<NovoLancamentoViewModel>? PedirAbrirNovoLancamento;
@@ -55,11 +64,13 @@ public partial class MainWindowViewModel : ViewModelBase
         BalancoViewModel balancoVm,
         DreViewModel dreVm,
         UiFeedbackService feedback,
-        SessionSecurityService sessionSecurity)
+        SessionSecurityService sessionSecurity,
+        FirstRunService firstRunService)
     {
         _novoLancamentoFactory = novoLancamentoFactory;
         Feedback = feedback;
         _sessionSecurity = sessionSecurity;
+        _firstRunService = firstRunService;
         _sessionSecurity.SessionExpired += () => SessionExpiredRequested?.Invoke();
 
         UsuarioNome      = store.Nome;
@@ -95,8 +106,65 @@ public partial class MainWindowViewModel : ViewModelBase
         App.Services.GetRequiredService<BalancoViewModel>(),
         App.Services.GetRequiredService<DreViewModel>(),
         App.Services.GetRequiredService<UiFeedbackService>(),
-        App.Services.GetRequiredService<SessionSecurityService>())
+        App.Services.GetRequiredService<SessionSecurityService>(),
+        App.Services.GetRequiredService<FirstRunService>())
     { }
+
+    // ── Onboarding completo da aplicação ─────────────────────────────────────
+
+    public void IniciarOnboarding()
+    {
+        if (_firstRunService.IsCompleted) return;
+        OnboardingStep = 0;
+        OnboardingVisible = true;
+        AtualizarOnboarding();
+    }
+
+    [RelayCommand]
+    private void ProximoOnboarding()
+    {
+        if (OnboardingIsLast)
+        {
+            FecharOnboarding();
+            return;
+        }
+
+        OnboardingStep++;
+        if (OnboardingStep is >= 1 and <= 6)
+            SelectedMenuIndex = OnboardingStep switch
+            {
+                1 => 0, 2 => 1, 3 => 2, 4 => 5, 5 => 6, 6 => 6, _ => 0
+            };
+        AtualizarOnboarding();
+    }
+
+    [RelayCommand]
+    private void SaltarOnboarding() => FecharOnboarding();
+
+    private void FecharOnboarding()
+    {
+        OnboardingVisible = false;
+        _firstRunService.MarkCompleted();
+    }
+
+    private void AtualizarOnboarding()
+    {
+        (OnboardingTitle, OnboardingDescription) = OnboardingStep switch
+        {
+            0 => ("Bem-vindo ao SmartGest", "Este é um tour rápido pela aplicação. Vamos mostrar onde encontrar as principais áreas, como registar movimentos e onde configurar segurança e preferências."),
+            1 => ("Dashboard", "É o centro de controlo do SmartGest. Aqui acompanha os principais indicadores, movimentos recentes, saldos e alertas da empresa."),
+            2 => ("Caixa", "Use o Caixa para registar lançamentos e movimentos financeiros do dia a dia. Os lançamentos ficam integrados com a contabilidade."),
+            3 => ("Relatórios e contabilidade", "Balancete, Balanço Patrimonial e DRE permitem consultar a posição financeira e o desempenho da empresa."),
+            4 => ("Contas e Bancos", "Consulte contas bancárias e movimentos associados para manter a tesouraria organizada e acompanhar os saldos."),
+            5 => ("Configurações", "Aqui gere os dados da empresa, utilizadores, aparência, notificações, segurança e integrações da aplicação."),
+            6 => ("Segurança", "Dentro de Configurações > Segurança pode alterar a senha, configurar o tempo da sessão, auditoria e outras proteções disponíveis."),
+            _ => ("Está pronto", "O tour terminou. Pode navegar livremente pelo SmartGest. Se precisar de voltar a estas informações, consulte Configurações ou o menu da aplicação.")
+        };
+
+        OnboardingProgress = OnboardingStep == 0 ? "Introdução" : $"Passo {OnboardingStep} de 6";
+        OnboardingAction = OnboardingStep >= 7 ? "Concluir" : OnboardingStep == 6 ? "Concluir tour" : OnboardingStep == 0 ? "Começar" : "Próximo";
+        OnboardingIsLast = OnboardingStep >= 6;
+    }
 
     // ── Navegação ─────────────────────────────────────────────────────────────
 
