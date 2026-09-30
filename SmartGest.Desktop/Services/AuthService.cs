@@ -25,7 +25,7 @@ public class AuthService
             .AsNoTracking()
             .FirstOrDefaultAsync(u => u.Telefone == telefone && u.Activo);
 
-        if (user is null || !BCrypt.Verify(password, user.PasswordHash))
+        if (user is null || !BCrypt.Net.BCrypt.Verify(password, user.PasswordHash))
             throw new UnauthorizedAccessException("Número ou senha incorretos.");
 
         _store.Token = "LOCAL";
@@ -45,11 +45,11 @@ public class AuthService
             throw new ArgumentException("As senhas não coincidem.");
 
         var user = await db.Utilizadores.FirstOrDefaultAsync(u => u.Telefone == _store.Telefone);
-        if (user is null || !BCrypt.Verify(senhaAtual, user.PasswordHash))
+        if (user is null || !BCrypt.Net.BCrypt.Verify(senhaAtual, user.PasswordHash))
             throw new UnauthorizedAccessException("Senha actual incorrecta.");
 
         await db.Database.ExecuteSqlInterpolatedAsync(
-            $"UPDATE Utilizadores SET PasswordHash = {BCrypt.HashPassword(senhaNova, workFactor: 12)} WHERE Id = {user.Id}");
+            $"UPDATE Utilizadores SET PasswordHash = {BCrypt.Net.BCrypt.HashPassword(senhaNova, workFactor: 12)} WHERE Id = {user.Id}");
     }
 
     public void Logout() => _store.Limpar();
