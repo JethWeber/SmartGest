@@ -3,6 +3,29 @@
              xmlns:vm="using:SmartGest.Desktop.ViewModels"
              x:Class="SmartGest.Desktop.Views.InitialSetupView"
              x:DataType="vm:InitialSetupViewModel">
+
+  <UserControl.Styles>
+    <Style Selector="Border.sg-card">
+      <Setter Property="CornerRadius" Value="14"/>
+      <Setter Property="BorderThickness" Value="1"/>
+      <Setter Property="BorderBrush" Value="{DynamicResource SgCardBorder}"/>
+      <Setter Property="Background" Value="{DynamicResource SgCardBackground}"/>
+      <Setter Property="BoxShadow" Value="0 4 24 0 #28000000"/>
+    </Style>
+    <Style Selector="TextBlock.field-label">
+      <Setter Property="FontSize" Value="11"/>
+      <Setter Property="Foreground" Value="{DynamicResource SgTextSecondary}"/>
+      <Setter Property="Margin" Value="0,0,0,4"/>
+    </Style>
+    <Style Selector="TextBox.sg-input">
+      <Setter Property="Background" Value="{DynamicResource SgInputBackground}"/>
+      <Setter Property="BorderBrush" Value="{DynamicResource SgInputBorder}"/>
+      <Setter Property="BorderThickness" Value="1"/>
+      <Setter Property="CornerRadius" Value="7"/>
+      <Setter Property="Padding" Value="10,8"/>
+    </Style>
+  </UserControl.Styles>
+
   <Border Background="{DynamicResource SgAppBackground}">
     <Grid RowDefinitions="Auto,*,Auto">
       <StackPanel Grid.Row="0" Margin="48,34,48,18" Spacing="6">
