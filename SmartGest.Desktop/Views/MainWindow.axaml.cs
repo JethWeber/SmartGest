@@ -1,5 +1,6 @@
 using Avalonia.Controls;
 using Avalonia.Input;
+using SmartGest.Desktop.ViewModels;
 
 namespace SmartGest.Desktop.Views;
 
@@ -8,6 +9,8 @@ public partial class MainWindow : Window
     public MainWindow()
     {
         InitializeComponent();
+        AddHandler(PointerMovedEvent, (_, _) => (DataContext as MainWindowViewModel)?.RegistarActividade(), RoutingStrategies.Tunnel);
+        AddHandler(KeyDownEvent, (_, _) => (DataContext as MainWindowViewModel)?.RegistarActividade(), RoutingStrategies.Tunnel);
 
         // Liga os eventos de hover da sidebar ao overlay
         Sidebar.PointerEntered += OnSidebarPointerEntered;
