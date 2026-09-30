@@ -230,9 +230,9 @@
           <StackPanel Grid.Column="1" VerticalAlignment="Center">
             <TextBlock Text="Novo Lançamento"
                        FontSize="17" FontWeight="Bold"
-                       Foreground="#F0F6FF"/>
+                       Foreground="{DynamicResource SgTextPrimary}"/>
             <TextBlock Text="Registe uma nova movimentação financeira"
-                       FontSize="11" Foreground="#55FFFFFF" Margin="0,2,0,0"/>
+                       FontSize="11" Foreground="{DynamicResource SgTextMuted}" Margin="0,2,0,0"/>
           </StackPanel>
 
           <Button Grid.Column="2"
@@ -391,7 +391,7 @@
                              CornerRadius="8,0,0,8"/>
                     <Border Grid.Column="1"
                             Background="#1A2196F3"
-                            BorderBrush="#25FFFFFF"
+                            BorderBrush="{DynamicResource SgInputBorder}"
                             BorderThickness="0,1.5,1.5,1.5"
                             CornerRadius="0,8,8,0"
                             Padding="14,0">
@@ -495,7 +495,7 @@
 
                 <StackPanel Grid.Column="2" Spacing="0">
                   <TextBlock Classes="lbl" Text="Documento / Recibo (Opcional)"/>
-                  <Border Background="#12FFFFFF"
+                  <Border Background="{DynamicResource SgInputBackground}"
                           BorderBrush="{Binding CorBordaDoc}"
                           BorderThickness="1.5"
                           CornerRadius="8">
@@ -579,9 +579,9 @@
                            Height="90"/>
                   <Grid Margin="2,4,0,0">
                     <TextBlock Text="Máx. 500 caracteres"
-                               FontSize="10" Foreground="#60FFFFFF"/>
+                               FontSize="10" Foreground="{DynamicResource SgTextMuted}"/>
                     <TextBlock Text="{Binding ContadorObs}"
-                               FontSize="10" Foreground="#60FFFFFF"
+                               FontSize="10" Foreground="{DynamicResource SgTextMuted}"
                                HorizontalAlignment="Right"/>
                   </Grid>
                 </StackPanel>
@@ -631,7 +631,7 @@
                              Width="15" Height="15"
                              Foreground="#1A73E8"/>
             <TextBlock Text="A guardar lançamento..."
-                       FontSize="12" Foreground="#C8DCFF"
+                       FontSize="12" Foreground="{DynamicResource SgTextSecondary}"
                        VerticalAlignment="Center"/>
           </StackPanel>
 
