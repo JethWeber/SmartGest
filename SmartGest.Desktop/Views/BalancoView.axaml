@@ -157,7 +157,7 @@
           <StackPanel Grid.Column="0">
             <TextBlock Text="Balanço Patrimonial"
                        FontSize="26" FontWeight="Bold"
-                       Foreground="#F0F6FF"/>
+                       Foreground="{DynamicResource SgTextPrimary}"/>
             <TextBlock Text="Posição financeira da empresa num determinado momento"
                        FontSize="12" Foreground="#9AA0AB" Margin="0,2,0,0"/>
           </StackPanel>
@@ -612,7 +612,7 @@
             <TextBlock Grid.Column="2"
                        Text="{Binding PeriodoTexto}"
                        FontSize="11" FontWeight="SemiBold"
-                       Foreground="#C8DCFF"
+                       Foreground="{DynamicResource SgTextSecondary}"
                        VerticalAlignment="Center"
                        Margin="16,0,0,0"/>
           </Grid>
