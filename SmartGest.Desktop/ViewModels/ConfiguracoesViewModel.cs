@@ -11,17 +11,20 @@ public partial class ConfiguracoesViewModel : ViewModelBase
 {
     private readonly ConfiguracoesService _configService;
     private readonly AuthService _authService;
+    private readonly ThemeService _themeService;
 
-    public ConfiguracoesViewModel(ConfiguracoesService configService, AuthService authService)
+    public ConfiguracoesViewModel(ConfiguracoesService configService, AuthService authService, ThemeService themeService)
     {
         _configService = configService;
         _authService = authService;
+        _themeService = themeService;
         _ = CarregarAsync();
     }
 
     public ConfiguracoesViewModel() : this(
         App.Services.GetRequiredService<ConfiguracoesService>(),
-        App.Services.GetRequiredService<AuthService>()) { }
+        App.Services.GetRequiredService<AuthService>(),
+        App.Services.GetRequiredService<ThemeService>()) { }
 
     private async Task CarregarAsync()
     {
@@ -90,13 +93,15 @@ public partial class ConfiguracoesViewModel : ViewModelBase
     // TAB 2 · APARÊNCIA
     // ════════════════════════════════════════════════════════════════════════
 
-    [ObservableProperty] private int  _temaIndex    = 0;   // 0=Claro, 1=Escuro, 2=Sistema
+    [ObservableProperty] private int  _temaIndex    = 3;   // 0=Claro, 1=Escuro, 2=Sistema, 3=SG Tema
     [ObservableProperty] private int  _idiomaIndex  = 0;   // 0=Português, 1=Inglês
     [ObservableProperty] private int  _moedaIndex   = 0;   // 0=Kzs, 1=USD, 2=EUR
     [ObservableProperty] private int  _dataFormatoIndex = 0; // 0=dd/MM/yyyy, 1=MM/dd/yyyy
     [ObservableProperty] private bool _mostrarSparklines    = true;
     [ObservableProperty] private bool _animacoesAtivadas    = true;
     [ObservableProperty] private bool _mostrarSaldosOcultos = false;
+
+    partial void OnTemaIndexChanged(int value) => _themeService.Apply(value);
 
     // ════════════════════════════════════════════════════════════════════════
     // TAB 3 · NOTIFICAÇÕES
