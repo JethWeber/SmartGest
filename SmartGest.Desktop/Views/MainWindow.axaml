@@ -188,11 +188,7 @@
   <Panel>
 
     <!-- Gradiente de fundo -->
-    <Border Background="{DynamicResource SgAppBackground}">
-      <Border.Background>
-        {DynamicResource SgAppBackground}
-      </Border.Background>
-    </Border>
+    <Border Background="{DynamicResource SgAppBackground}"/>
 
     <!-- Orbe topo direito -->
     <Ellipse Width="600" Height="600"
