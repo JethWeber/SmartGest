@@ -71,7 +71,7 @@ public sealed class FirstRunService
         try
         {
             Directory.CreateDirectory(Path.GetDirectoryName(_path)!);
-            File.WriteAllText(_path, JsonSerializer.Serialize(new State(completed), new JsonSerializerOptions { WriteIndented = true }));
+            File.WriteAllText(_path, JsonSerializer.Serialize(ReadState() with { Completed = completed }, new JsonSerializerOptions { WriteIndented = true }));
         }
         catch (Exception ex) { AppLogService.Error("Não foi possível guardar o estado de configuração inicial.", ex); }
     }
