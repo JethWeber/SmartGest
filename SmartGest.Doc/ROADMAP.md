@@ -1,79 +1,144 @@
 # SmartGest — Roadmap
 
+## 🚨 Prioridade atual
+
+**Desktop Local primeiro. Web/API depois.**
+
+Estamos a trabalhar contra o relógio. Nenhuma funcionalidade Web/API deve bloquear a primeira versão produtiva.
+
+---
+
 ## Fase 0 — Baseline
 
 - [ ] Congelar versão atual
 - [ ] Mapear arquitetura existente
-- [ ] Identificar dependências PostgreSQL/Docker
-- [ ] Identificar regras de negócio misturadas com UI/API
+- [ ] Identificar entidades
+- [ ] Identificar regras de negócio
+- [ ] Identificar persistência atual
+- [ ] Identificar dependências externas
+- [ ] Identificar funcionalidades já funcionais no Desktop
 
-## Fase 1 — Domain
+---
 
-- [ ] Criar SmartGest.Domain
-- [ ] Migrar entidades
-- [ ] Migrar regras
-- [ ] Definir interfaces
+## Fase 1 — SmartGest.Domain
 
-## Fase 2 — Application
+**Objetivo:** separar o negócio da interface e da infraestrutura.
 
-- [ ] Criar SmartGest.Application
-- [ ] Casos de uso
-- [ ] DTOs
-- [ ] Validações
-- [ ] Tratamento de erros
+- [ ] Criar projeto SmartGest.Domain
+- [ ] Migrar entidades existentes
+- [ ] Migrar enums
+- [ ] Criar value objects necessários
+- [ ] Extrair regras de negócio
+- [ ] Criar exceções de domínio
+- [ ] Definir contratos essenciais
+- [ ] Remover dependências de UI
+- [ ] Remover dependências de banco específico
+- [ ] Compilar Domain isoladamente
 
-## Fase 3 — Infrastructure
+**Critério de conclusão:**
 
-- [ ] Criar SmartGest.Infrastructure
-- [ ] PostgreSQL
+`SmartGest.Domain` deve representar o negócio sem precisar de Desktop, API ou banco específico.
+
+---
+
+## Fase 2 — SmartGest.Application
+
+**Objetivo:** transformar as funcionalidades atuais em casos de uso reutilizáveis pelo Desktop.
+
+- [ ] Criar projeto SmartGest.Application
+- [ ] Criar DTOs necessários
+- [ ] Criar interfaces de persistência
+- [ ] Criar serviços/casos de uso
+- [ ] Migrar operações de negócio do Desktop
+- [ ] Centralizar validações
+- [ ] Centralizar tratamento de erros
+- [ ] Garantir transações nas operações críticas
+- [ ] Fazer Desktop consumir Application
+- [ ] Remover lógica empresarial dos ViewModels
+- [ ] Testar casos de uso
+
+**Critério de conclusão:**
+
+O Desktop deve executar as operações principais através de Application, sem duplicar regras de negócio nos ViewModels.
+
+---
+
+## Fase 3 — SmartGest.Infrastructure Local
+
 - [ ] SQLite
-- [ ] Repositórios
+- [ ] EF Core
+- [ ] DbContext
 - [ ] Migrations
+- [ ] Repositórios
+- [ ] Seed inicial quando necessário
 - [ ] Logs
 - [ ] Backup
+- [ ] Restore
+- [ ] Integridade da base
 
-## Fase 4 — Web/API
+---
 
-- [ ] Isolar Controllers
-- [ ] Autenticação
-- [ ] Autorização
-- [ ] Error handling
-- [ ] OpenAPI
-- [ ] Health checks
+## Fase 4 — SmartGest.Desktop
 
-## Fase 5 — Desktop
-
-- [ ] Criar SmartGest.Desktop
+- [ ] Integrar Domain
 - [ ] Integrar Application
-- [ ] Integrar SQLite
-- [ ] Login local
-- [ ] Configuração
+- [ ] Integrar Infrastructure
+- [ ] Garantir funcionamento 100% offline
+- [ ] Corrigir fluxos existentes
+- [ ] Persistência completa
+- [ ] Estados de loading/erro/vazio
+- [ ] Impressão/exportação quando aplicável
+- [ ] Configurações
 - [ ] Backup/restore
 
-## Fase 6 — Produção
+---
+
+## Fase 5 — Produção Local
 
 - [ ] Installer
-- [ ] Atualizações
-- [ ] Logs
-- [ ] Diagnóstico
-- [ ] Documentação operacional
+- [ ] Configuração de diretórios
+- [ ] Logs de diagnóstico
+- [ ] Atualização
+- [ ] Migração de versões
+- [ ] Testes em máquinas reais
+- [ ] Teste de recuperação
+- [ ] Checklist de release
 
-## Fase 7 — Validação
+---
+
+## Fase 6 — Validação
 
 - [ ] Unit tests
 - [ ] Integration tests
-- [ ] API tests
-- [ ] Desktop tests
 - [ ] E2E
 - [ ] Performance
-- [ ] Recovery
+- [ ] Backup/restore
+- [ ] Teste offline
+- [ ] Teste de atualização
+
+---
+
+## Fase 7 — Web/API
+
+**Só depois da edição Desktop estar estável.**
+
+- [ ] SmartGest.Web/API
+- [ ] PostgreSQL
+- [ ] Autenticação server
+- [ ] Autorização
+- [ ] OpenAPI
+- [ ] Health checks
+- [ ] Deployment server
+
+---
 
 ## Fase 8 — Futuro
 
-- [ ] Sincronização Local ↔ Server
+- [ ] SmartGest Server
 - [ ] SmartGest Cloud
+- [ ] Sincronização Local ↔ Server
 - [ ] Gestão centralizada
 
-## Critério
+## Regra
 
-Uma fase só deve ser marcada como concluída quando houver implementação funcional e validação correspondente.
+Não marcar uma fase como concluída apenas porque os projetos compilam. A funcionalidade precisa estar integrada e validada.
