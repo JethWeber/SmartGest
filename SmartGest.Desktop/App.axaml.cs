@@ -2,6 +2,7 @@ using System;
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Data.Core.Plugins;
+using Avalonia.Threading;
 using System.Linq;
 using System.IO;
 using Avalonia.Markup.Xaml;
@@ -32,6 +33,20 @@ public partial class App : Avalonia.Application
         var collection = new ServiceCollection();
         RegisterServices(collection);
         Services = collection.BuildServiceProvider();
+
+        Dispatcher.UIThread.UnhandledException += (_, e) =>
+        {
+            AppLogService.Error("Erro não tratado na interface.", e.Exception);
+            Services.GetRequiredService<UiFeedbackService>().ShowError("Ocorreu um erro inesperado. Consulte os logs para mais detalhes.");
+            e.Handled = true;
+        };
+        AppDomain.CurrentDomain.UnhandledException += (_, e) =>
+            AppLogService.Error("Erro não tratado no processo.", e.ExceptionObject as Exception);
+        TaskScheduler.UnobservedTaskException += (_, e) =>
+        {
+            AppLogService.Error("Excepção não observada numa tarefa.", e.Exception);
+            e.SetObserved();
+        };
 
         // Inicializa a base local antes de abrir o primeiro ecrã.
         // O caminho fica no perfil do utilizador, nunca dentro da pasta da aplicação.
