@@ -1,0 +1,45 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:SmartGest.Desktop.ViewModels"
+             x:Class="SmartGest.Desktop.Views.InitialSetupView"
+             x:DataType="vm:InitialSetupViewModel">
+  <Border Background="{DynamicResource SgAppBackground}">
+    <Grid RowDefinitions="Auto,*,Auto">
+      <StackPanel Grid.Row="0" Margin="48,34,48,18" Spacing="6">
+        <TextBlock Text="Configuração inicial" FontSize="28" FontWeight="Bold" Foreground="{DynamicResource SgTextPrimary}"/>
+        <TextBlock Text="Antes de começar, configure a empresa e a primeira conta bancária do SmartGest." FontSize="14" Foreground="{DynamicResource SgTextSecondary}"/>
+      </StackPanel>
+      <ScrollViewer Grid.Row="1" Margin="48,0" VerticalScrollBarVisibility="Auto">
+        <Grid ColumnDefinitions="*,24,*" MaxWidth="1000" HorizontalAlignment="Center">
+          <Border Grid.Column="0" Classes="sg-card" Padding="24">
+            <StackPanel Spacing="12">
+              <TextBlock Text="Dados da empresa" FontSize="17" FontWeight="SemiBold" Foreground="{DynamicResource SgTextPrimary}"/>
+              <TextBlock Text="Nome da empresa *" Classes="field-label"/><TextBox Text="{Binding EmpresaNome}" Classes="sg-input"/>
+              <TextBlock Text="NIF" Classes="field-label"/><TextBox Text="{Binding EmpresaNif}" Classes="sg-input"/>
+              <TextBlock Text="Morada" Classes="field-label"/><TextBox Text="{Binding EmpresaMorada}" Classes="sg-input"/>
+              <TextBlock Text="Cidade" Classes="field-label"/><TextBox Text="{Binding EmpresaCidade}" Classes="sg-input"/>
+              <TextBlock Text="Telefone" Classes="field-label"/><TextBox Text="{Binding EmpresaTelefone}" Classes="sg-input"/>
+              <TextBlock Text="Email" Classes="field-label"/><TextBox Text="{Binding EmpresaEmail}" Classes="sg-input"/>
+            </StackPanel>
+          </Border>
+          <Border Grid.Column="2" Classes="sg-card" Padding="24">
+            <StackPanel Spacing="12">
+              <TextBlock Text="Primeira conta bancária" FontSize="17" FontWeight="SemiBold" Foreground="{DynamicResource SgTextPrimary}"/>
+              <TextBlock Text="Banco *" Classes="field-label"/><TextBox Text="{Binding Banco}" Classes="sg-input" Watermark="Ex.: BFA, BIC, BAI..."/>
+              <TextBlock Text="NIB" Classes="field-label"/><TextBox Text="{Binding Nib}" Classes="sg-input"/>
+              <TextBlock Text="Titular" Classes="field-label"/><TextBox Text="{Binding Titular}" Classes="sg-input"/>
+              <TextBlock Text="Saldo inicial" Classes="field-label"/><TextBox Text="{Binding SaldoInicial}" Classes="sg-input"/>
+              <Border Margin="0,8,0,0" Padding="12" CornerRadius="8" Background="{DynamicResource SgSubtleBackground}">
+                <TextBlock Text="A conta será criada em AOA como Conta à Ordem. Poderá completar ou alterar os restantes dados depois em Contas e Bancos." Foreground="{DynamicResource SgTextMuted}" FontSize="12" TextWrapping="Wrap"/>
+              </Border>
+            </StackPanel>
+          </Border>
+        </Grid>
+      </ScrollViewer>
+      <StackPanel Grid.Row="2" Margin="48,18" Spacing="10">
+        <TextBlock Text="{Binding Erro}" Foreground="#E53935" TextWrapping="Wrap"/>
+        <Button Content="Guardar e começar" Command="{Binding GuardarCommand}" Classes="btn-primary" HorizontalAlignment="Right"/>
+      </StackPanel>
+    </Grid>
+  </Border>
+</UserControl>
