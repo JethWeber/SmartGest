@@ -44,7 +44,7 @@ public partial class ConfiguracoesViewModel : ViewModelBase
             Utilizadores.Clear();
             foreach(var u in s.Utilizadores) Utilizadores.Add(new(u.Nome,u.Email,u.Perfil,u.Activo,u.Iniciais,u.CorAvatar));
         }
-        catch { }
+        catch (Exception ex) { AppLogService.Error("Falha ao carregar configurações.", ex); }
     }
     // ── Tab activa ────────────────────────────────────────────────────────────
     [ObservableProperty] private int _tabIndex = 0;
