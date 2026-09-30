@@ -62,7 +62,10 @@ public class ContasBancariasService
     }
 
     public async Task EliminarAsync(int id)
-        => await db.Database.ExecuteSqlInterpolatedAsync($"UPDATE ContasBancarias SET Activa=0 WHERE Id={id}");
+    {
+        await using var db = await _factory.CreateDbContextAsync();
+        await db.Database.ExecuteSqlInterpolatedAsync($"UPDATE ContasBancarias SET Activa=0 WHERE Id={id}");
+    }
 
     public async Task<MovimentoBancarioDto?> CriarMovimentoAsync(int contaId, MovimentoBancarioRequest req)
     {
