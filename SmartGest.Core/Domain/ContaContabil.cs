@@ -3,9 +3,9 @@ namespace SmartGest.Core.Domain;
 public sealed class ContaContabil
 {
     public int Id { get; private set; }
-    public string Codigo { get; private set; }
-    public string Nome { get; private set; }
-    public string Grupo { get; private set; }
+    public string Codigo { get; private set; } = string.Empty;
+    public string Nome { get; private set; } = string.Empty;
+    public string Grupo { get; private set; } = string.Empty;
     public bool IsDevedora { get; private set; }
     public bool Activa { get; private set; }
     public bool? Corrente { get; private set; }
