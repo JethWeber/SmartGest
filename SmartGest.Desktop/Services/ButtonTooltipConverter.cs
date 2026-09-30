@@ -57,9 +57,9 @@ public sealed class ButtonTooltipConverter : IValueConverter
         {
             foreach (var child in panel.Children)
             {
-                var text = ExtrairTexto(child);
-                if (!string.IsNullOrWhiteSpace(text))
-                    return text;
+                var childText = ExtrairTexto(child);
+                if (!string.IsNullOrWhiteSpace(childText))
+                    return childText;
             }
         }
 
