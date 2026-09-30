@@ -57,7 +57,7 @@ public sealed class LocalDatabaseMaintenance
     public async Task<bool> CheckIntegrityAsync(CancellationToken cancellationToken = default)
     {
         await using var db = await _factory.CreateDbContextAsync(cancellationToken);
-        var result = await db.Database.SqlQueryRaw<string>("PRAGMA integrity_check").FirstOrDefaultAsync(cancellationToken);
+        var result = await db.Database.SqlQueryRaw<string>("SELECT integrity_check AS Value FROM pragma_integrity_check").FirstOrDefaultAsync(cancellationToken);
         return string.Equals(result, "ok", StringComparison.OrdinalIgnoreCase);
     }
 
