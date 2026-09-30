@@ -105,10 +105,8 @@ public partial class App : Avalonia.Application
 
                     var onboarding = Services.GetRequiredService<FirstRunService>();
                     if (!onboarding.IsCompleted)
-                    {
-                        Services.GetRequiredService<UiFeedbackService>().ShowInfo("Bem-vindo ao SmartGest. Explore Configurações para concluir a personalização inicial.");
-                        onboarding.MarkCompleted();
-                    }
+                        mainVm.IniciarOnboarding();
+
                     login.Close();
 
                 };
