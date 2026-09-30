@@ -28,12 +28,16 @@ public sealed class FirstRunService
         }
     }
 
-    public void MarkCompleted()
+    public void Reset() => MarkCompleted(false);
+
+    public void MarkCompleted() => MarkCompleted(true);
+
+    private void MarkCompleted(bool completed)
     {
         try
         {
             Directory.CreateDirectory(Path.GetDirectoryName(_path)!);
-            File.WriteAllText(_path, JsonSerializer.Serialize(new State(true), new JsonSerializerOptions { WriteIndented = true }));
+            File.WriteAllText(_path, JsonSerializer.Serialize(new State(completed), new JsonSerializerOptions { WriteIndented = true }));
         }
         catch (Exception ex) { AppLogService.Error("Não foi possível guardar o estado de configuração inicial.", ex); }
     }
