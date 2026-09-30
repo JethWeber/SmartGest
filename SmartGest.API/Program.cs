@@ -76,7 +76,11 @@ builder.Services.AddProblemDetails();
 // ── CORS ──────────────────────────────────────────────────────────────────────
 var allowedOrigins = builder.Configuration
     .GetSection("Cors:AllowedOrigins")
-    .Get<string[]>() ?? Array.Empty<string>();
+    .GetChildren()
+    .Select(x => x.Value)
+    .Where(x => !string.IsNullOrWhiteSpace(x))
+    .Select(x => x!)
+    .ToArray();
 
 builder.Services.AddCors(opt =>
 {
