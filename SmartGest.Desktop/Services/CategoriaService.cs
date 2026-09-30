@@ -1,25 +1,25 @@
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+using SmartGest.Infrastructure.Persistence;
 
 namespace SmartGest.Desktop.Services;
 
-/// <summary>
-/// Obtém as categorias financeiras válidas da API.
-/// GET /api/categorias?tipo=Entrada|Saída
-/// </summary>
 public class CategoriaService
 {
-    private readonly ApiClient _api;
-    public CategoriaService(ApiClient api) => _api = api;
+    private readonly SmartGestDbContext _db;
+    public CategoriaService(SmartGestDbContext db) => _db = db;
 
     public async Task<List<CategoriaItem>> ListarAsync(string? tipo = null)
     {
-        var url = "api/categorias";
-        if (!string.IsNullOrEmpty(tipo))
-            url += $"?tipo={System.Uri.EscapeDataString(tipo)}";
+        var query = _db.CategoriaContabeis.AsNoTracking().Where(x => x.Ativo);
+        if (!string.IsNullOrWhiteSpace(tipo))
+            query = query.Where(x => x.Tipo == tipo);
 
-        var resp = await _api.GetAsync<List<CategoriaItem>>(url);
-        return resp ?? new List<CategoriaItem>();
+        return await query.OrderBy(x => x.Id)
+            .Select(x => new CategoriaItem(x.Id, x.Nome, x.Tipo))
+            .ToListAsync();
     }
 
     public record CategoriaItem(int? Id, string Nome, string Tipo)
