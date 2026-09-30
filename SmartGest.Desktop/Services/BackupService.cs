@@ -36,7 +36,7 @@ public sealed class BackupService
         if (!File.Exists(path)) return false;
         try
         {
-            // O SQLite backup é validado abrindo-o através de uma cópia temporária.
+            // Validação estrutural mínima: o ficheiro existe e pode ser copiado integralmente.
             var temp = Path.Combine(Path.GetTempPath(), $"smartgest_validate_{Guid.NewGuid():N}.db");
             File.Copy(path, temp);
             try
