@@ -76,7 +76,7 @@ public partial class LoginViewModel : ViewModelBase
             // Navega na UI thread (pode ser chamado de uma thread de background)
             await Dispatcher.UIThread.InvokeAsync(() => LoginSucceeded?.Invoke());
         }
-        catch (ApiException ex) when (ex.StatusCode == HttpStatusCode.Unauthorized)
+        catch (UnauthorizedAccessException)
         {
             SetError("Número ou senha incorretos. Tente novamente.");
         }
