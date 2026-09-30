@@ -3,13 +3,13 @@ namespace SmartGest.Core.Domain;
 public sealed class CategoriaContabil
 {
     public int Id { get; private set; }
-    public string Nome { get; private set; }
-    public string Tipo { get; private set; }
-    public string ContaDebito { get; private set; }
-    public string ContaCredito { get; private set; }
-    public string GrupoDre { get; private set; }
-    public string GrupoBalanco { get; private set; }
-    public string GrupoFluxoCaixa { get; private set; }
+    public string Nome { get; private set; } = string.Empty;
+    public string Tipo { get; private set; } = string.Empty;
+    public string ContaDebito { get; private set; } = string.Empty;
+    public string ContaCredito { get; private set; } = string.Empty;
+    public string GrupoDre { get; private set; } = string.Empty;
+    public string GrupoBalanco { get; private set; } = string.Empty;
+    public string GrupoFluxoCaixa { get; private set; } = string.Empty;
     public bool AplicaImpostoSelo { get; private set; }
     public bool Ativo { get; private set; }
 
