@@ -13,19 +13,8 @@
       <Setter Property="BorderThickness" Value="1"/>
       <Setter Property="Padding"         Value="24"/>
       <Setter Property="BoxShadow"       Value="0 4 24 0 #28000000"/>
-      <Setter Property="BorderBrush">
-        <LinearGradientBrush StartPoint="0%,0%" EndPoint="100%,100%">
-          <GradientStop Offset="0"   Color="#30FFFFFF"/>
-          <GradientStop Offset="0.5" Color="#10FFFFFF"/>
-          <GradientStop Offset="1"   Color="#05FFFFFF"/>
-        </LinearGradientBrush>
-      </Setter>
-      <Setter Property="Background">
-        <LinearGradientBrush StartPoint="0%,0%" EndPoint="100%,100%">
-          <GradientStop Offset="0" Color="#16FFFFFF"/>
-          <GradientStop Offset="1" Color="#0AFFFFFF"/>
-        </LinearGradientBrush>
-      </Setter>
+      <Setter Property="BorderBrush" Value="{DynamicResource SgCardBorder}"/>
+      <Setter Property="Background" Value="{DynamicResource SgCardBackground}"/>
     </Style>
 
     <!-- ── Título de grupo dentro de um card ─────────────────────────── -->
@@ -58,8 +47,8 @@
 
     <!-- ── ComboBox ─────────────────────────────────────────────────── -->
     <Style Selector="ComboBox.sg-combo">
-      <Setter Property="Background"      Value="#12FFFFFF"/>
-      <Setter Property="BorderBrush"     Value="#25FFFFFF"/>
+      <Setter Property="Background"      Value="{DynamicResource SgInputBackground}"/>
+      <Setter Property="BorderBrush"     Value="{DynamicResource SgInputBorder}"/>
       <Setter Property="BorderThickness" Value="1"/>
       <Setter Property="CornerRadius"    Value="7"/>
       <Setter Property="Padding"         Value="10,8"/>
@@ -121,7 +110,7 @@
       <Setter Property="BorderBrush"     Value="{DynamicResource SgCardBorder}"/>
     </Style>
     <Style Selector="Button.btn-outline:pointerover /template/ ContentPresenter">
-      <Setter Property="Background" Value="#12FFFFFF"/>
+      <Setter Property="Background" Value="{DynamicResource SgSubtleBackground}"/>
     </Style>
 
     <!-- ── Separador horizontal ─────────────────────────────────────── -->
