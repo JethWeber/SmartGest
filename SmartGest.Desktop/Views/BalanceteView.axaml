@@ -165,9 +165,9 @@
             <StackPanel Grid.Column="0">
               <TextBlock Text="Balancete"
                          FontSize="26" FontWeight="Bold"
-                         Foreground="#F0F6FF"/>
+                         Foreground="{DynamicResource SgTextPrimary}"/>
               <TextBlock Text="Saldos devedores e credores por conta contabilística"
-                         FontSize="12" Foreground="#55FFFFFF" Margin="0,4,0,0"/>
+                         FontSize="12" Foreground="{DynamicResource SgTextMuted}" Margin="0,4,0,0"/>
             </StackPanel>
 
             <StackPanel Grid.Column="1"
@@ -360,7 +360,7 @@
                         <TextBlock Text="{Binding Codigo}"
                                    VerticalAlignment="Center"
                                    FontWeight="SemiBold"
-                                   Foreground="#C8DCFF"
+                                   Foreground="{DynamicResource SgTextSecondary}"
                                    Margin="10,0"/>
                       </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
@@ -372,7 +372,7 @@
                       <DataTemplate x:DataType="vm:BalanceteItem">
                         <TextBlock Text="{Binding NomeConta}"
                                    VerticalAlignment="Center"
-                                   Foreground="#C8DCFF"
+                                   Foreground="{DynamicResource SgTextSecondary}"
                                    Margin="10,0"/>
                       </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
@@ -454,7 +454,7 @@
                                    VerticalAlignment="Center"
                                    TextAlignment="Right"
                                    FontWeight="SemiBold"
-                                   Foreground="#C8DCFF"
+                                   Foreground="{DynamicResource SgTextSecondary}"
                                    Margin="10,0"/>
                       </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
@@ -467,7 +467,7 @@
                                    VerticalAlignment="Center"
                                    TextAlignment="Right"
                                    FontWeight="SemiBold"
-                                   Foreground="#C8DCFF"
+                                   Foreground="{DynamicResource SgTextSecondary}"
                                    Margin="10,0"/>
                       </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
@@ -480,7 +480,7 @@
                                    VerticalAlignment="Center"
                                    TextAlignment="Right"
                                    FontWeight="SemiBold"
-                                   Foreground="#C8DCFF"
+                                   Foreground="{DynamicResource SgTextSecondary}"
                                    Margin="10,0"/>
                       </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
