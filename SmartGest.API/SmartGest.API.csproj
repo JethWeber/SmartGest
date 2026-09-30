@@ -23,7 +23,7 @@
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.9.0" />
 
     <!-- Hashing de passwords -->
-    <PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
+    <PackageReference Include="BCrypt.Net-Next" Version="4.2.0" />
 
     <!-- Swagger / OpenAPI UI -->
     <PackageReference Include="Swashbuckle.AspNetCore" Version="7.3.1" />
