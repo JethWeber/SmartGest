@@ -16,7 +16,7 @@ using SmartGest.Infrastructure;
 
 namespace SmartGest.Desktop;
 
-public partial class App : Application
+public partial class App : Avalonia.Application
 {
     public static ServiceProvider Services { get; private set; } = null!;
 
