@@ -139,13 +139,12 @@ public partial class NovoLancamentoViewModel : ViewModelBase
     }
 
     /// <summary>Construtor sem parâmetros — APENAS para o Avalonia Designer.</summary>
-    public NovoLancamentoViewModel()
+    public NovoLancamentoViewModel() : this(
+        App.Services.GetRequiredService<LancamentoService>(),
+        App.Services.GetRequiredService<ContasBancariasService>(),
+        App.Services.GetRequiredService<CategoriaService>())
     {
-        var stubStore  = new TokenStore();
-        var stubApi    = new ApiClient(stubStore);
-        _lancamentoSvc = new LancamentoService(stubApi);
-        _contasSvc     = new ContasBancariasService(stubApi);
-        _categoriaSvc  = new CategoriaService(stubApi);
+        
 
         // Dados stub para o designer
         ContasOrigem.Add(new ContaItemVm(1, "Banco BIC  ·  4.820.000 Kzs"));
