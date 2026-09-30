@@ -40,7 +40,7 @@ public partial class ConfiguracoesViewModel : ViewModelBase
             NotifEmailAtivo=s.NotifEmail; NotifAppAtivo=s.NotifApp; NotifSaldoBaixo=s.NotifSaldoBaixo;
             NotifLancamentos=s.NotifLancamentos; NotifRelatorios=s.NotifRelatorios; NotifErrosSistema=s.NotifErrosSistema;
             NotifBackup=s.NotifBackup; EmailNotificacoes=s.EmailNotificacoes; LimiarSaldoBaixo=s.LimiarSaldoBaixo.ToString("N0");
-            DoisFatoresAtivo=s.DoisFatoresAtivo; SessaoTempomins=s.SessaoTimeoutMins.ToString(); RegistarAuditoria=s.RegistarAuditoria;
+            DoisFatoresAtivo=s.DoisFatoresAtivo; SessaoTimeoutIndex = s.SessaoTimeoutMins switch { 15 => 0, 30 => 1, 60 => 2, 240 => 3, _ => 4 }; RegistarAuditoria=s.RegistarAuditoria;
             Utilizadores.Clear();
             foreach(var u in s.Utilizadores) Utilizadores.Add(new(u.Nome,u.Email,u.Perfil,u.Activo,u.Iniciais,u.CorAvatar));
         }
@@ -125,7 +125,7 @@ public partial class ConfiguracoesViewModel : ViewModelBase
     [ObservableProperty] private string _senhaNova         = string.Empty;
     [ObservableProperty] private string _senhaConfirmacao  = string.Empty;
     [ObservableProperty] private bool   _doisFatoresAtivo  = false;
-    [ObservableProperty] private string _sessaoTempomins   = "30";
+    [ObservableProperty] private int _sessaoTimeoutIndex = 1;
     [ObservableProperty] private bool   _registarAuditoria = true;
     [ObservableProperty] private string _erroSeguranca     = string.Empty;
     [ObservableProperty] private bool   _temErroSeguranca  = false;
@@ -329,7 +329,7 @@ public partial class ConfiguracoesViewModel : ViewModelBase
     // ── Helpers ──────────────────────────────────────────────────────────────
     private async Task GuardarConfiguracaoAsync(string mensagem)
     {
-        int.TryParse(SessaoTempomins, out var timeout);
+        var timeout = SessaoTimeoutIndex switch { 0 => 15, 1 => 30, 2 => 60, 3 => 240, _ => 0 };
         decimal.TryParse(LimiarSaldoBaixo.Replace(".","").Replace(",", "."), System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out var limiar);
         await _configService.GuardarConfiguracaoAsync(TemaIndex,IdiomaIndex,MoedaIndex,DataFormatoIndex,MostrarSparklines,AnimacoesAtivadas,MostrarSaldosOcultos,
             NotifEmailAtivo,NotifAppAtivo,NotifSaldoBaixo,NotifLancamentos,NotifRelatorios,NotifErrosSistema,NotifBackup,EmailNotificacoes,limiar,DoisFatoresAtivo,timeout,RegistarAuditoria);
