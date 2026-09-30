@@ -12,6 +12,8 @@ public static class DatabaseInitializer
         CancellationToken cancellationToken = default)
     {
         await db.Database.EnsureCreatedAsync(cancellationToken);
+        await db.Database.ExecuteSqlRawAsync("PRAGMA foreign_keys = ON;", cancellationToken);
+        await db.Database.ExecuteSqlRawAsync("PRAGMA journal_mode = WAL;", cancellationToken);
 
         // Compatibilidade de primeira execução: a BD local precisa de um
         // utilizador administrador para funcionar sem API.
