@@ -104,8 +104,28 @@ public partial class App : Avalonia.Application
                     main.Show();
 
                     var onboarding = Services.GetRequiredService<FirstRunService>();
-                    if (!onboarding.IsCompleted)
+                    if (!onboarding.IsSetupCompleted)
+                    {
+                        var setupVm = Services.GetRequiredService<InitialSetupViewModel>();
+                        var setup = new InitialSetupView { DataContext = setupVm };
+                        setupVm.SetupCompleted += () =>
+                            Avalonia.Threading.Dispatcher.UIThread.Post(() =>
+                            {
+                                setup.Close();
+                                if (!onboarding.IsCompleted)
+                                    mainVm.IniciarOnboarding();
+                            });
+                        setup.Closed += (_, _) =>
+                        {
+                            if (!onboarding.IsSetupCompleted)
+                                mainVm.IniciarOnboarding();
+                        };
+                        setup.ShowDialog(main);
+                    }
+                    else if (!onboarding.IsCompleted)
+                    {
                         mainVm.IniciarOnboarding();
+                    }
 
                     login.Close();
 
