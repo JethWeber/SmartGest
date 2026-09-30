@@ -28,6 +28,7 @@ public class AuthService
             throw new UnauthorizedAccessException("Número ou senha incorretos.");
 
         _store.Token = "LOCAL";
+        _store.Telefone = user.Telefone;
         _store.Nome = user.Nome;
         _store.Perfil = user.Perfil;
         _store.Iniciais = user.Iniciais;
