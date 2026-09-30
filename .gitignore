@@ -36,3 +36,8 @@ Thumbs.db
 *.log
 dob
 UI_ViewModels_V2.md
+
+# Local databases and backups
+SmartGest.API/smartgest.db
+SmartGest.API/*.db
+SmartGest.API/Backups/
