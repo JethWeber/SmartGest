@@ -130,10 +130,10 @@ public partial class MainWindowViewModel : ViewModelBase
         }
 
         OnboardingStep++;
-        if (OnboardingStep is >= 1 and <= 6)
+        if (OnboardingStep is >= 1 and <= 8)
             SelectedMenuIndex = OnboardingStep switch
             {
-                1 => 0, 2 => 1, 3 => 2, 4 => 5, 5 => 6, 6 => 6, _ => 0
+                1 => 0, 2 => 1, 3 => 2, 4 => 5, 5 => 6, 6 => 6, 7 => 6, 8 => 6, _ => 0
             };
         AtualizarOnboarding();
     }
@@ -158,12 +158,14 @@ public partial class MainWindowViewModel : ViewModelBase
             4 => ("Contas e Bancos", "Consulte contas bancárias e movimentos associados para manter a tesouraria organizada e acompanhar os saldos."),
             5 => ("Configurações", "Aqui gere os dados da empresa, utilizadores, aparência, notificações, segurança e integrações da aplicação."),
             6 => ("Segurança", "Dentro de Configurações > Segurança pode alterar a senha, configurar o tempo da sessão, auditoria e outras proteções disponíveis."),
-            _ => ("Está pronto", "O tour terminou. Pode navegar livremente pelo SmartGest. Se precisar de voltar a estas informações, consulte Configurações ou o menu da aplicação.")
+            7 => ("API e Integrações", "Em Configurações > API / Integração pode gerir a ligação da aplicação, testar a conexão e configurar webhooks para integrar o SmartGest com outros serviços."),
+            8 => ("Tudo pronto", "O tour terminou. Pode navegar livremente pelo SmartGest. Os dados da empresa, operações financeiras, relatórios, segurança e integrações ficam organizados nos respectivos módulos."),
+            _ => ("Bem-vindo", "Explore o SmartGest através do menu lateral.")
         };
 
-        OnboardingProgress = OnboardingStep == 0 ? "Introdução" : $"Passo {OnboardingStep} de 6";
-        OnboardingAction = OnboardingStep >= 7 ? "Concluir" : OnboardingStep == 6 ? "Concluir tour" : OnboardingStep == 0 ? "Começar" : "Próximo";
-        OnboardingIsLast = OnboardingStep >= 6;
+        OnboardingProgress = OnboardingStep == 0 ? "Introdução" : $"Passo {OnboardingStep} de 8";
+        OnboardingAction = OnboardingStep >= 8 ? "Concluir" : OnboardingStep == 0 ? "Começar" : "Próximo";
+        OnboardingIsLast = OnboardingStep >= 8;
     }
 
     // ── Navegação ─────────────────────────────────────────────────────────────
