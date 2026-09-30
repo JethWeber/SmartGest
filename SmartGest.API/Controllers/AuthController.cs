@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using SmartGest.API.Data;
@@ -13,6 +14,7 @@ namespace SmartGest.API.Controllers;
 
 [ApiController]
 [Route("api/auth")]
+[EnableRateLimiting("login")]
 public class AuthController : ControllerBase
 {
     private readonly AppDbContext _db;
@@ -54,7 +56,7 @@ public class AuthController : ControllerBase
         if (req.SenhaNova != req.SenhaConfirmacao)
             return BadRequest(new { message = "As senhas não coincidem." });
 
-        user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(req.SenhaNova);
+        user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(req.SenhaNova, workFactor: 12);
         await _db.SaveChangesAsync();
         return Ok(new { message = "Senha alterada com sucesso." });
     }
