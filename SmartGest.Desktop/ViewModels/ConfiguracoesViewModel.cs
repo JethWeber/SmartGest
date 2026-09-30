@@ -12,19 +12,22 @@ public partial class ConfiguracoesViewModel : ViewModelBase
     private readonly ConfiguracoesService _configService;
     private readonly AuthService _authService;
     private readonly ThemeService _themeService;
+    private readonly AuditService _auditService;
 
-    public ConfiguracoesViewModel(ConfiguracoesService configService, AuthService authService, ThemeService themeService)
+    public ConfiguracoesViewModel(ConfiguracoesService configService, AuthService authService, ThemeService themeService, AuditService auditService)
     {
         _configService = configService;
         _authService = authService;
         _themeService = themeService;
+        _auditService = auditService;
         _ = CarregarAsync();
     }
 
     public ConfiguracoesViewModel() : this(
         App.Services.GetRequiredService<ConfiguracoesService>(),
         App.Services.GetRequiredService<AuthService>(),
-        App.Services.GetRequiredService<ThemeService>()) { }
+        App.Services.GetRequiredService<ThemeService>(),
+        App.Services.GetRequiredService<AuditService>()) { }
 
     private async Task CarregarAsync()
     {
@@ -177,6 +180,7 @@ public partial class ConfiguracoesViewModel : ViewModelBase
     {
         decimal.TryParse(EmpresaCapital.Replace(".","").Replace(",", "."), System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out var capital);
         await _configService.GuardarEmpresaAsync(EmpresaNome,EmpresaNif,EmpresaMorada,EmpresaCidade,EmpresaPais,EmpresaTelefone,EmpresaEmail,EmpresaWebsite,capital,LogoCaminho);
+        await _auditService.RegistarAsync("Actualizar perfil da empresa", "Empresa", "1");
         await SimularGuardar("Perfil da empresa actualizado com sucesso.");
     }
 
