@@ -214,6 +214,22 @@
       </Ellipse.Fill>
     </Ellipse>
 
+    <!-- Feedback global: sucesso, erro, aviso e informação -->
+    <Border IsVisible="{Binding Feedback.IsVisible}"
+            HorizontalAlignment="Right" VerticalAlignment="Top"
+            Margin="0,24,28,0" Padding="16,12"
+            ZIndex="100" CornerRadius="10"
+            Background="{DynamicResource SgCardBackground}"
+            BorderBrush="{Binding Feedback.AccentColor}" BorderThickness="1"
+            BoxShadow="0 6 24 0 #50000000">
+      <StackPanel Orientation="Horizontal" Spacing="10">
+        <Border Width="4" CornerRadius="2" Background="{Binding Feedback.AccentColor}"/>
+        <TextBlock Text="{Binding Feedback.Message}"
+                   Foreground="{DynamicResource SgTextPrimary}"
+                   FontSize="13" TextWrapping="Wrap" MaxWidth="360"/>
+      </StackPanel>
+    </Border>
+
     <!-- Grid principal -->
     <Grid>
       <Grid.ColumnDefinitions>
