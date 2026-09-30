@@ -14,6 +14,7 @@ public sealed partial class UiFeedbackService : ObservableObject
     [ObservableProperty] private FeedbackKind _kind = FeedbackKind.Info;
     [ObservableProperty] private bool _isVisible;
     [ObservableProperty] private bool _isBusy;
+    [ObservableProperty] private string _accentColor = "#2196F3";
     private CancellationTokenSource? _hideCts;
 
     public async Task BusyAsync(Func<Task> operation, string? successMessage = null)
@@ -52,6 +53,13 @@ public sealed partial class UiFeedbackService : ObservableObject
         {
             Message = message;
             Kind = kind;
+            AccentColor = kind switch
+            {
+                FeedbackKind.Success => "#43A047",
+                FeedbackKind.Error => "#E53935",
+                FeedbackKind.Warning => "#FB8C00",
+                _ => "#2196F3"
+            };
             IsVisible = true;
         }
 
