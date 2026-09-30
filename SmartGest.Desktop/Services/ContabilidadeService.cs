@@ -11,7 +11,7 @@ public record BalanceteItemResponse(string Codigo,string Nome,string Grupo,doubl
 public record BalanceteApiResponse(BalancetePeriodo Periodo,double TotalDebitos,double TotalCreditos,List<BalanceteItemResponse> Items);
 public record BalancetePeriodo(DateTime Inicio,DateTime Fim);
 public record BalancoLinhaResponse(string Descricao,decimal Valor,bool IsDeducao=false);
-public record BalancoApiResponse(List<BalancoLinhaResponse> AtivoCorrentes,List<BalancoLinhaResponse> AtivoNaoCorrentes,List<BalancoLinhaResponse> PassivosCorrentes,List<BalancoLinhaResponse> CapitalProprio,decimal TotalAtivo,decimal TotalPassivo,decimal TotalCapitalProprio,decimal TotalPassivoMaisCapital);
+public record BalancoApiResponse(List<BalancoLinhaResponse> AtivoCorrentes,List<BalancoLinhaResponse> AtivoNaoCorrentes,List<BalancoLinhaResponse> PassivosCorrentes,List<BalancoLinhaResponse> PassivosNaoCorrentes,List<BalancoLinhaResponse> CapitalProprio,decimal TotalAtivo,decimal TotalPassivo,decimal TotalCapitalProprio,decimal TotalPassivoMaisCapital);
 public record DreItemResponse(string Codigo,string Descricao,string Grupo,decimal ValorOrcado,decimal ValorRealizado,bool IsReceita,DateTime DataOrigem);
 public record DreFluxoMensalItem(string Mes,decimal Receita,decimal Despesa,decimal Lucro);
 public record DreSumarioApiResponse(decimal TotalReceitas,decimal TotalCustos,decimal ResultadoLiquido,List<DreItemResponse> Linhas,List<DreFluxoMensalItem> FluxoMensal);
