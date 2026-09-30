@@ -134,9 +134,9 @@
           <StackPanel Grid.Column="0">
             <TextBlock Text="Caixa"
                        FontSize="26" FontWeight="Bold"
-                       Foreground="#F0F6FF"/>
+                       Foreground="{DynamicResource SgTextPrimary}"/>
             <TextBlock Text="Gestão de entradas e saídas de caixa"
-                       FontSize="12" Foreground="#55FFFFFF" Margin="0,4,0,0"/>
+                       FontSize="12" Foreground="{DynamicResource SgTextMuted}" Margin="0,4,0,0"/>
           </StackPanel>
 
           <!-- Botão Nova Transação -->
@@ -154,9 +154,9 @@
               </LinearGradientBrush>
             </Button.Background>
             <StackPanel Orientation="Horizontal" Spacing="8">
-              <mi:MaterialIcon Kind="CashPlus" Width="18" Height="18" Foreground="White"/>
+              <mi:MaterialIcon Kind="CashPlus" Width="18" Height="18" Foreground="{DynamicResource SgTextOnAccent}"/>
               <TextBlock Text="Nova Transação" FontSize="13" FontWeight="SemiBold"
-                         Foreground="White" VerticalAlignment="Center"/>
+                         Foreground="{DynamicResource SgTextOnAccent}" VerticalAlignment="Center"/>
             </StackPanel>
           </Button>
         </Grid>
@@ -346,7 +346,7 @@
                     <DataTemplate x:DataType="vm:LancamentoCaixaItem">
                       <TextBlock Text="{Binding Descricao}"
                                  VerticalAlignment="Center"
-                                 Foreground="#C8DCFF"
+                                 Foreground="{DynamicResource SgTextSecondary}"
                                  Margin="10,0"/>
                     </DataTemplate>
                   </DataGridTemplateColumn.CellTemplate>
