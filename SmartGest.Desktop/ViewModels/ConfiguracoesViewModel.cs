@@ -38,7 +38,10 @@ public partial class ConfiguracoesViewModel : ViewModelBase
             EmpresaCidade=s.EmpresaCidade; EmpresaPais=s.EmpresaPais; EmpresaTelefone=s.EmpresaTelefone;
             EmpresaEmail=s.EmpresaEmail; EmpresaWebsite=s.EmpresaWebsite; EmpresaCapital=s.EmpresaCapital.ToString("N0");
             LogoCaminho=s.LogoPath; TemLogo=!string.IsNullOrWhiteSpace(LogoCaminho);
-            // Tema é uma preferência local da interface: o JSON é a fonte de verdade.\n            // A BD continua a guardar as configurações empresariais/sistémicas.\n            TemaIndex=_themeService.LoadThemeIndex(s.TemaIndex);\n            IdiomaIndex=s.IdiomaIndex; MoedaIndex=s.MoedaIndex; DataFormatoIndex=s.DataFormatoIndex;
+            // Tema é uma preferência local da interface: o JSON é a fonte de verdade.
+            // A BD continua a guardar as configurações empresariais/sistémicas.
+            TemaIndex=_themeService.LoadThemeIndex(s.TemaIndex);
+            IdiomaIndex=s.IdiomaIndex; MoedaIndex=s.MoedaIndex; DataFormatoIndex=s.DataFormatoIndex;
             MostrarSparklines=s.MostrarSparklines; AnimacoesAtivadas=s.AnimacoesAtivadas; MostrarSaldosOcultos=s.MostrarSaldosOcultos;
             NotifEmailAtivo=s.NotifEmail; NotifAppAtivo=s.NotifApp; NotifSaldoBaixo=s.NotifSaldoBaixo;
             NotifLancamentos=s.NotifLancamentos; NotifRelatorios=s.NotifRelatorios; NotifErrosSistema=s.NotifErrosSistema;
