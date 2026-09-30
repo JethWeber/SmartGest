@@ -1,5 +1,3 @@
-
-using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using SmartGest.Infrastructure.Persistence;
 
@@ -36,8 +34,10 @@ public sealed class LocalDatabaseMaintenance
         await using var db = await _factory.CreateDbContextAsync(cancellationToken);
         await db.Database.OpenConnectionAsync(cancellationToken);
 
-        var escaped = file.Replace("'", "''");
-        await db.Database.ExecuteSqlRawAsync($"VACUUM INTO '{escaped}'", cancellationToken);
+        await db.Database.ExecuteSqlRawAsync(
+            "VACUUM INTO {0}",
+            new object[] { file },
+            cancellationToken);
 
         return file;
     }
@@ -57,7 +57,10 @@ public sealed class LocalDatabaseMaintenance
     public async Task<bool> CheckIntegrityAsync(CancellationToken cancellationToken = default)
     {
         await using var db = await _factory.CreateDbContextAsync(cancellationToken);
-        var result = await db.Database.SqlQueryRaw<string>("SELECT integrity_check AS Value FROM pragma_integrity_check").FirstOrDefaultAsync(cancellationToken);
+        var result = await db.Database
+            .SqlQueryRaw<string>("SELECT integrity_check AS Value FROM pragma_integrity_check")
+            .FirstOrDefaultAsync(cancellationToken);
+
         return string.Equals(result, "ok", StringComparison.OrdinalIgnoreCase);
     }
 
@@ -78,9 +81,15 @@ public sealed class LocalDatabaseMaintenance
         if (!File.Exists(backupPath))
             throw new FileNotFoundException("Backup não encontrado.", backupPath);
 
-        await using var db = await _factory.CreateDbContextAsync(cancellationToken);
-        await db.Database.CloseConnectionAsync();
+        var fullBackupPath = Path.GetFullPath(backupPath);
+        if (string.Equals(fullBackupPath, _databasePath, StringComparison.OrdinalIgnoreCase))
+            throw new InvalidOperationException("O backup de origem não pode ser a própria base de dados.");
 
-        File.Copy(backupPath, _databasePath, overwrite: true);
+        await using (var db = await _factory.CreateDbContextAsync(cancellationToken))
+        {
+            await db.Database.CloseConnectionAsync();
+        }
+
+        File.Copy(fullBackupPath, _databasePath, overwrite: true);
     }
 }
