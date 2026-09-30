@@ -42,6 +42,25 @@ public sealed class LocalDatabaseMaintenance
         return file;
     }
 
+    public async Task<string?> CreateAutomaticBackupIfNeededAsync(CancellationToken cancellationToken = default)
+    {
+        var directory = Path.Combine(Path.GetDirectoryName(_databasePath)!, "Backups");
+        Directory.CreateDirectory(directory);
+        var today = DateTime.Now.ToString("yyyyMMdd");
+        var existing = Directory.GetFiles(directory, $"smartgest_{today}_*.db");
+        if (existing.Length > 0)
+            return existing.OrderByDescending(File.GetLastWriteTimeUtc).First();
+
+        return await BackupAsync(directory, cancellationToken);
+    }
+
+    public async Task<bool> CheckIntegrityAsync(CancellationToken cancellationToken = default)
+    {
+        await using var db = await _factory.CreateDbContextAsync(cancellationToken);
+        var result = await db.Database.SqlQueryRaw<string>("PRAGMA integrity_check").FirstOrDefaultAsync(cancellationToken);
+        return string.Equals(result, "ok", StringComparison.OrdinalIgnoreCase);
+    }
+
     public Task<List<string>> ListBackupsAsync(CancellationToken cancellationToken = default)
     {
         var directory = Path.Combine(Path.GetDirectoryName(_databasePath)!, "Backups");
