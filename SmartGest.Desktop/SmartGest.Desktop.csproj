@@ -35,5 +35,6 @@
     <ProjectReference Include="..\SmartGest.Core\SmartGest.Core.csproj" />
     <ProjectReference Include="..\SmartGest.Application\SmartGest.Application.csproj" />
     <ProjectReference Include="..\SmartGest.Infrastructure\SmartGest.Infrastructure.csproj" />
+    <ProjectReference Include="..\SmartGest.Migrations\SmartGest.Migrations.csproj" />
   </ItemGroup>
 </Project>
