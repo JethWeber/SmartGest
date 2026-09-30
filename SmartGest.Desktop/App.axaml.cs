@@ -5,6 +5,7 @@ using Avalonia.Data.Core.Plugins;
 using Avalonia.Threading;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using System.IO;
 using Avalonia.Markup.Xaml;
 using Microsoft.Extensions.DependencyInjection;
