@@ -186,6 +186,7 @@ public partial class App : Avalonia.Application
 
         // ── ViewModels simples ────────────────────────────────────────────────
         services.AddTransient<LoginViewModel>();
+        services.AddTransient<InitialSetupViewModel>();
         services.AddTransient<CaixaViewModel>();
         services.AddSingleton<DashboardViewModel>();
         services.AddSingleton<BalanceteViewModel>();
