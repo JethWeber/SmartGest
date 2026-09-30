@@ -53,7 +53,7 @@ public partial class DashboardViewModel : ViewModelBase
         _ = CarregarAsync();
     }
 
-    public DashboardViewModel() : this(new DashboardService(new ApiClient(new TokenStore())))
+    public DashboardViewModel() : this(App.Services.GetRequiredService<DashboardService>())
     {
         TotalReceita = "1.500.000 Kzs";
         TotalDespesa = "600.000 Kzs";
