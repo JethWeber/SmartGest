@@ -100,6 +100,13 @@ public partial class App : Avalonia.Application
                     _ = Services.GetRequiredService<SessionSecurityService>().StartAsync();
                     desktop.MainWindow = main;
                     main.Show();
+
+                    var onboarding = Services.GetRequiredService<FirstRunService>();
+                    if (!onboarding.IsCompleted)
+                    {
+                        Services.GetRequiredService<UiFeedbackService>().ShowInfo("Bem-vindo ao SmartGest. Explore Configurações para concluir a personalização inicial.");
+                        onboarding.MarkCompleted();
+                    }
                     login.Close();
 
                 };
