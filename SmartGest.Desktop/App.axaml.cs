@@ -40,6 +40,8 @@ public partial class App : Avalonia.Application
 
         // Preferência visual é local à instalação/utilizador e fica em JSON.
         // Dados empresariais e financeiros continuam na BD.
+        Services.GetRequiredService<AuditService>().EnsureSchemaAsync().GetAwaiter().GetResult();
+
         var themeService = Services.GetRequiredService<ThemeService>();
         themeService.Apply(themeService.LoadThemeIndex(), persist: false);
 
@@ -71,6 +73,24 @@ public partial class App : Avalonia.Application
                     };
 
                     desktop.MainWindow = main;
+
+                    mainVm.SessionExpiredRequested += () =>
+                    {
+                        Avalonia.Threading.Dispatcher.UIThread.Post(() =>
+                        {
+                            if (desktop.MainWindow == main)
+                            {
+                                var freshLoginVm = Services.GetRequiredService<LoginViewModel>();
+                                var freshLogin = new MainWindow();
+                                // O login é recriado pelo fluxo normal abaixo.
+                                desktop.MainWindow = new LoginView { DataContext = freshLoginVm };
+                                desktop.MainWindow.Show();
+                                main.Close();
+                            }
+                        });
+                    };
+
+                    _ = Services.GetRequiredService<SessionSecurityService>().StartAsync();
                     main.Show();
                     login.Close();
                 };
@@ -103,6 +123,10 @@ public partial class App : Avalonia.Application
         // ── Infraestrutura de sessão/API (compatibilidade durante a migração) ──
         services.AddSingleton<TokenStore>();
         services.AddSingleton<ThemeService>();
+        services.AddSingleton<UiFeedbackService>();
+        services.AddSingleton<AuditService>();
+        services.AddSingleton<SessionSecurityService>();
+        services.AddSingleton<FirstRunService>();
         services.AddSingleton<ApiClient>();
 
         // ── Serviços de API ───────────────────────────────────────────────────
