@@ -36,6 +36,7 @@ public partial class App : Avalonia.Application
         // Inicializa a base local antes de abrir o primeiro ecrã.
         // O caminho fica no perfil do utilizador, nunca dentro da pasta da aplicação.
         Services.InitializeSmartGestDatabaseAsync().GetAwaiter().GetResult();
+        Services.GetRequiredService<LocalDatabaseMaintenance>().CreateAutomaticBackupIfNeededAsync().GetAwaiter().GetResult();
 
         var pluginsToRemove = BindingPlugins.DataValidators
             .OfType<DataAnnotationsValidationPlugin>()
