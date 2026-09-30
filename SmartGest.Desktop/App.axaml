@@ -76,6 +76,23 @@
     <StyleInclude Source="avares://Avalonia.Controls.DataGrid/Themes/Fluent.xaml"/>
     <StyleInclude Source="avares://Material.Icons.Avalonia/MaterialIconStyles.axaml"/>
 
+    <!-- === BASE TEMÁTICA: texto e controlos sem cor explícita === -->
+    <Style Selector="TextBlock">
+      <Setter Property="Foreground" Value="{DynamicResource SgTextPrimary}"/>
+    </Style>
+    <Style Selector="Button">
+      <Setter Property="Foreground" Value="{DynamicResource SgTextPrimary}"/>
+    </Style>
+    <Style Selector="TextBox">
+      <Setter Property="Foreground" Value="{DynamicResource SgTextPrimary}"/>
+    </Style>
+    <Style Selector="ComboBox">
+      <Setter Property="Foreground" Value="{DynamicResource SgTextPrimary}"/>
+    </Style>
+    <Style Selector="CheckBox">
+      <Setter Property="Foreground" Value="{DynamicResource SgTextSecondary}"/>
+    </Style>
+
     <!-- =====================================================
          SMARTGEST · ESTILOS GLOBAIS GLASSMORPHISM
          Paleta: #0A1628 dark | #2196F3 azul | #1565C0 azul escuro
