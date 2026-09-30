@@ -31,9 +31,7 @@ public class LancamentoService
         entity.DefinirCategoria(categoria.Nome);
         db.Lancamentos.Add(entity);
         await db.SaveChangesAsync();
-        var categoria = await db.CategoriaContabeis.AsNoTracking()
-            .FirstOrDefaultAsync(x => x.Id == entity.CategoriaContabilId);
-        return Map(entity, categoria?.Nome, null);
+        return Map(entity, categoria.Nome, null);
     }
 
     public async Task<LancamentosPageResponse> ListarAsync(
