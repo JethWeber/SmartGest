@@ -3,14 +3,14 @@ namespace SmartGest.Core.Domain;
 public sealed class Utilizador
 {
     public int Id { get; private set; }
-    public string Nome { get; private set; }
-    public string Email { get; private set; }
-    public string Telefone { get; private set; }
-    public string PasswordHash { get; private set; }
-    public string Perfil { get; private set; }
+    public string Nome { get; private set; } = string.Empty;
+    public string Email { get; private set; } = string.Empty;
+    public string Telefone { get; private set; } = string.Empty;
+    public string PasswordHash { get; private set; } = string.Empty;
+    public string Perfil { get; private set; } = string.Empty;
     public bool Activo { get; private set; }
-    public string Iniciais { get; private set; }
-    public string CorAvatar { get; private set; }
+    public string Iniciais { get; private set; } = string.Empty;
+    public string CorAvatar { get; private set; } = string.Empty;
     public DateTime CriadoEm { get; private set; }
 
     private Utilizador() { }
