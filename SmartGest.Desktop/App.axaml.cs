@@ -86,7 +86,6 @@ public partial class App : Avalonia.Application
                     main.Show();
                     login.Close();
 
-                    _ = Services.GetRequiredService<AuditService>().RegistarAsync("Login", "Utilizador");
                 };
 
                 desktop.MainWindow = login;
