@@ -25,11 +25,11 @@ public static class DatabaseInitializer
             // Fazemos o baseline uma única vez antes de começar a usar Migrations.
             if (existingSchema && applied.Length == 0)
             {
-                await db.Database.ExecuteSqlRawAsync("""
-                    CREATE TABLE IF NOT EXISTS "__EFMigrationsHistory" (
-                        "MigrationId" TEXT NOT NULL CONSTRAINT "PK___EFMigrationsHistory" PRIMARY KEY,
-                        "ProductVersion" TEXT NOT NULL
-                    );""", cancellationToken);
+                await db.Database.ExecuteSqlRawAsync(
+                    "CREATE TABLE IF NOT EXISTS \"__EFMigrationsHistory\" (" +
+                    "\"MigrationId\" TEXT NOT NULL CONSTRAINT \"PK___EFMigrationsHistory\" PRIMARY KEY, " +
+                    "\"ProductVersion\" TEXT NOT NULL);",
+                    cancellationToken);
                 var productVersion = "10.0.0";
                 await db.Database.ExecuteSqlRawAsync(
                     "INSERT INTO \"__EFMigrationsHistory\" (\"MigrationId\", \"ProductVersion\") VALUES ({0}, {1})",
