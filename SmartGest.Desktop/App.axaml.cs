@@ -30,6 +30,11 @@ public partial class App : Application
         RegisterServices(collection);
         Services = collection.BuildServiceProvider();
 
+        // Inicializa a base local antes de abrir o primeiro ecrã.
+        // O caminho fica no perfil do utilizador, nunca dentro da pasta da aplicação.
+        Services.GetRequiredService<SmartGest.Infrastructure.Persistence.SmartGestDbContext>()
+            .Database.EnsureCreated();
+
         var pluginsToRemove = BindingPlugins.DataValidators
             .OfType<DataAnnotationsValidationPlugin>()
             .ToArray();
