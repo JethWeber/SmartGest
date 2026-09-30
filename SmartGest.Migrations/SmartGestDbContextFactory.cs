@@ -15,7 +15,7 @@ public sealed class SmartGestDbContextFactory : IDesignTimeDbContextFactory<Smar
                 "smartgest.db");
 
         var options = new DbContextOptionsBuilder<SmartGestDbContext>()
-            .UseSqlite($"Data Source={Path.GetFullPath(path)}")
+            .UseSqlite($"Data Source={Path.GetFullPath(path)}", sqlite => sqlite.MigrationsAssembly(typeof(SmartGestDbContextFactory).Assembly.GetName().Name))
             .Options;
 
         return new SmartGestDbContext(options);
