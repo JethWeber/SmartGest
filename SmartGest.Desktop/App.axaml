@@ -76,6 +76,19 @@
     <StyleInclude Source="avares://Avalonia.Controls.DataGrid/Themes/Fluent.xaml"/>
     <StyleInclude Source="avares://Material.Icons.Avalonia/MaterialIconStyles.axaml"/>
 
+    <theme:ButtonTooltipConverter x:Key="ButtonTooltipConverter"/>
+
+    <!-- Dicas contextuais para todos os botões da aplicação. -->
+    <Style Selector="Button">
+      <Setter Property="ToolTip.Tip">
+        <Setter.Value>
+          <Binding Path="Content"
+                   RelativeSource="{RelativeSource Self}"
+                   Converter="{StaticResource ButtonTooltipConverter}"/>
+        </Setter.Value>
+      </Setter>
+    </Style>
+
     <!-- === BASE TEMÁTICA: texto e controlos sem cor explícita === -->
     <Style Selector="TextBlock">
       <Setter Property="Foreground" Value="{DynamicResource SgTextPrimary}"/>
