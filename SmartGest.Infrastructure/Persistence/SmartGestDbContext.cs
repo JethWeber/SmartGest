@@ -31,7 +31,7 @@ public sealed class SmartGestDbContext : DbContext
             e.Property(x => x.Telefone).HasMaxLength(20).IsRequired();
             e.Property(x => x.PasswordHash).IsRequired();
             e.Property(x => x.Perfil).HasMaxLength(30).HasDefaultValue("Operador");
-            e.HasMany(x => x.Sessoes).WithOne(x => x.Utilizador).HasForeignKey(x => x.UtilizadorId).OnDelete(DeleteBehavior.Cascade);
+            e.HasMany<SessaoActiva>().WithOne().HasForeignKey(x => x.UtilizadorId).OnDelete(DeleteBehavior.Cascade);
         });
 
         mb.Entity<SessaoActiva>().HasKey(x => x.Id);
@@ -103,8 +103,8 @@ public sealed class SmartGestDbContext : DbContext
             e.Property(x => x.ImpostoSelo).HasPrecision(18,2);
             e.Property(x => x.Anulado).HasDefaultValue(false);
             e.HasIndex(x => x.Data).HasDatabaseName("IX_Lancamento_Data");
-            e.HasOne(x => x.ContaBancaria).WithMany(x => x.Lancamentos).HasForeignKey(x => x.ContaBancariaId).OnDelete(DeleteBehavior.SetNull);
-            e.HasOne(x => x.CategoriaContabil).WithMany().HasForeignKey(x => x.CategoriaContabilId).OnDelete(DeleteBehavior.SetNull);
+            e.HasOne<ContaBancaria>().WithMany().HasForeignKey(x => x.ContaBancariaId).OnDelete(DeleteBehavior.SetNull);
+            e.HasOne<CategoriaContabil>().WithMany().HasForeignKey(x => x.CategoriaContabilId).OnDelete(DeleteBehavior.SetNull);
         });
 
         mb.Entity<LancamentoDetalhe>(e =>
@@ -112,8 +112,8 @@ public sealed class SmartGestDbContext : DbContext
             e.HasKey(x => x.Id);
             e.Property(x => x.Debito).HasPrecision(18,2);
             e.Property(x => x.Credito).HasPrecision(18,2);
-            e.HasOne(x => x.Lancamento).WithMany(x => x.Detalhes).HasForeignKey(x => x.LancamentoId).OnDelete(DeleteBehavior.Cascade);
-            e.HasOne(x => x.ContaContabil).WithMany(x => x.Lancamentos).HasForeignKey(x => x.ContaContabilId).OnDelete(DeleteBehavior.Restrict);
+            e.HasOne<Lancamento>().WithMany().HasForeignKey(x => x.LancamentoId).OnDelete(DeleteBehavior.Cascade);
+            e.HasOne<ContaContabil>().WithMany().HasForeignKey(x => x.ContaContabilId).OnDelete(DeleteBehavior.Restrict);
         });
 
         mb.Entity<ContaBancaria>(e =>
@@ -128,7 +128,7 @@ public sealed class SmartGestDbContext : DbContext
             e.Property(x => x.Agencia).HasMaxLength(150);
             e.Property(x => x.Titular).HasMaxLength(200);
             e.HasIndex(x => x.NIB).IsUnique();
-            e.HasOne(x => x.ContaContabil).WithMany().HasForeignKey(x => x.ContaContabilId).OnDelete(DeleteBehavior.SetNull);
+            e.HasOne<ContaContabil>().WithMany().HasForeignKey(x => x.ContaContabilId).OnDelete(DeleteBehavior.SetNull);
         });
 
         mb.Entity<MovimentoBancario>(e =>
@@ -138,7 +138,7 @@ public sealed class SmartGestDbContext : DbContext
             e.Property(x => x.Referencia).HasMaxLength(50);
             e.Property(x => x.Tipo).HasMaxLength(20).IsRequired();
             e.Property(x => x.Valor).HasPrecision(18,2);
-            e.HasOne(x => x.ContaBancaria).WithMany(x => x.Movimentos).HasForeignKey(x => x.ContaBancariaId).OnDelete(DeleteBehavior.Cascade);
+            e.HasOne<ContaBancaria>().WithMany().HasForeignKey(x => x.ContaBancariaId).OnDelete(DeleteBehavior.Cascade);
         });
 
         Seed(mb);
