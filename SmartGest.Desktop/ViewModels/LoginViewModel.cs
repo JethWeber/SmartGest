@@ -43,11 +43,7 @@ public partial class LoginViewModel : ViewModelBase
     /// Construtor sem parâmetros — usado pelo Avalonia Designer.
     /// Em produção NUNCA é chamado directamente; o DI usa o construtor acima.
     /// </summary>
-    public LoginViewModel() : this(
-        new AuthService(
-            new ApiClient(new TokenStore()),
-            new TokenStore()))
-    { }
+    public LoginViewModel() : this(App.Services.GetRequiredService<AuthService>()) { }
 
     // ── Comandos ──────────────────────────────────────────────────────────────
 
