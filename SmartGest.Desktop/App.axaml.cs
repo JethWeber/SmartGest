@@ -3,6 +3,7 @@ using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Data.Core.Plugins;
 using System.Linq;
+using System.IO;
 using Avalonia.Markup.Xaml;
 using Microsoft.Extensions.DependencyInjection;
 using LiveChartsCore;
@@ -10,6 +11,8 @@ using LiveChartsCore.SkiaSharpView;
 using SmartGest.Desktop.Services;
 using SmartGest.Desktop.ViewModels;
 using SmartGest.Desktop.Views;
+using SmartGest.Application;
+using SmartGest.Infrastructure;
 
 namespace SmartGest.Desktop;
 
@@ -32,8 +35,7 @@ public partial class App : Application
 
         // Inicializa a base local antes de abrir o primeiro ecrã.
         // O caminho fica no perfil do utilizador, nunca dentro da pasta da aplicação.
-        Services.GetRequiredService<SmartGest.Infrastructure.Persistence.SmartGestDbContext>()
-            .Database.EnsureCreated();
+        Services.InitializeSmartGestDatabaseAsync().GetAwaiter().GetResult();
 
         var pluginsToRemove = BindingPlugins.DataValidators
             .OfType<DataAnnotationsValidationPlugin>()
@@ -81,7 +83,18 @@ public partial class App : Application
 
     private static void RegisterServices(IServiceCollection services)
     {
-        // ── Infraestrutura ────────────────────────────────────────────────────
+        // ── Core da aplicação ────────────────────────────────────────────────
+        services.AddSmartGestApplication();
+
+        // ── Persistência local ────────────────────────────────────────────────
+        var dataDirectory = Path.Combine(
+            Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+            "SmartGest");
+
+        var databasePath = Path.Combine(dataDirectory, "smartgest.db");
+        services.AddSmartGestInfrastructure(databasePath);
+
+        // ── Infraestrutura de sessão/API (compatibilidade durante a migração) ──
         services.AddSingleton<TokenStore>();
         services.AddSingleton<ApiClient>();
 
