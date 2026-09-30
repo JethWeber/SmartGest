@@ -38,10 +38,10 @@ public partial class App : Avalonia.Application
         Services.InitializeSmartGestDatabaseAsync().GetAwaiter().GetResult();
         Services.GetRequiredService<LocalDatabaseMaintenance>().CreateAutomaticBackupIfNeededAsync().GetAwaiter().GetResult();
 
-        // Aplica o tema persistido antes de abrir a janela principal.
-        var temaInicial = Services.GetRequiredService<ConfiguracoesService>()
-            .ObterAsync().GetAwaiter().GetResult().TemaIndex;
-        Services.GetRequiredService<ThemeService>().Apply(temaInicial);
+        // Preferência visual é local à instalação/utilizador e fica em JSON.
+        // Dados empresariais e financeiros continuam na BD.
+        var themeService = Services.GetRequiredService<ThemeService>();
+        themeService.Apply(themeService.LoadThemeIndex(), persist: false);
 
         var pluginsToRemove = BindingPlugins.DataValidators
             .OfType<DataAnnotationsValidationPlugin>()
