@@ -10,24 +10,28 @@ namespace SmartGest.Desktop.Services;
 
 public class LancamentoService
 {
-    private readonly SmartGestDbContext _db;
-    private readonly ILancamentoApplicationService _application;
+    private readonly IDbContextFactory<SmartGestDbContext> _factory;
 
-    public LancamentoService(SmartGestDbContext db, ILancamentoApplicationService application)
+    public LancamentoService(IDbContextFactory<SmartGestDbContext> factory)
     {
-        _db = db;
-        _application = application;
+        _factory = factory;
     }
 
     public async Task<LancamentoResponse> CriarAsync(LancamentoRequest req)
     {
-        var result = await _application.CriarAsync(new CriarLancamentoCommand(
+        await using var db = await _factory.CreateDbContextAsync();
+        var categoria = await db.CategoriaContabeis.AsNoTracking().FirstOrDefaultAsync(x => x.Id == req.CategoriaId && x.Ativo);
+        if (categoria is null || categoria.Tipo != req.Tipo)
+            throw new InvalidOperationException("Categoria financeira inválida para o tipo de lançamento.");
+
+        var entity = new SmartGest.Core.Domain.Lancamento(
             req.Data, req.Descricao, req.Tipo, req.Valor, req.CategoriaId,
             req.Beneficiario, req.MetodoPagamento, req.CaminhoDocumento,
-            req.Observacoes, req.CentroCusto, req.ReferenciaInterna, req.ContaBancariaId));
-
-        var entity = await _db.Lancamentos.AsNoTracking().FirstAsync(x => x.Id == result.Id);
-        var categoria = await _db.CategoriaContabeis.AsNoTracking()
+            req.Observacoes, req.CentroCusto, req.ReferenciaInterna, req.ContaBancariaId);
+        entity.DefinirCategoria(categoria.Nome);
+        db.Lancamentos.Add(entity);
+        await db.SaveChangesAsync();
+        var categoria = await db.CategoriaContabeis.AsNoTracking()
             .FirstOrDefaultAsync(x => x.Id == entity.CategoriaContabilId);
         return Map(entity, categoria?.Nome, null);
     }
@@ -37,7 +41,8 @@ public class LancamentoService
         string? texto = null, int? contaId = null, bool incluirAnulados = false,
         int pagina = 1, int tamPagina = 50)
     {
-        var q = _db.Lancamentos.AsNoTracking().AsQueryable();
+        await using var db = await _factory.CreateDbContextAsync();
+        var q = db.Lancamentos.AsNoTracking().AsQueryable();
         if (!incluirAnulados) q = q.Where(x => !x.Anulado);
         if (!string.IsNullOrWhiteSpace(tipo)) q = q.Where(x => x.Tipo == tipo);
         if (dataInicio.HasValue) q = q.Where(x => x.Data >= dataInicio.Value.Date);
@@ -54,7 +59,7 @@ public class LancamentoService
             .Skip((pagina - 1) * tamPagina).Take(tamPagina).ToListAsync();
 
         var contaIds = items.Where(x => x.ContaBancariaId.HasValue).Select(x => x.ContaBancariaId!.Value).Distinct().ToList();
-        var contas = await _db.ContasBancarias.AsNoTracking().Where(x => contaIds.Contains(x.Id))
+        var contas = await db.ContasBancarias.AsNoTracking().Where(x => contaIds.Contains(x.Id))
             .ToDictionaryAsync(x => x.Id, x => $"{x.Banco} · {x.SaldoAtual:N0} {x.Moeda}");
 
         return new(total, pagina, tamPagina, items.Select(x =>
